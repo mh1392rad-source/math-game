@@ -1,0 +1,3716 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚡ Math Game</title>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --surface: #111128;
+    --card: #181840;
+    --teal: #00f5d4;
+    --teal-dim: rgba(0,245,212,0.12);
+    --gold: #ffd700;
+    --gold-dim: rgba(255,215,0,0.12);
+    --pink: #ff6bcd;
+    --pink-dim: rgba(255,107,205,0.12);
+    --red: #ff4757;
+    --red-dim: rgba(255,71,87,0.12);
+    --text: #f0f4ff;
+    --muted: #8899bb;
+    --border: rgba(255,255,255,0.06);
+    --radius: 20px;
+    --shadow: 0 20px 60px rgba(0,0,0,0.5);
+    --duel-blue: #4facfe;
+    --duel-blue-dim: rgba(79,172,254,0.12);
+    --duel-orange: #ff9f43;
+    --duel-orange-dim: rgba(255,159,67,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    direction: rtl;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  body.light-mode {
+    --bg: #f0f4ff;
+    --surface: #e8ecf8;
+    --card: #dce0f0;
+    --text: #1a1a2e;
+    --muted: #5a6a8a;
+    --border: rgba(0,0,0,0.08);
+    --shadow: 0 20px 60px rgba(0,0,0,0.1);
+  }
+
+  #canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+  body.light-mode #canvas { opacity: 0.12; }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+  }
+
+  .screen { display: none; width: 100%; max-width: 600px; animation: fadeSlide 0.4s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .home-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .home-top .spacer { width: 44px; }
+  .theme-toggle {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text);
+  }
+  .theme-toggle:hover { transform: scale(1.08); }
+
+  .music-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 4px 10px;
+  }
+  .music-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 6px;
+    transition: all 0.2s;
+    border-radius: 6px;
+  }
+  .music-btn:hover { color: var(--text); background: var(--teal-dim); }
+  .music-btn.active { color: var(--teal); }
+  .volume-slider {
+    width: 50px;
+    accent-color: var(--teal);
+    background: var(--bg);
+    border-radius: 4px;
+    height: 4px;
+  }
+  .volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--teal);
+    cursor: pointer;
+  }
+
+  .home-logo { text-align: center; margin-bottom: 16px; }
+  .logo-icon {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 4px;
+    animation: float3d 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(0,245,212,0.25));
+  }
+  @keyframes float3d {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-12px) rotate(2deg); }
+    66% { transform: translateY(4px) rotate(-2deg); }
+  }
+
+  .logo-title {
+    font-size: 30px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--teal), var(--gold), var(--pink));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease-in-out infinite;
+  }
+  @keyframes gradientShift {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .logo-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .logo-sub span { color: var(--gold); font-weight: 700; }
+
+  .account-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  .account-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .account-avatar {
+    font-size: 28px;
+  }
+  .account-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .account-name .guest {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 11px;
+  }
+  .account-btn {
+    background: var(--teal-dim);
+    border: 1.5px solid var(--teal);
+    color: var(--teal);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.3s;
+  }
+  .account-btn:hover { background: var(--teal); color: var(--bg); }
+
+  .mode-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .mode-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'Vazirmatn', sans-serif;
+  }
+  .mode-btn:hover { border-color: rgba(255,255,255,0.2); transform: scale(1.03); }
+  .mode-btn.active {
+    border-color: var(--teal);
+    color: var(--text);
+    background: var(--teal-dim);
+    box-shadow: 0 0 30px rgba(0,245,212,0.08);
+  }
+  .mode-btn .icon { font-size: 20px; display: block; margin-bottom: 2px; }
+  .mode-btn .label { font-size: 11px; font-weight: 600; }
+  .mode-btn .sub { font-size: 8px; color: var(--muted); }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .level-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .level-card:hover:not(.locked) { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow); }
+  .level-card.easy { border-color: rgba(0,245,212,0.25); }
+  .level-card.easy:hover:not(.locked) { border-color: var(--teal); box-shadow: 0 20px 60px rgba(0,245,212,0.12); }
+  .level-card.hard { border-color: rgba(255,215,0,0.25); }
+  .level-card.hard:hover:not(.locked) { border-color: var(--gold); box-shadow: 0 20px 60px rgba(255,215,0,0.12); }
+  .level-card.expert { border-color: rgba(255,107,205,0.25); }
+  .level-card.expert:hover:not(.locked) { border-color: var(--pink); box-shadow: 0 20px 60px rgba(255,107,205,0.12); }
+  .level-card.duel-easy { border-color: rgba(79,172,254,0.25); }
+  .level-card.duel-easy:hover:not(.locked) { border-color: var(--duel-blue); box-shadow: 0 20px 60px rgba(79,172,254,0.12); }
+  .level-card.duel-medium { border-color: rgba(255,159,67,0.25); }
+  .level-card.duel-medium:hover:not(.locked) { border-color: var(--duel-orange); box-shadow: 0 20px 60px rgba(255,159,67,0.12); }
+  .level-card.duel-hard { border-color: rgba(255,71,87,0.25); }
+  .level-card.duel-hard:hover:not(.locked) { border-color: var(--red); box-shadow: 0 20px 60px rgba(255,71,87,0.12); }
+  .level-card.locked { opacity: 0.4; cursor: not-allowed; }
+  .level-card.locked:hover { transform: none; box-shadow: none; }
+
+  .level-icon { font-size: 24px; display: block; margin-bottom: 2px; }
+  .level-name { font-size: 14px; font-weight: 700; }
+  .easy .level-name { color: var(--teal); }
+  .hard .level-name { color: var(--gold); }
+  .expert .level-name { color: var(--pink); }
+  .duel-easy .level-name { color: var(--duel-blue); }
+  .duel-medium .level-name { color: var(--duel-orange); }
+  .duel-hard .level-name { color: var(--red); }
+  .level-desc { font-size: 10px; color: var(--muted); line-height: 1.3; }
+  .level-badge {
+    display: inline-block;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 4px;
+  }
+  .easy .level-badge { background: var(--teal-dim); color: var(--teal); }
+  .hard .level-badge { background: var(--gold-dim); color: var(--gold); }
+  .expert .level-badge { background: var(--pink-dim); color: var(--pink); }
+  .duel-easy .level-badge { background: var(--duel-blue-dim); color: var(--duel-blue); }
+  .duel-medium .level-badge { background: var(--duel-orange-dim); color: var(--duel-orange); }
+  .duel-hard .level-badge { background: var(--red-dim); color: var(--red); }
+
+  .extra-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .extra-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 6px;
+    color: var(--muted);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .extra-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); transform: scale(1.02); }
+  .extra-btn .icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+  .credit-box {
+    text-align: center;
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+  }
+  .credit-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .credit-name span {
+    background: linear-gradient(135deg, var(--teal), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .credit-org { font-size: 10px; color: rgba(136,153,187,0.5); font-weight: 300; }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    max-width: 400px;
+    width: 100%;
+    animation: fadeSlide 0.3s ease;
+    box-shadow: var(--shadow);
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .modal-title span { color: var(--teal); }
+  .modal-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: 'Vazirmatn', sans-serif;
+    text-align: center;
+    transition: all 0.3s;
+    direction: ltr;
+  }
+  .modal-input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 20px rgba(0,245,212,0.08);
+  }
+  .modal-input.error {
+    border-color: var(--red);
+    box-shadow: 0 0 20px rgba(255,71,87,0.15);
+  }
+  .modal-input.success {
+    border-color: var(--teal);
+    box-shadow: 0 0 20px rgba(0,245,212,0.15);
+  }
+  .modal-hint {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin: 6px 0 12px 0;
+  }
+  .modal-avatar-selector {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0 16px 0;
+  }
+  .modal-avatar-option {
+    font-size: 30px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+  .modal-avatar-option:hover { transform: scale(1.1); }
+  .modal-avatar-option.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .modal-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.3s;
+  }
+  .modal-btn-primary {
+    background: linear-gradient(135deg, var(--teal), #00d4b8);
+    color: var(--bg);
+  }
+  .modal-btn-primary:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,245,212,0.25); }
+  .modal-btn-secondary {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--text);
+    margin-top: 8px;
+  }
+  .modal-btn-secondary:hover { border-color: rgba(255,255,255,0.2); transform: scale(1.02); }
+
+  /* ===== LOBBY ===== */
+  .lobby-container {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .lobby-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+  .lobby-link-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin: 10px 0;
+    border: 1px solid var(--border);
+    direction: ltr;
+  }
+  .lobby-link-box input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    outline: none;
+    direction: ltr;
+    text-align: left;
+    word-break: break-all;
+  }
+  .lobby-link-box .copy-btn {
+    background: var(--teal-dim);
+    border: none;
+    color: var(--teal);
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .lobby-link-box .copy-btn:hover { background: var(--teal); color: var(--bg); }
+  .lobby-status {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 8px;
+    border-radius: 8px;
+    background: var(--surface);
+    margin: 8px 0;
+  }
+  .lobby-status.connected { color: var(--teal); background: var(--teal-dim); }
+  .lobby-status.waiting { color: var(--gold); background: var(--gold-dim); }
+  .lobby-status.error { color: var(--red); background: var(--red-dim); }
+  .lobby-level-select {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 8px 0;
+  }
+  .lobby-level-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Vazirmatn', sans-serif;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .lobby-level-btn:hover:not(.selected) { border-color: rgba(255,255,255,0.2); }
+  .lobby-level-btn.selected {
+    border-color: var(--teal);
+    color: var(--text);
+    background: var(--teal-dim);
+  }
+  .lobby-start-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.3s;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .lobby-start-btn.active {
+    background: linear-gradient(135deg, var(--teal), #00d4b8);
+    color: var(--bg);
+    border: none;
+    box-shadow: 0 8px 24px rgba(0,245,212,0.25);
+  }
+  .lobby-start-btn.active:hover { transform: scale(1.02); }
+  .lobby-start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .lobby-join-box {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .lobby-join-box input {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Vazirmatn', sans-serif;
+    text-align: center;
+    transition: all 0.3s;
+    direction: ltr;
+    word-break: break-all;
+  }
+  .lobby-join-box input:focus {
+    outline: none;
+    border-color: var(--teal);
+  }
+  .lobby-join-box button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    background: linear-gradient(135deg, var(--teal), #00d4b8);
+    color: var(--bg);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .lobby-join-box button:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,245,212,0.25); }
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .back-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 4px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: 'Vazirmatn', sans-serif;
+  }
+  .back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .game-stats {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    transition: all 0.3s;
+  }
+  .stat-chip .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .dot-teal { background: var(--teal); box-shadow: 0 0 8px rgba(0,245,212,0.4); }
+  .dot-gold { background: var(--gold); box-shadow: 0 0 8px rgba(255,215,0,0.4); }
+  .dot-pink { background: var(--pink); box-shadow: 0 0 8px rgba(255,107,205,0.4); }
+  .dot-red { background: var(--red); }
+  .dot-blue { background: var(--duel-blue); box-shadow: 0 0 8px rgba(79,172,254,0.4); }
+  .dot-orange { background: var(--duel-orange); box-shadow: 0 0 8px rgba(255,159,67,0.4); }
+  .dot-heart { color: var(--red); font-size: 13px; }
+
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    transition: all 0.3s;
+  }
+  .timer-wrap.urgent { color: var(--red); border-color: rgba(255,71,87,0.3); background: var(--red-dim); animation: pulse 0.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .timer-num { min-width: 20px; text-align: center; font-size: 15px; }
+
+  .question-counter {
+    font-size: 10px;
+    color: var(--muted);
+    padding: 2px 8px;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .progress-wrap {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--teal), var(--gold), var(--pink));
+    background-size: 200% 200%;
+    animation: progressShine 2s ease-in-out infinite;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes progressShine {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .progress-text {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 14px;
+    margin-bottom: 12px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+  }
+  .question-card.correct { border-color: var(--teal); box-shadow: 0 0 30px rgba(0,245,212,0.12); }
+  .question-card.wrong { border-color: var(--red); box-shadow: 0 0 30px rgba(255,71,87,0.12); }
+  .question-card.duel-player-win { border-color: var(--teal); box-shadow: 0 0 30px rgba(0,245,212,0.2); }
+  .question-card.duel-robot-win { border-color: var(--red); box-shadow: 0 0 30px rgba(255,71,87,0.2); }
+  .question-card.duel-draw { border-color: var(--gold); box-shadow: 0 0 30px rgba(255,215,0,0.2); }
+
+  .q-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .q-equation {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+    direction: ltr;
+    font-family: 'Times New Roman', serif;
+  }
+  .q-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .q-difficulty {
+    display: inline-block;
+    font-size: 8px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .duel-container {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 8px;
+    border: 1.5px solid var(--border);
+  }
+  .duel-player {
+    flex: 1;
+    text-align: center;
+    padding: 6px;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  .duel-player.active { background: var(--teal-dim); border: 1px solid var(--teal); }
+  .duel-player.robot-active { background: var(--duel-blue-dim); border: 1px solid var(--duel-blue); }
+  .duel-player.winner { background: var(--gold-dim); border: 2px solid var(--gold); }
+  .duel-player.loser { background: var(--red-dim); border: 2px solid var(--red); }
+  .duel-player .avatar { font-size: 28px; display: block; }
+  .duel-player .name { font-size: 11px; font-weight: 700; margin-top: 2px; }
+  .duel-player .answer {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin-top: 2px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .duel-player .status {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .duel-vs {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+  .duel-score {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    background: var(--card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .duel-score .player-score { color: var(--teal); }
+  .duel-score .robot-score { color: var(--duel-blue); }
+  .duel-score .draw-score { color: var(--gold); }
+
+  .duel-result {
+    font-size: 20px;
+    font-weight: 900;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 6px;
+    text-align: center;
+  }
+  .duel-result.win { color: var(--teal); background: var(--teal-dim); }
+  .duel-result.lose { color: var(--red); background: var(--red-dim); }
+  .duel-result.draw { color: var(--gold); background: var(--gold-dim); }
+
+  .powerups {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .powerup-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Vazirmatn', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .powerup-btn:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text);
+    transform: scale(1.04);
+  }
+  .powerup-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .powerup-btn .badge {
+    background: var(--gold-dim);
+    color: var(--gold);
+    border-radius: 50%;
+    padding: 0 5px;
+    font-size: 9px;
+  }
+
+  .numpad {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+  }
+  .numpad-display {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    direction: ltr;
+    min-height: 40px;
+    margin-bottom: 6px;
+    transition: all 0.3s;
+    font-family: 'Courier New', monospace;
+  }
+  .numpad-display.focused {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,245,212,0.08);
+  }
+  .numpad-display.correct { border-color: var(--teal); background: var(--teal-dim); }
+  .numpad-display.wrong { border-color: var(--red); background: var(--red-dim); }
+  .numpad-display .placeholder { color: var(--muted); font-size: 12px; }
+  .cursor-blink {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: var(--teal);
+    vertical-align: middle;
+    animation: blink 0.8s step-end infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .quad-numpad-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .quad-numpad-col { flex: 1; }
+  .numpad-label { font-size: 9px; color: var(--muted); text-align: center; margin-bottom: 2px; }
+
+  .keys-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+  }
+  .key {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 3px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .key:active { transform: scale(0.92); background: rgba(255,255,255,0.05); }
+  .key.key-minus { background: var(--pink-dim); border-color: rgba(255,107,205,0.25); color: var(--pink); }
+  .key.key-del { background: var(--gold-dim); border-color: rgba(255,215,0,0.25); color: var(--gold); }
+  .key.key-zero { grid-column: span 2; }
+  .key.key-check {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 900;
+    transition: all 0.3s;
+    box-shadow: none;
+  }
+  .key.key-check:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .key.key-check.active {
+    background: linear-gradient(135deg, var(--teal), #00d4b8);
+    border-color: var(--teal);
+    color: #ffffff !important;
+    box-shadow: 0 0 30px rgba(0,245,212,0.3);
+  }
+  .key.key-check.inactive {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--muted);
+    box-shadow: none;
+  }
+
+  .feedback-box {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    display: none;
+    animation: slideFeedback 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideFeedback {
+    from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct { background: var(--teal-dim); border: 2px solid rgba(0,245,212,0.25); }
+  .feedback-box.wrong { background: var(--red-dim); border: 2px solid rgba(255,71,87,0.25); }
+  .feedback-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+  .feedback-steps {
+    color: var(--text);
+    font-size: 11px;
+    direction: ltr;
+    text-align: left;
+    background: rgba(0,0,0,0.15);
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 3px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .next-btn {
+    width: 100%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.3s;
+    display: none;
+  }
+  .next-btn.show { display: block; animation: fadeSlide 0.3s ease; }
+  .next-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); transform: scale(1.02); }
+
+  .result-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 18px;
+    text-align: center;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-trophy { font-size: 56px; margin-bottom: 6px; animation: float3d 3s ease-in-out infinite; }
+  .result-title { font-size: 24px; font-weight: 900; }
+  .result-subtitle { font-size: 12px; color: var(--muted); }
+  .stars { font-size: 24px; letter-spacing: 3px; }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .result-stat {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 8px 4px;
+    border: 1px solid var(--border);
+  }
+  .result-stat-num { font-size: 20px; font-weight: 900; }
+  .result-stat-label { font-size: 8px; color: var(--muted); }
+  .stat-correct .result-stat-num { color: var(--teal); }
+  .stat-wrong .result-stat-num { color: var(--red); }
+  .stat-score .result-stat-num { color: var(--gold); }
+  .stat-streak .result-stat-num { color: var(--pink); }
+
+  .result-details {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .result-details span { color: var(--gold); font-weight: 700; }
+
+  .action-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), #00d4b8);
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bg);
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(0,245,212,0.25); }
+  .btn-secondary {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.3s;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.2); transform: scale(1.02); }
+
+  .profile-avatar {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .avatar-selector {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .avatar-option {
+    font-size: 24px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+  .avatar-option:hover { transform: scale(1.08); }
+  .avatar-option.selected { border-color: var(--gold); background: var(--gold-dim); }
+
+  .pie-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 10px 0;
+    padding: 10px;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .pie-chart {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+  }
+  .pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pie-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .pie-legend-color.correct-color { background: var(--teal); }
+  .pie-legend-color.wrong-color { background: var(--red); }
+  .pie-legend-text {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .pie-legend-text .num {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-10px) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+  }
+
+  .combo-display {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--gold);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 100;
+    text-shadow: 0 0 30px rgba(255,215,0,0.4);
+  }
+  .combo-display.show {
+    opacity: 1;
+    animation: comboAnim 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes comboAnim {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -75%) scale(1); }
+  }
+
+  .achievement-popup {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: var(--card);
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: none;
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    max-width: 280px;
+  }
+  .achievement-popup.show { display: block; }
+  @keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .achievement-popup .title { font-size: 12px; font-weight: 700; color: var(--gold); }
+  .achievement-popup .desc { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .shake { animation: shake 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  .burst { animation: burst 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  @keyframes burst {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.04); }
+    60% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+  }
+
+  .speed-score {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-dim);
+    padding: 2px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,215,0,0.2);
+  }
+
+  /* Duel Timer Styles */
+  .duel-timers {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .duel-timers .timer-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+  }
+  .duel-timers .timer-item .num {
+    min-width: 24px;
+    text-align: center;
+    font-size: 16px;
+  }
+  .duel-timers .timer-item.urgent { color: var(--red); border-color: rgba(255,71,87,0.3); background: var(--red-dim); animation: pulse 0.5s infinite; }
+  .duel-timers .timer-item .label { font-size: 10px; color: var(--muted); font-weight: 400; }
+
+  @media (max-width: 480px) {
+    .level-grid { grid-template-columns: 1fr 1fr; }
+    .mode-selector { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .mode-selector .mode-btn { padding: 8px 2px; }
+    .mode-selector .mode-btn .icon { font-size: 16px; }
+    .mode-selector .mode-btn .label { font-size: 9px; }
+    .mode-selector .mode-btn .sub { font-size: 7px; }
+    .extra-btns { grid-template-columns: 1fr 1fr; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+    .action-btns { grid-template-columns: 1fr; }
+    .q-equation { font-size: 20px; }
+    .keys-grid { gap: 3px; }
+    .key { font-size: 13px; padding: 6px 2px; }
+    .game-stats .stat-chip { font-size: 8px; padding: 1px 5px; }
+    .timer-wrap { font-size: 9px; padding: 1px 6px; }
+    .home-top .spacer { width: 36px; }
+    .theme-toggle { width: 38px; height: 38px; font-size: 17px; }
+    .logo-title { font-size: 28px; }
+    .logo-icon { font-size: 52px; }
+    .logo-sub { font-size: 12px; }
+    .music-controls .volume-slider { width: 35px; }
+    .duel-container { flex-direction: column; gap: 4px; }
+    .duel-vs { padding: 2px 0; }
+    .duel-player .answer { font-size: 14px; }
+    .pie-chart-container { flex-direction: column; gap: 10px; }
+    .pie-chart { width: 100px; height: 100px; }
+    .lobby-level-select { grid-template-columns: 1fr 1fr; }
+    .lobby-join-box { flex-direction: column; }
+    .lobby-join-box button { width: 100%; }
+    .duel-timers { flex-direction: column; align-items: center; gap: 4px; }
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="combo-display" id="comboDisplay">🔥 COMBO x2</div>
+<div class="achievement-popup" id="achievementPopup">
+  <div class="title" id="achTitle">🏆 دستاورد جدید!</div>
+  <div class="desc" id="achDesc">۵ پاسخ پیاپی صحیح</div>
+</div>
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- ===== ACCOUNT MODAL ===== -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal-box">
+    <div class="modal-title">👤 <span>ساخت اکانت</span></div>
+    <input type="text" class="modal-input" id="usernameInput" placeholder="نام کاربری ۸ کاراکتری" maxlength="8" dir="ltr">
+    <div class="modal-hint" id="usernameHint">⏳ فقط حروف و اعداد انگلیسی · ۸ کاراکتر</div>
+    <div class="modal-avatar-selector" id="modalAvatarSelector">
+      <span class="modal-avatar-option selected" onclick="selectModalAvatar('🧑‍🎓')">🧑‍🎓</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('👨‍🎓')">👨‍🎓</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('👩‍🎓')">👩‍🎓</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('🧙')">🧙</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('🦊')">🦊</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('🐉')">🐉</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('🚀')">🚀</span>
+      <span class="modal-avatar-option" onclick="selectModalAvatar('🌟')">🌟</span>
+    </div>
+    <button class="modal-btn modal-btn-primary" onclick="createAccount()">✅ ساخت اکانت</button>
+    <button class="modal-btn modal-btn-secondary" onclick="closeAccountModal()">بعداً</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ===== HOME SCREEN ===== -->
+  <div class="screen active" id="homeScreen">
+    <div class="home-top">
+      <div class="music-controls">
+        <button class="music-btn" id="musicToggle" onclick="toggleMusic()">🔊</button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50" oninput="setVolume(this.value)">
+        <button class="music-btn" id="sfxToggle" onclick="toggleSFX()">🔔</button>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+
+    <div class="account-bar" id="accountBar">
+      <div class="account-info" onclick="showProfile()">
+        <span class="account-avatar" id="accAvatar">🧑‍🎓</span>
+        <span class="account-name" id="accName"><span class="guest">میهمان</span></span>
+      </div>
+      <button class="account-btn" id="accBtn" onclick="openAccountModal()">ساخت اکانت</button>
+    </div>
+
+    <div class="home-logo">
+      <span class="logo-icon">⚡</span>
+      <div class="logo-title">Math Game</div>
+      <div class="logo-sub"><span>معادله</span></div>
+    </div>
+
+    <div class="mode-selector">
+      <button class="mode-btn active" data-mode="testi" onclick="setMode('testi')">
+        <span class="icon">📝</span>
+        <div class="label">تستی</div>
+        <div class="sub">چهار گزینه‌ای</div>
+      </button>
+      <button class="mode-btn" data-mode="tashrihi" onclick="setMode('tashrihi')">
+        <span class="icon">✍️</span>
+        <div class="label">تشریحی</div>
+        <div class="sub">پاسخ عددی</div>
+      </button>
+      <button class="mode-btn" data-mode="sorati" onclick="setMode('sorati')">
+        <span class="icon">⚡</span>
+        <div class="label">سرعتی</div>
+        <div class="sub">۱۰ ثانیه</div>
+      </button>
+      <button class="mode-btn" data-mode="duel" onclick="setMode('duel')">
+        <span class="icon">⚔️</span>
+        <div class="label">دوئل</div>
+        <div class="sub">مبارزه</div>
+      </button>
+    </div>
+
+    <div class="level-grid" id="levelGrid"></div>
+
+    <div class="extra-btns">
+      <button class="extra-btn" onclick="dailyChallenge()">
+        <span class="icon">📅</span> چالش روزانه
+      </button>
+      <button class="extra-btn" onclick="showProfile()">
+        <span class="icon">👤</span> پروفایل
+      </button>
+    </div>
+
+    <div class="credit-box">
+      <div class="credit-name">⚡ ساخته شده توسط <span>محمد حسین حبیبی راد</span></div>
+      <div class="credit-org">
+        📢 کانال من:
+        <a href="https://eitaa.com/irandigital_python" target="_blank"
+           style="color:#00f5d4;text-decoration:none;font-weight:700;">
+           @irandigital_python
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE SCREEN ===== -->
+  <div class="screen" id="profileScreen">
+    <div class="game-header">
+      <button class="back-btn" onclick="goHome()">← بازگشت</button>
+      <span style="font-weight:700;font-size:17px;">👤 پروفایل</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="result-card">
+      <div class="profile-avatar" id="profileAvatar">🧑‍🎓</div>
+      <div class="avatar-selector" id="avatarSelector">
+        <span class="avatar-option selected" onclick="selectAvatar('🧑‍🎓')">🧑‍🎓</span>
+        <span class="avatar-option" onclick="selectAvatar('👨‍🎓')">👨‍🎓</span>
+        <span class="avatar-option" onclick="selectAvatar('👩‍🎓')">👩‍🎓</span>
+        <span class="avatar-option" onclick="selectAvatar('🧙')">🧙</span>
+        <span class="avatar-option" onclick="selectAvatar('🦊')">🦊</span>
+        <span class="avatar-option" onclick="selectAvatar('🐉')">🐉</span>
+        <span class="avatar-option" onclick="selectAvatar('🚀')">🚀</span>
+        <span class="avatar-option" onclick="selectAvatar('🌟')">🌟</span>
+      </div>
+
+      <div class="pie-chart-container">
+        <div class="pie-chart" id="pieChart"></div>
+        <div class="pie-legend">
+          <div class="pie-legend-item">
+            <div class="pie-legend-color correct-color"></div>
+            <span class="pie-legend-text">✅ صحیح: <span class="num" id="pieCorrectNum">0</span> (<span id="pieCorrectPercent">0%</span>)</span>
+          </div>
+          <div class="pie-legend-item">
+            <div class="pie-legend-color wrong-color"></div>
+            <span class="pie-legend-text">❌ غلط: <span class="num" id="pieWrongNum">0</span> (<span id="pieWrongPercent">0%</span>)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-stats" style="margin-top:10px;">
+        <div class="result-stat stat-correct">
+          <div class="result-stat-num" id="pCorrect">0</div>
+          <div class="result-stat-label">✅ صحیح</div>
+        </div>
+        <div class="result-stat stat-wrong">
+          <div class="result-stat-num" id="pWrong">0</div>
+          <div class="result-stat-label">❌ غلط</div>
+        </div>
+        <div class="result-stat stat-score">
+          <div class="result-stat-num" id="pGames">0</div>
+          <div class="result-stat-label">🎮 بازی</div>
+        </div>
+        <div class="result-stat stat-streak">
+          <div class="result-stat-num" id="pAccuracy">0%</div>
+          <div class="result-stat-label">🎯 دقت</div>
+        </div>
+      </div>
+
+      <div class="result-details" id="profileDetails">
+        🔓 سطح استاد: <span id="pMasterStatus">🔒 قفل</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goHome()" style="width:100%;">🏠 بازگشت به منو</button>
+  </div>
+
+  <!-- ===== LOBBY SCREEN ===== -->
+  <div class="screen" id="lobbyScreen">
+    <div class="game-header">
+      <button class="back-btn" onclick="leaveLobby()">← خروج</button>
+      <span style="font-weight:700;font-size:17px;">👥 دوئل با دوستان</span>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="lobby-container">
+      <div class="lobby-title" id="lobbyTitle">🏗️ ساخت لابی</div>
+      
+      <!-- لینک (فقط برای میزبان) -->
+      <div id="lobbyLinkSection" style="display:none;">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);">🔗 کد لابی</div>
+        <div class="lobby-link-box">
+          <input type="text" id="lobbyLinkInput" readonly>
+          <button class="copy-btn" onclick="copyLobbyLink()">📋 کپی</button>
+        </div>
+      </div>
+
+      <!-- وضعیت -->
+      <div class="lobby-status waiting" id="lobbyStatus">⏳ در حال آماده‌سازی...</div>
+
+      <!-- انتخاب سطح (فقط برای میزبان) -->
+      <div id="lobbyLevelSection" style="display:none;">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:12px;">📚 انتخاب سطح سوالات</div>
+        <div class="lobby-level-select" id="lobbyLevelSelect">
+          <div class="lobby-level-btn selected" data-level="easy" onclick="selectLobbyLevel('easy')">📐 آسان</div>
+          <div class="lobby-level-btn" data-level="hard" onclick="selectLobbyLevel('hard')">🔢 سخت</div>
+          <div class="lobby-level-btn" data-level="expert" onclick="selectLobbyLevel('expert')">🧠 متخصص</div>
+          <div class="lobby-level-btn" data-level="master" onclick="selectLobbyLevel('master')">👑 استاد</div>
+        </div>
+      </div>
+
+      <!-- دکمه شروع (فقط برای میزبان) -->
+      <button class="lobby-start-btn" id="lobbyStartBtn" onclick="startFriendDuel()" disabled>⏳ منتظر دوست...</button>
+
+      <!-- فرم جوین (فقط برای مهمان) -->
+      <div id="lobbyJoinSection" style="display:none;">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;">🔑 کد لابی را وارد کنید</div>
+        <div class="lobby-join-box">
+          <input type="text" id="lobbyJoinInput" placeholder="کد را از دوست خود بگیرید" dir="ltr">
+          <button onclick="joinLobbyWithCode()" id="lobbyJoinBtn">✅ تایید</button>
+        </div>
+        <div id="lobbyWaitMsg" style="display:none;font-size:13px;color:var(--gold);background:var(--gold-dim);padding:8px;border-radius:8px;margin-top:6px;">
+          ⏳ منتظریم تا دوست شما شروع بازی را کلیک کند...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div class="screen" id="gameScreen">
+    <div class="game-header">
+      <button class="back-btn" onclick="goHome()">🏠 برگشت</button>
+      <div class="game-stats">
+        <div class="stat-chip" id="levelChip">
+          <div class="dot dot-teal"></div>
+          <span id="levelLabel">آسان</span>
+        </div>
+        <div class="stat-chip">
+          <span class="dot-heart" id="livesDisplay">❤️❤️❤️</span>
+        </div>
+        <div class="stat-chip">
+          <span id="correctCount">0</span>✅
+        </div>
+        <div class="stat-chip" id="wrongChip">
+          <span id="wrongCount">0</span>❌
+        </div>
+        <div class="stat-chip" id="comboChip">
+          🔥 <span id="comboCount">0</span>
+        </div>
+        <div class="timer-wrap" id="timerWrap">
+          ⏱ <span class="timer-num" id="timerNum">10</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div class="question-counter" id="questionCounter">سوال #۱</div>
+      <div class="speed-score" id="speedScore" style="display:none;">⭐ ۰ امتیاز</div>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-text" id="progressText">۰%</div>
+    </div>
+
+    <!-- Duel Timers -->
+    <div class="duel-timers" id="duelTimers" style="display:none;">
+      <div class="timer-item" id="answerTimer">
+        ⏱ پاسخ: <span class="num" id="answerTimerNum">30</span>ث
+      </div>
+      <div class="timer-item" id="reviewTimer" style="display:none;">
+        📖 بررسی: <span class="num" id="reviewTimerNum">10</span>ث
+      </div>
+    </div>
+
+    <div id="duelContainer" style="display:none;">
+      <div class="duel-score" id="duelScore">
+        <span class="player-score" id="duelPlayerLabel">👤 شما: <span id="duelPlayerScore">0</span></span>
+        <span class="draw-score">🤝 تساوی: <span id="duelDrawCount">0</span></span>
+        <span class="robot-score" id="duelRobotLabel">🤖 ربات: <span id="duelRobotScore">0</span></span>
+      </div>
+      <div class="duel-container" id="duelBox">
+        <div class="duel-player active" id="duelPlayerBox">
+          <span class="avatar" id="duelPlayerAvatar">👤</span>
+          <div class="name" id="duelPlayerName">شما</div>
+          <div class="answer" id="duelPlayerAnswer">❓</div>
+          <div class="status" id="duelPlayerStatus">در حال فکر...</div>
+        </div>
+        <div class="duel-vs">⚔️</div>
+        <div class="duel-player" id="duelRobotBox">
+          <span class="avatar" id="duelRobotAvatar">🤖</span>
+          <div class="name" id="duelRobotName">ربات</div>
+          <div class="answer" id="duelRobotAnswer">❓</div>
+          <div class="status" id="duelRobotStatus">در حال محاسبه...</div>
+        </div>
+      </div>
+      <div id="duelResult" class="duel-result" style="display:none;"></div>
+    </div>
+
+    <div class="powerups" id="powerupsBar">
+      <button class="powerup-btn" id="hintBtn" onclick="useHint()">💡 راهنما <span class="badge">۱</span></button>
+      <button class="powerup-btn" id="freezeBtn" onclick="useFreeze()">⏸️ توقف <span class="badge">۱</span></button>
+      <button class="powerup-btn" id="skipBtn" onclick="useSkip()">⏭️ رد <span class="badge">۱</span></button>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <div class="q-label" id="qLabel">سوال ۱</div>
+      <div class="q-equation" id="qEquation">2x + 3 = 7</div>
+      <div class="q-hint" id="qHint">مقدار x را پیدا کن</div>
+      <div class="q-difficulty" id="qDifficulty">⭐ آسان</div>
+    </div>
+
+    <div class="answer-section">
+      <div id="inputArea"></div>
+    </div>
+
+    <div class="feedback-box" id="feedbackBox">
+      <div class="feedback-title" id="feedbackTitle"></div>
+      <div class="feedback-steps" id="feedbackSteps"></div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">➡️ سوال بعدی</button>
+  </div>
+
+  <!-- ===== RESULT SCREEN ===== -->
+  <div class="screen" id="resultScreen">
+    <div class="result-card">
+      <div class="result-trophy" id="resultTrophy">🏆</div>
+      <div class="stars" id="resultStars">⭐⭐⭐</div>
+      <div class="result-title" id="resultTitle">عالی بود!</div>
+      <div class="result-subtitle" id="resultSubtitle">نتایج بازی شما</div>
+      <div class="result-stats">
+        <div class="result-stat stat-correct">
+          <div class="result-stat-num" id="rCorrect">0</div>
+          <div class="result-stat-label">✅ صحیح</div>
+        </div>
+        <div class="result-stat stat-wrong">
+          <div class="result-stat-num" id="rWrong">0</div>
+          <div class="result-stat-label">❌ غلط</div>
+        </div>
+        <div class="result-stat stat-score">
+          <div class="result-stat-num" id="rScore">0</div>
+          <div class="result-stat-label">⭐ امتیاز</div>
+        </div>
+        <div class="result-stat stat-streak">
+          <div class="result-stat-num" id="rStreak">0</div>
+          <div class="result-stat-label">🔥 زنجیره</div>
+        </div>
+      </div>
+      <div class="result-details" id="resultDetails"></div>
+    </div>
+    <div class="action-btns">
+      <button class="btn-primary" id="playAgainBtn" onclick="restartGame()">🔄 دوباره</button>
+      <button class="btn-secondary" onclick="goHome()">🏠 منو</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================
+// 🔥 FIREBASE CONFIGURATION & INITIALIZATION
+// ============================================
+let firebaseDB = null;
+let firebaseReady = false;
+let currentRoomCode = null;
+let currentRoomListener = null;
+
+// Firebase Config - کاربر باید این را خودش تنظیم کند
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "your-project.firebaseapp.com",
+  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+  projectId: "your-project",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Try to initialize Firebase
+// Firebase is OPTIONAL - only for friend duel
+// Without Firebase, all other features work!
+try {
+  firebase.initializeApp(firebaseConfig);
+  firebaseDB = firebase.database();
+  firebaseReady = true;
+  console.log('✅ Firebase - دوئل دوستان فعال!');
+} catch(e) {
+  firebaseReady = false;
+  console.log('ℹ️ Firebase تنظیم نشده - فقط دوئل دوستان غیرفعال است. سایر بازی کاملاً کار می‌کند!');
+}
+
+// Firebase Helper Functions
+function generateRoomCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+function createFirebaseRoom(username, level) {
+  if (!firebaseReady) {
+    alert('❌ Firebase تنظیم نشده!\n\nراهنمای Firebase را ببینید!');
+    return null;
+  }
+
+  const code = generateRoomCode();
+  const roomData = {
+    host: username,
+    level: level,
+    created: new Date().toISOString(),
+    status: 'waiting',
+    player1: { name: username, score: 0, ready: false },
+    player2: null
+  };
+
+  firebaseDB.ref('rooms/' + code).set(roomData).then(() => {
+    currentRoomCode = code;
+    console.log('✅ اتاق ایجاد شد:', code);
+    return code;
+  }).catch(e => {
+    alert('❌ خطا: ' + e.message);
+    return null;
+  });
+
+  return code;
+}
+
+function joinFirebaseRoom(code, username) {
+  if (!firebaseReady) {
+    alert('❌ Firebase تنظیم نشده!');
+    return false;
+  }
+
+  const roomRef = firebaseDB.ref('rooms/' + code);
+  
+  roomRef.once('value', (snapshot) => {
+    if (!snapshot.exists()) {
+      alert('❌ کد اتاق اشتباه است!');
+      return;
+    }
+
+    roomRef.update({
+      'player2': { name: username, score: 0, ready: false },
+      'status': 'ready'
+    }).then(() => {
+      currentRoomCode = code;
+      console.log('✅ به اتاق پیوستید:', code);
+      
+      // Listen for changes
+      listenToRoomChanges(code);
+    }).catch(e => {
+      alert('❌ خطا: ' + e.message);
+    });
+  }).catch(e => {
+    alert('❌ خطا در اتصال: ' + e.message);
+  });
+
+  return true;
+}
+
+function listenToRoomChanges(code) {
+  if (!firebaseReady) return;
+  
+  const roomRef = firebaseDB.ref('rooms/' + code);
+  
+  currentRoomListener = roomRef.on('value', (snapshot) => {
+    if (!snapshot.exists()) return;
+    
+    const data = snapshot.val();
+    console.log('🔄 بروزرسانی اتاق:', data);
+    
+    // نمایش وضعیت اتصال
+    if (data.player2) {
+      document.getElementById('lobbyStatus').textContent = 
+        '✅ ' + data.player1.name + ' و ' + data.player2.name + ' متصل هستند!';
+      document.getElementById('lobbyStatus').className = 'lobby-status connected';
+    }
+  });
+}
+
+function sendFirebaseAnswer(round, answer, isCorrect) {
+  if (!firebaseReady || !currentRoomCode) return;
+  
+  const updatePath = 'rooms/' + currentRoomCode + '/rounds/round_' + round;
+  
+  firebaseDB.ref(updatePath).update({
+    player1_answer: answer,
+    player1_correct: isCorrect,
+    player1_time: new Date().getTime()
+  }).catch(e => console.error('خطا در ارسال:', e));
+}
+
+function cleanupFirebaseRoom() {
+  if (firebaseReady && currentRoomCode && currentRoomListener) {
+    firebaseDB.ref('rooms/' + currentRoomCode).off('value', currentRoomListener);
+  }
+  currentRoomCode = null;
+  currentRoomListener = null;
+}
+
+// ============================================
+// 🎵 SOUND SYSTEM
+// ============================================
+class SoundSystem {
+  constructor() {
+    this.ctx = null;
+    this.isMuted = false;
+    this.isSFXMuted = false;
+    this.volume = 0.5;
+    this.musicInterval = null;
+    this.isMusicPlaying = false;
+    this.currentNoteIndex = 0;
+    this.bgPattern = [[523,0.3],[587,0.3],[659,0.3],[523,0.3],[659,0.3],[784,0.3],[880,0.3],[784,0.3]];
+    this.init();
+  }
+  init() {
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  ensureContext() {
+    if (!this.ctx) this.init();
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  }
+  playTone(freq, duration, type = 'sine', gainVal = 0.2) {
+    if (this.isMuted) return;
+    const ctx = this.ensureContext();
+    if (!ctx) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = gainVal * this.volume;
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+  }
+  correct() {
+    if (this.isSFXMuted) return;
+    this.playTone(523,0.12,'sine',0.25);
+    setTimeout(()=>this.playTone(659,0.12,'sine',0.25),100);
+    setTimeout(()=>this.playTone(784,0.16,'sine',0.25),200);
+    setTimeout(()=>this.playTone(1047,0.2,'sine',0.15),320);
+  }
+  wrong() {
+    if (this.isSFXMuted) return;
+    this.playTone(350,0.25,'sawtooth',0.15);
+    setTimeout(()=>this.playTone(280,0.3,'sawtooth',0.12),180);
+  }
+  combo(level) {
+    if (this.isSFXMuted) return;
+    const base = 440 + level * 25;
+    for (let i=0;i<4;i++) setTimeout(()=>this.playTone(base+i*60,0.08,'square',0.1),i*80);
+  }
+  tick() { if(!this.isSFXMuted) this.playTone(800,0.04,'sine',0.06); }
+  levelUp() {
+    if (this.isSFXMuted) return;
+    [523,587,659,784,1047].forEach((f,i)=>setTimeout(()=>this.playTone(f,0.15,'sine',0.2),i*120));
+  }
+  gameOver() {
+    if (this.isSFXMuted) return;
+    [440,370,330,280].forEach((f,i)=>setTimeout(()=>this.playTone(f,0.3,'sawtooth',0.1),i*200));
+  }
+  achievement() {
+    if (this.isSFXMuted) return;
+    [523,659,784,1047,1318].forEach((f,i)=>setTimeout(()=>this.playTone(f,0.12,'sine',0.15),i*100));
+  }
+  duelWin() {
+    if (this.isSFXMuted) return;
+    [523,659,784,1047,1318,1568].forEach((f,i)=>setTimeout(()=>this.playTone(f,0.1,'sine',0.18),i*80));
+  }
+  duelLose() {
+    if (this.isSFXMuted) return;
+    [440,370,330,280,220].forEach((f,i)=>setTimeout(()=>this.playTone(f,0.2,'sawtooth',0.1),i*150));
+  }
+  startMusic() {
+    if (this.isMusicPlaying || this.isMuted) return;
+    this.isMusicPlaying = true;
+    this.currentNoteIndex = 0;
+    this.playMusicLoop();
+  }
+  playMusicLoop() {
+    if (!this.isMusicPlaying || this.isMuted) return;
+    const note = this.bgPattern[this.currentNoteIndex % this.bgPattern.length];
+    this.playTone(note[0], note[1], 'sine', 0.06);
+    this.currentNoteIndex++;
+    this.musicInterval = setTimeout(()=>this.playMusicLoop(), 350 + Math.random() * 50);
+  }
+  stopMusic() {
+    this.isMusicPlaying = false;
+    if (this.musicInterval) { clearTimeout(this.musicInterval); this.musicInterval = null; }
+  }
+  toggleMusic() {
+    if (this.isMuted) { this.isMuted = false; this.startMusic(); return; }
+    if (this.isMusicPlaying) { this.stopMusic(); this.isMuted = false; } else { this.startMusic(); }
+    this.updateUI();
+  }
+  toggleSFX() { this.isSFXMuted = !this.isSFXMuted; this.updateUI(); }
+  setVolume(val) { this.volume = val / 100; this.updateUI(); }
+  updateUI() {
+    const musicBtn = document.getElementById('musicToggle');
+    const sfxBtn = document.getElementById('sfxToggle');
+    const volSlider = document.getElementById('volumeSlider');
+    if (musicBtn) {
+      if (this.isMuted) { musicBtn.textContent='🔇'; musicBtn.className='music-btn'; }
+      else if (this.isMusicPlaying) { musicBtn.textContent='🔊'; musicBtn.className='music-btn active'; }
+      else { musicBtn.textContent='🔇'; musicBtn.className='music-btn'; }
+    }
+    if (sfxBtn) {
+      sfxBtn.textContent = this.isSFXMuted ? '🔕' : '🔔';
+      sfxBtn.className = 'music-btn' + (this.isSFXMuted ? '' : ' active');
+    }
+    if (volSlider) volSlider.value = this.volume * 100;
+  }
+}
+const sound = new SoundSystem();
+function toggleMusic() { sound.toggleMusic(); }
+function toggleSFX() { sound.toggleSFX(); }
+function setVolume(val) { sound.setVolume(val); }
+document.addEventListener('click', ()=>{ if(!sound.isMusicPlaying && !sound.isMuted){ sound.startMusic(); sound.updateUI(); } }, { once: true });
+
+// ============================================
+// PARTICLES
+// ============================================
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const symbols = ['∑','∫','π','√','∞','Δ','θ','λ','φ','x²','y³','e','i'];
+let particles = [];
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+function spawnParticle() {
+  const size = 12 + Math.random() * 16;
+  return {
+    x: Math.random() * canvas.width,
+    y: canvas.height + 20,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: -(0.2 + Math.random() * 0.6),
+    sym: symbols[Math.floor(Math.random() * symbols.length)],
+    size: size,
+    alpha: 0.05 + Math.random() * 0.18,
+    color: ['#00f5d4','#ffd700','#ff6bcd','#4facfe'][Math.floor(Math.random() * 4)],
+    rot: Math.random() * Math.PI * 2,
+    rotV: (Math.random() - 0.5) * 0.012,
+    pulse: Math.random() * Math.PI * 2
+  };
+}
+for (let i=0;i<35;i++) { const p=spawnParticle(); p.y=Math.random()*canvas.height; particles.push(p); }
+function animParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i)=>{
+    p.x += p.vx + Math.sin(p.pulse)*0.06;
+    p.y += p.vy;
+    p.rot += p.rotV;
+    p.pulse += 0.015;
+    if (p.y < -35) particles[i] = spawnParticle();
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = p.alpha + Math.sin(p.pulse)*0.02;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 10;
+    ctx.font = `${p.size}px Vazirmatn, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.sym,0,0);
+    ctx.restore();
+  });
+  if (Math.random() < 0.012 && particles.length < 65) particles.push(spawnParticle());
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ============================================
+// CONFETTI
+// ============================================
+function fireConfetti(count=30) {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#ffd700','#ff6bcd','#00f5d4','#ff4757','#4facfe','#ff9ff3','#feca57'];
+  for (let i=0;i<count;i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.top = '-10px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = (5 + Math.random() * 7) + 'px';
+    piece.style.height = (5 + Math.random() * 7) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.animationDuration = (1.8 + Math.random() * 1.8) + 's';
+    piece.style.animationDelay = (Math.random() * 0.4) + 's';
+    container.appendChild(piece);
+    setTimeout(()=>piece.remove(), 3800);
+  }
+}
+
+// ============================================
+// PIE CHART
+// ============================================
+function updatePieChart(correct, wrong) {
+  const total = correct + wrong;
+  if (total === 0) {
+    document.getElementById('pieChart').style.background = 'conic-gradient(var(--muted) 0%, var(--muted) 100%)';
+    document.getElementById('pieCorrectNum').textContent = '0';
+    document.getElementById('pieWrongNum').textContent = '0';
+    document.getElementById('pieCorrectPercent').textContent = '0%';
+    document.getElementById('pieWrongPercent').textContent = '0%';
+    return;
+  }
+  const correctPercent = (correct / total) * 100;
+  const wrongPercent = (wrong / total) * 100;
+  const correctColor = getComputedStyle(document.documentElement).getPropertyValue('--teal').trim() || '#00f5d4';
+  const wrongColor = getComputedStyle(document.documentElement).getPropertyValue('--red').trim() || '#ff4757';
+  document.getElementById('pieChart').style.background = `conic-gradient(${correctColor} 0% ${correctPercent}%, ${wrongColor} ${correctPercent}% 100%)`;
+  document.getElementById('pieCorrectNum').textContent = correct;
+  document.getElementById('pieWrongNum').textContent = wrong;
+  document.getElementById('pieCorrectPercent').textContent = Math.round(correctPercent) + '%';
+  document.getElementById('pieWrongPercent').textContent = Math.round(wrongPercent) + '%';
+}
+
+// ============================================
+// ACCOUNT SYSTEM
+// ============================================
+let account = null;
+let modalAvatar = '🧑‍🎓';
+
+function loadAccount() {
+  try {
+    const data = JSON.parse(localStorage.getItem('mathGameAccount'));
+    if (data && data.username && data.username.length === 8) {
+      account = data;
+      updateAccountUI();
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+function saveAccount() {
+  if (account) {
+    localStorage.setItem('mathGameAccount', JSON.stringify(account));
+    updateAccountUI();
+  }
+}
+function updateAccountUI() {
+  if (account) {
+    document.getElementById('accAvatar').textContent = account.avatar || '🧑‍🎓';
+    document.getElementById('accName').textContent = account.username;
+    document.getElementById('accName').classList.remove('guest');
+    document.getElementById('accBtn').textContent = '👤 پروفایل';
+    document.getElementById('accBtn').onclick = showProfile;
+  } else {
+    document.getElementById('accAvatar').textContent = '🧑‍🎓';
+    document.getElementById('accName').innerHTML = '<span class="guest">میهمان</span>';
+    document.getElementById('accBtn').textContent = 'ساخت اکانت';
+    document.getElementById('accBtn').onclick = openAccountModal;
+  }
+}
+function openAccountModal() {
+  document.getElementById('accountModal').classList.add('show');
+  document.getElementById('usernameInput').value = '';
+  document.getElementById('usernameInput').className = 'modal-input';
+  document.getElementById('usernameHint').textContent = '⏳ فقط حروف و اعداد انگلیسی · ۸ کاراکتر';
+  document.getElementById('usernameHint').style.color = 'var(--muted)';
+  document.querySelectorAll('.modal-avatar-option').forEach(el=>el.classList.toggle('selected',el.textContent==='🧑‍🎓'));
+  modalAvatar = '🧑‍🎓';
+  setTimeout(()=>document.getElementById('usernameInput').focus(), 300);
+}
+function closeAccountModal() { document.getElementById('accountModal').classList.remove('show'); }
+function selectModalAvatar(emoji) {
+  modalAvatar = emoji;
+  document.querySelectorAll('.modal-avatar-option').forEach(el=>el.classList.toggle('selected',el.textContent===emoji));
+}
+function createAccount() {
+  const username = document.getElementById('usernameInput').value.trim();
+  const hint = document.getElementById('usernameHint');
+  if (username.length !== 8) {
+    hint.textContent = '❌ نام کاربری باید دقیقاً ۸ کاراکتر باشد!';
+    hint.style.color = 'var(--red)';
+    document.getElementById('usernameInput').className = 'modal-input error';
+    return;
+  }
+  if (!/^[A-Za-z0-9]+$/.test(username)) {
+    hint.textContent = '❌ فقط حروف و اعداد انگلیسی مجاز است!';
+    hint.style.color = 'var(--red)';
+    document.getElementById('usernameInput').className = 'modal-input error';
+    return;
+  }
+  const allAccounts = JSON.parse(localStorage.getItem('allAccounts') || '[]');
+  if (allAccounts.some(a=>a.username===username)) {
+    hint.textContent = '❌ این نام کاربری قبلاً ثبت شده است!';
+    hint.style.color = 'var(--red)';
+    document.getElementById('usernameInput').className = 'modal-input error';
+    return;
+  }
+  account = { username, avatar: modalAvatar, createdAt: Date.now() };
+  allAccounts.push({ username, avatar: modalAvatar });
+  localStorage.setItem('allAccounts', JSON.stringify(allAccounts));
+  saveAccount();
+  closeAccountModal();
+  updateAccountUI();
+  showAchievement('🎉 خوش آمدید!', `اکانت ${username} با موفقیت ساخته شد!`);
+  sound.achievement();
+  fireConfetti(20);
+}
+function isLoggedIn() { return account !== null; }
+
+// ============================================
+// PEERJS - DUEL WITH FRIENDS
+// ============================================
+let peer = null;
+let conn = null;
+let isHost = false;
+let lobbyLevel = 'easy';
+let friendConnected = false;
+let friendDuelActive = false;
+let friendDuelQuestions = [];
+let friendDuelCurrent = 0;
+let friendDuelScore = 0;
+let friendDuelTotal = 10;
+let lobbyCode = '';
+let isLeavingLobby = false;
+let isConnOpen = false;
+
+let friendAnswers = {
+  player1: null,
+  player2: null,
+  round: -1
+};
+
+function showLobbyScreen(hostMode) {
+  isHost = hostMode;
+  friendConnected = false;
+  isLeavingLobby = false;
+  isConnOpen = false;
+  document.getElementById('lobbyTitle').textContent = hostMode ? '🏗️ ساخت لابی' : '🔗 عضو شدن به لابی';
+  document.getElementById('lobbyLinkSection').style.display = hostMode ? 'block' : 'none';
+  document.getElementById('lobbyLevelSection').style.display = hostMode ? 'block' : 'none';
+  document.getElementById('lobbyJoinSection').style.display = hostMode ? 'none' : 'block';
+  document.getElementById('lobbyStartBtn').style.display = hostMode ? 'block' : 'none';
+  document.getElementById('lobbyStartBtn').disabled = true;
+  document.getElementById('lobbyStartBtn').textContent = '⏳ منتظر دوست...';
+  document.getElementById('lobbyStartBtn').className = 'lobby-start-btn';
+  document.getElementById('lobbyStatus').textContent = hostMode ? '⏳ در حال ساخت لابی...' : '⏳ کد لابی را وارد کنید';
+  document.getElementById('lobbyStatus').className = 'lobby-status waiting';
+  document.getElementById('lobbyWaitMsg').style.display = 'none';
+  if (hostMode) {
+    document.getElementById('lobbyLinkInput').value = 'در حال ساخت...';
+    document.getElementById('lobbyJoinInput').value = '';
+  }
+  show('lobbyScreen');
+}
+
+function createLobby() {
+  if (!isLoggedIn()) {
+    alert('⚠️ لطفاً ابتدا اکانت بسازید!');
+    openAccountModal();
+    return;
+  }
+  
+  if (!firebaseReady) {
+    alert('❌ Firebase تنظیم نشده!\n\nراهنمای Firebase را ببینید!');
+    return;
+  }
+  
+  showLobbyScreen(true);
+  lobbyLevel = 'easy'; // Default level
+  
+  const code = createFirebaseRoom(account?.username || 'میزبان', lobbyLevel);
+  if (code) {
+    lobbyCode = code;
+    document.getElementById('lobbyLinkInput').value = code;
+    document.getElementById('lobbyStatus').textContent = '🔗 کد لابی: ' + code + '\n برای دوست خود ارسال کنید';
+    document.getElementById('lobbyStatus').className = 'lobby-status waiting';
+    
+    // Listen for friend joining
+    listenToRoomChanges(code);
+  }
+}
+
+function joinLobbyWithCode() {
+  const code = document.getElementById('lobbyJoinInput').value.trim().toUpperCase();
+  
+  if (code.length < 4) {
+    document.getElementById('lobbyStatus').textContent = '❌ کد معتبر نیست!';
+    document.getElementById('lobbyStatus').className = 'lobby-status error';
+    return;
+  }
+  
+  if (!isLoggedIn()) {
+    alert('⚠️ لطفاً ابتدا اکانت بسازید!');
+    openAccountModal();
+    return;
+  }
+  
+  if (!firebaseReady) {
+    alert('❌ Firebase تنظیم نشده!');
+    return;
+  }
+  
+  showLobbyScreen(false);
+  document.getElementById('lobbyStatus').textContent = '⏳ در حال اتصال به کد: ' + code;
+  document.getElementById('lobbyStatus').className = 'lobby-status waiting';
+  document.getElementById('lobbyJoinBtn').disabled = true;
+  document.getElementById('lobbyJoinBtn').textContent = '⏳ در حال اتصال...';
+  document.getElementById('lobbyWaitMsg').style.display = 'none';
+  
+  // Try to join Firebase room
+  joinFirebaseRoom(code, account?.username || 'مهمان');
+}
+
+function handleFriendMessage(data) {
+  try {
+    if (data.type === 'hostInfo' && !isHost) {
+      document.getElementById('lobbyStatus').textContent = `✅ متصل به ${data.username} (${data.avatar})`;
+      document.getElementById('lobbyStatus').className = 'lobby-status connected';
+      lobbyLevel = data.level || 'easy';
+    }
+    if (data.type === 'guestInfo' && isHost) {
+      document.getElementById('lobbyStatus').textContent = `✅ ${data.username} (${data.avatar}) وارد شد!`;
+      document.getElementById('lobbyStatus').className = 'lobby-status connected';
+      document.getElementById('lobbyStartBtn').textContent = '🎮 شروع بازی';
+      document.getElementById('lobbyStartBtn').disabled = false;
+      document.getElementById('lobbyStartBtn').className = 'lobby-start-btn active';
+    }
+    if (data.type === 'startGame') {
+      friendDuelQuestions = data.questions;
+      friendDuelCurrent = 0;
+      friendDuelScore = 0;
+      friendDuelTotal = data.questions.length;
+      friendDuelActive = true;
+      friendAnswers = { player1: null, player2: null, round: -1 };
+      if (isConnOpen && !isHost) {
+        try { conn.send({ type: 'gameStarted' }); } catch(e) {}
+      }
+      startFriendDuelGame(data.questions);
+    }
+    if (data.type === 'gameStarted' && isHost) {
+    }
+    if (data.type === 'roundResult') {
+      if (isHost) {
+        friendAnswers.player2 = data.answer;
+        friendAnswers.round = data.round;
+        if (friendAnswers.player1 !== null && friendAnswers.player2 !== null && friendAnswers.round === friendDuelCurrent) {
+          evaluateFriendRound();
+        } else {
+          document.getElementById('duelRobotStatus').textContent = '⏳ منتظر پاسخ شما...';
+        }
+      } else {
+        friendAnswers.player1 = data.answer;
+        friendAnswers.round = data.round;
+        if (friendAnswers.player1 !== null && friendAnswers.player2 !== null && friendAnswers.round === friendDuelCurrent) {
+          evaluateFriendRound();
+        } else {
+          document.getElementById('duelRobotStatus').textContent = '⏳ منتظر پاسخ شما...';
+        }
+      }
+    }
+    if (data.type === 'gameOver') showFriendDuelResult(data);
+    if (data.type === 'levelChange' && !isHost) {
+      lobbyLevel = data.level;
+      document.querySelectorAll('.lobby-level-btn').forEach(el=>el.classList.toggle('selected',el.dataset.level===data.level));
+    }
+  } catch(e) {
+    console.error('Error handling message:', e);
+  }
+}
+
+function evaluateFriendRound() {
+  const q = friendDuelQuestions[friendAnswers.round];
+  const correctAnswer = q.answer[0];
+  
+  let myAnswer, friendAnswer;
+  let myName, friendName;
+  
+  if (isHost) {
+    myAnswer = friendAnswers.player1;
+    friendAnswer = friendAnswers.player2;
+    myName = account ? account.username : 'شما';
+    friendName = 'دوست';
+  } else {
+    myAnswer = friendAnswers.player2;
+    friendAnswer = friendAnswers.player1;
+    myName = account ? account.username : 'شما';
+    friendName = 'میزبان';
+  }
+  
+  const myCorrect = myAnswer !== null && Math.abs(myAnswer - correctAnswer) < 0.01;
+  const friendCorrect = friendAnswer !== null && Math.abs(friendAnswer - correctAnswer) < 0.01;
+  
+  let result = 'draw', resultText = '🤝 تساوی!', resultClass = 'draw';
+  if (myCorrect && !friendCorrect) { 
+    result='win'; 
+    resultText='🎉 شما برنده شدید!'; 
+    resultClass='win'; 
+    friendDuelScore++; 
+    sound.duelWin(); 
+    fireConfetti(15); 
+  }
+  else if (!myCorrect && friendCorrect) { 
+    result='lose'; 
+    resultText='😔 دوست شما برنده شد!'; 
+    resultClass='lose'; 
+    sound.duelLose(); 
+  }
+  else if (myCorrect && friendCorrect) { 
+    result='draw'; 
+    resultText='🤝 هر دو درست!'; 
+    resultClass='draw'; 
+  }
+  else { 
+    result='draw'; 
+    resultText='🤝 هر دو اشتباه!'; 
+    resultClass='draw'; 
+  }
+  
+  document.getElementById('duelResult').style.display = 'block';
+  document.getElementById('duelResult').textContent = resultText;
+  document.getElementById('duelResult').className = `duel-result ${resultClass}`;
+  
+  if (isHost) {
+    document.getElementById('duelPlayerAnswer').textContent = friendAnswers.player1 !== null ? friendAnswers.player1 : '❌';
+    document.getElementById('duelRobotAnswer').textContent = friendAnswers.player2 !== null ? friendAnswers.player2 : '❌';
+    document.getElementById('duelPlayerStatus').textContent = myCorrect ? '✅ درست!' : '❌ غلط!';
+    document.getElementById('duelRobotStatus').textContent = friendCorrect ? '✅ درست!' : '❌ غلط!';
+  } else {
+    document.getElementById('duelPlayerAnswer').textContent = friendAnswers.player2 !== null ? friendAnswers.player2 : '❌';
+    document.getElementById('duelRobotAnswer').textContent = friendAnswers.player1 !== null ? friendAnswers.player1 : '❌';
+    document.getElementById('duelPlayerStatus').textContent = myCorrect ? '✅ درست!' : '❌ غلط!';
+    document.getElementById('duelRobotStatus').textContent = friendCorrect ? '✅ درست!' : '❌ غلط!';
+  }
+  
+  if (result==='win') { 
+    document.getElementById('duelPlayerBox').className='duel-player winner'; 
+    document.getElementById('duelRobotBox').className='duel-player loser'; 
+  }
+  else if (result==='lose') { 
+    document.getElementById('duelPlayerBox').className='duel-player loser'; 
+    document.getElementById('duelRobotBox').className='duel-player winner'; 
+  }
+  else { 
+    document.getElementById('duelPlayerBox').className='duel-player'; 
+    document.getElementById('duelRobotBox').className='duel-player'; 
+  }
+  
+  const fb = document.getElementById('feedbackBox');
+  const title = document.getElementById('feedbackTitle');
+  const steps = document.getElementById('feedbackSteps');
+  fb.className = `feedback-box show ${myCorrect ? 'correct' : 'wrong'}`;
+  title.textContent = `✅ پاسخ صحیح: ${correctAnswer}`;
+  steps.innerHTML = q.steps.map((s,i)=>`<div style="margin:2px 0;${i===q.steps.length-1?'color:var(--gold);font-weight:700;':''}">${s}</div>`).join('');
+  
+  document.getElementById('duelPlayerScore').textContent = friendDuelScore;
+  
+  // Start review timer instead of showing next button
+  startDuelReviewTimer(true);
+  
+  friendAnswers = { player1: null, player2: null, round: -1 };
+}
+
+function selectLobbyLevel(level) {
+  lobbyLevel = level;
+  document.querySelectorAll('.lobby-level-btn').forEach(el=>el.classList.toggle('selected',el.dataset.level===level));
+  if (isConnOpen) {
+    try { conn.send({ type: 'levelChange', level: level }); } catch(e) {}
+  }
+}
+
+function copyLobbyLink() {
+  const input = document.getElementById('lobbyLinkInput');
+  input.select();
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(input.value).then(() => {
+        showAchievement('📋 کپی شد!', 'کد لابی کپی شد. برای دوست خود ارسال کنید.');
+      }).catch(() => {
+        document.execCommand('copy');
+        showAchievement('📋 کپی شد!', 'کد لابی کپی شد.');
+      });
+    } else {
+      document.execCommand('copy');
+      showAchievement('📋 کپی شد!', 'کد لابی کپی شد.');
+    }
+  } catch(e) {
+    document.execCommand('copy');
+    showAchievement('📋 کپی شد!', 'کد لابی کپی شد.');
+  }
+}
+
+function startFriendDuel() {
+  if (!friendConnected || !isConnOpen) {
+    alert('⚠️ دوست شما هنوز وارد نشده است!');
+    return;
+  }
+  
+  const generatorMap = {
+    'easy': generateLinear,
+    'hard': generateLinear,
+    'expert': function(){ return [generateFractional,generateExponential][randInt(0,1)](); },
+    'master': generateMaster
+  };
+  const generator = generatorMap[lobbyLevel] || generateLinear;
+  const questions = [];
+  for (let i=0;i<10;i++) questions.push(generator());
+  
+  try { conn.send({ type: 'startGame', questions: questions }); } catch(e) {}
+  
+  friendDuelQuestions = questions;
+  friendDuelCurrent = 0;
+  friendDuelScore = 0;
+  friendDuelTotal = questions.length;
+  friendDuelActive = true;
+  friendAnswers = { player1: null, player2: null, round: -1 };
+  startFriendDuelGame(questions);
+}
+
+function startFriendDuelGame(questions) {
+  state.isFriendDuel = true;
+  state.friendQuestions = questions;
+  state.friendCurrent = 0;
+  state.friendScore = 0;
+  state.friendTotal = questions.length;
+  state.friendAnswered = false;
+  document.getElementById('duelContainer').style.display = 'block';
+  document.getElementById('duelScore').style.display = 'flex';
+  document.getElementById('duelTimers').style.display = 'flex';
+  document.getElementById('answerTimer').style.display = 'flex';
+  document.getElementById('reviewTimer').style.display = 'none';
+  if (isHost) {
+    document.getElementById('duelPlayerName').textContent = account ? account.username : 'شما';
+    document.getElementById('duelPlayerAvatar').textContent = account ? account.avatar : '👤';
+    document.getElementById('duelRobotName').textContent = 'دوست';
+    document.getElementById('duelRobotAvatar').textContent = '👥';
+  } else {
+    document.getElementById('duelPlayerName').textContent = account ? account.username : 'شما';
+    document.getElementById('duelPlayerAvatar').textContent = account ? account.avatar : '👤';
+    document.getElementById('duelRobotName').textContent = 'میزبان';
+    document.getElementById('duelRobotAvatar').textContent = '👤';
+  }
+  document.getElementById('levelLabel').textContent = '👥 دوئل با دوستان';
+  document.getElementById('levelChip').querySelector('.dot').className = 'dot dot-blue';
+  document.getElementById('powerupsBar').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('timerWrap').style.display = 'none';
+  document.getElementById('livesDisplay').style.display = 'none';
+  document.getElementById('wrongChip').style.display = 'none';
+  document.getElementById('comboChip').style.display = 'none';
+  renderFriendQuestion();
+  show('gameScreen');
+}
+
+function renderFriendQuestion() {
+  if (friendDuelCurrent >= friendDuelTotal) { sendGameOver(); return; }
+  const q = friendDuelQuestions[friendDuelCurrent];
+  state.friendAnswered = false;
+  friendAnswers = { player1: null, player2: null, round: friendDuelCurrent };
+  
+  document.getElementById('qLabel').textContent = `👥 دوئل - دور ${friendDuelCurrent+1}`;
+  document.getElementById('questionCounter').textContent = `👥 دور ${friendDuelCurrent+1} از ${friendDuelTotal}`;
+  document.getElementById('qEquation').textContent = q.eq;
+  document.getElementById('qHint').textContent = q.hint;
+  document.getElementById('qDifficulty').textContent = q.difficulty || '⭐';
+  document.getElementById('questionCard').className = 'question-card';
+  document.getElementById('duelResult').style.display = 'none';
+  document.getElementById('duelPlayerAnswer').textContent = '❓';
+  document.getElementById('duelRobotAnswer').textContent = '❓';
+  document.getElementById('duelPlayerStatus').textContent = '⏳ در حال فکر...';
+  document.getElementById('duelRobotStatus').textContent = '⏳ منتظر پاسخ...';
+  document.getElementById('duelPlayerBox').className = 'duel-player active';
+  document.getElementById('duelRobotBox').className = 'duel-player';
+  document.getElementById('feedbackBox').className = 'feedback-box';
+  document.getElementById('nextBtn').classList.remove('show');
+  renderFriendInput();
+  startAnswerTimer(30, () => {
+    // Time's up - auto submit empty answer
+    if (!state.friendAnswered) {
+      state.friendAnswered = true;
+      if (isHost) {
+        friendAnswers.player1 = null;
+      } else {
+        friendAnswers.player2 = null;
+      }
+      friendAnswers.round = friendDuelCurrent;
+      document.getElementById('duelPlayerStatus').textContent = '⏰ زمان تمام شد!';
+      document.getElementById('submitBtn').disabled = true;
+      
+      if (isConnOpen) {
+        try { conn.send({ type: 'roundResult', round: friendDuelCurrent, answer: null }); } catch(e) {}
+      }
+      
+      if (friendAnswers.player1 !== null && friendAnswers.player2 !== null && friendAnswers.round === friendDuelCurrent) {
+        evaluateFriendRound();
+      } else {
+        document.getElementById('duelRobotStatus').textContent = '⏳ منتظر پاسخ دوست...';
+      }
+    }
+  });
+}
+
+function renderFriendInput() {
+  numpadValues = { ans1: '', ans2: '' };
+  activeField = 'ans1';
+  const area = document.getElementById('inputArea');
+  area.innerHTML = `
+    <div class="numpad">
+      <div id="disp_ans1" class="numpad-display focused" onclick="setActiveField('ans1')"><span class="placeholder">x = ?</span></div>
+      <div class="keys-grid">
+        <div class="key" onclick="numpadKey('7')">7</div><div class="key" onclick="numpadKey('8')">8</div><div class="key" onclick="numpadKey('9')">9</div><div class="key key-del" onclick="numpadKey('⌫')">⌫</div>
+        <div class="key" onclick="numpadKey('4')">4</div><div class="key" onclick="numpadKey('5')">5</div><div class="key" onclick="numpadKey('6')">6</div><div class="key key-minus" onclick="numpadKey('±')">±</div>
+        <div class="key" onclick="numpadKey('1')">1</div><div class="key" onclick="numpadKey('2')">2</div><div class="key" onclick="numpadKey('3')">3</div><div class="key key-check" onclick="submitFriendAnswer()" id="submitBtn">✓</div>
+        <div class="key key-zero" onclick="numpadKey('0')">0</div><div class="key" onclick="numpadKey('.')">.</div>
+      </div>
+    </div>`;
+  refreshDisplays();
+}
+
+function submitFriendAnswer() {
+  if (state.friendAnswered) return;
+  const val = parseFloat(numpadValues.ans1);
+  if (isNaN(val) || numpadValues.ans1.trim() === '' || numpadValues.ans1 === '-') {
+    const el = document.getElementById('disp_ans1');
+    if (el) { el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),500); }
+    return;
+  }
+  state.friendAnswered = true;
+  
+  if (isHost) {
+    friendAnswers.player1 = val;
+  } else {
+    friendAnswers.player2 = val;
+  }
+  friendAnswers.round = friendDuelCurrent;
+  
+  document.getElementById('duelPlayerAnswer').textContent = val;
+  document.getElementById('duelPlayerStatus').textContent = '✅ پاسخ داد!';
+  document.getElementById('submitBtn').disabled = true;
+  
+  if (isConnOpen) {
+    try { conn.send({ type: 'roundResult', round: friendDuelCurrent, answer: val }); } catch(e) {}
+  }
+  
+  if (friendAnswers.player1 !== null && friendAnswers.player2 !== null && friendAnswers.round === friendDuelCurrent) {
+    evaluateFriendRound();
+  } else {
+    document.getElementById('duelRobotStatus').textContent = '⏳ منتظر پاسخ دوست...';
+    document.getElementById('duelPlayerStatus').textContent = '✅ پاسخ شما ثبت شد! منتظر دوست...';
+  }
+}
+
+function sendGameOver() {
+  if (isConnOpen) {
+    try { conn.send({ type: 'gameOver', score: friendDuelScore }); } catch(e) {}
+  }
+  showFriendDuelResult({ score: friendDuelScore });
+}
+
+function showFriendDuelResult(data) {
+  const playerScore = friendDuelScore;
+  const friendScore = data.score || 0;
+  let trophy,title,stars;
+  if (playerScore > friendScore) { trophy='🏆'; title='🎉 شما برنده شدید!'; stars='⭐⭐⭐⭐⭐'; sound.duelWin(); fireConfetti(50); }
+  else if (friendScore > playerScore) { trophy='👥'; title='😔 دوست شما برنده شد!'; stars='⭐⭐'; sound.duelLose(); }
+  else { trophy='🤝'; title='تساوی! شما و دوستتان برابرید!'; stars='⭐⭐⭐'; }
+  document.getElementById('resultTrophy').textContent = trophy;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultSubtitle').textContent = `👥 دوئل با دوستان · ${friendDuelTotal} دور`;
+  document.getElementById('rCorrect').textContent = playerScore;
+  document.getElementById('rWrong').textContent = friendScore;
+  document.getElementById('rScore').textContent = playerScore * 10;
+  document.getElementById('rStreak').textContent = '0';
+  document.getElementById('resultDetails').innerHTML = `👤 شما: ${playerScore} برد &nbsp;|&nbsp;👥 دوست: ${friendScore} برد &nbsp;|&nbsp;🤝 تساوی: ${friendDuelTotal - playerScore - friendScore}`;
+  state.totalPlayed++;
+  state.totalCorrect += playerScore;
+  state.totalWrong += friendScore;
+  saveStats();
+  updatePieChart(state.totalCorrect, state.totalWrong);
+  cleanupPeer();
+  show('resultScreen');
+}
+
+function cleanupPeer() {
+  try {
+    if (conn) { conn.close(); conn = null; }
+    if (peer) { peer.destroy(); peer = null; }
+  } catch(e) {}
+  isConnOpen = false;
+  friendConnected = false;
+  friendDuelActive = false;
+  isHost = false;
+  document.getElementById('lobbyJoinBtn').disabled = false;
+  document.getElementById('lobbyJoinBtn').textContent = '✅ تایید';
+  document.getElementById('lobbyWaitMsg').style.display = 'none';
+}
+
+function leaveLobby() {
+  if (isLeavingLobby) return;
+  isLeavingLobby = true;
+  cleanupPeer();
+  document.getElementById('duelContainer').style.display = 'none';
+  document.getElementById('duelTimers').style.display = 'none';
+  goHome();
+}
+
+// ============================================
+// DUEL TIMER SYSTEM
+// ============================================
+let answerTimerInterval = null;
+let reviewTimerInterval = null;
+
+function startAnswerTimer(seconds, onTimeout) {
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  let remaining = seconds;
+  const el = document.getElementById('answerTimerNum');
+  const wrap = document.getElementById('answerTimer');
+  el.textContent = remaining;
+  wrap.classList.remove('urgent');
+  answerTimerInterval = setInterval(() => {
+    remaining--;
+    el.textContent = remaining;
+    if (remaining <= 5) wrap.classList.add('urgent');
+    if (remaining <= 0) {
+      clearInterval(answerTimerInterval);
+      answerTimerInterval = null;
+      wrap.classList.remove('urgent');
+      if (onTimeout) onTimeout();
+    }
+  }, 1000);
+}
+
+function startDuelReviewTimer(isFriend) {
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  document.getElementById('answerTimer').style.display = 'none';
+  document.getElementById('reviewTimer').style.display = 'flex';
+  
+  let remaining = 10;
+  const el = document.getElementById('reviewTimerNum');
+  const wrap = document.getElementById('reviewTimer');
+  el.textContent = remaining;
+  wrap.classList.remove('urgent');
+  
+  if (reviewTimerInterval) { clearInterval(reviewTimerInterval); reviewTimerInterval = null; }
+  reviewTimerInterval = setInterval(() => {
+    remaining--;
+    el.textContent = remaining;
+    if (remaining <= 3) wrap.classList.add('urgent');
+    if (remaining <= 0) {
+      clearInterval(reviewTimerInterval);
+      reviewTimerInterval = null;
+      wrap.classList.remove('urgent');
+      document.getElementById('reviewTimer').style.display = 'none';
+      document.getElementById('answerTimer').style.display = 'flex';
+      // Auto advance to next question
+      if (isFriend) {
+        friendDuelCurrent++;
+        if (friendDuelCurrent >= friendDuelTotal) sendGameOver();
+        else renderFriendQuestion();
+      } else {
+        state.duelCurrentRound++;
+        if (state.duelCurrentRound >= state.duelTotalRounds) showDuelResult();
+        else renderDuelQuestion();
+      }
+    }
+  }, 1000);
+}
+
+// ============================================
+// STATE
+// ============================================
+const state = {
+  level: 'easy', mode: 'testi', questions: [], current: 0, correct: 0, wrong: 0, answered: false,
+  timerInterval: null, timeLeft: 10, totalQ: 10, combo: 0, maxCombo: 0, score: 0,
+  totalPlayed: 0, totalCorrect: 0, totalWrong: 0, unlockedMaster: false, lives: 3, maxLives: 3,
+  hintUsed: false, freezeUsed: false, skipUsed: false, isFrozen: false, freezeTimeout: null,
+  avatar: '🧑‍🎓', skippedThisGame: 0, maxSkips: 1, isSpeedMode: false, speedTotal: 0, speedCorrect: 0,
+  isDuelMode: false, duelLevel: 'easy', duelPlayerScore: 0, duelRobotScore: 0, duelDrawCount: 0,
+  duelTotalRounds: 5, duelCurrentRound: 0, duelAnswered: false, duelRobotAnswer: null,
+  duelRobotTime: 0, duelPlayerAnswer: null, duelPlayerTime: 0, duelRoundResult: null,
+  duelRoundActive: false, duelTimeout: null, duelInterval: null,
+  isFriendDuel: false, friendQuestions: [], friendCurrent: 0, friendScore: 0, friendTotal: 10, friendAnswered: false
+};
+
+function loadStats() {
+  try {
+    const data = JSON.parse(localStorage.getItem('mathQuestProStats'));
+    if (data) {
+      state.totalPlayed = data.totalPlayed || 0;
+      state.totalCorrect = data.totalCorrect || 0;
+      state.totalWrong = data.totalWrong || 0;
+      state.unlockedMaster = data.unlockedMaster || false;
+      state.avatar = data.avatar || '🧑‍🎓';
+      document.getElementById('profileAvatar').textContent = state.avatar;
+      document.querySelectorAll('.avatar-option').forEach(el=>el.classList.toggle('selected',el.textContent===state.avatar));
+      updatePieChart(state.totalCorrect, state.totalWrong);
+    }
+  } catch(e) {}
+}
+loadStats();
+
+function saveStats() {
+  try {
+    localStorage.setItem('mathQuestProStats', JSON.stringify({
+      totalPlayed: state.totalPlayed, totalCorrect: state.totalCorrect, totalWrong: state.totalWrong,
+      unlockedMaster: state.unlockedMaster, avatar: state.avatar
+    }));
+  } catch(e) {}
+}
+
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=randInt(0,i); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+// ============================================
+// BUILD NORMAL MENU
+// ============================================
+function buildNormalMenu(mode) {
+  const configs = {
+    'testi': {
+      levels: [
+        { id: 'easy', icon: '📐', name: 'تستی آسان', desc: 'چهار گزینه‌ای ساده', badge: '📝 مبتدی', class: 'easy' },
+        { id: 'hard', icon: '🔢', name: 'تستی سخت', desc: 'چهار گزینه‌ای متوسط', badge: '📝 متوسط', class: 'hard' },
+        { id: 'expert', icon: '🧠', name: 'تستی متخصص', desc: 'چهار گزینه‌ای پیشرفته', badge: '📝 پیشرفته', class: 'expert' },
+        { id: 'master', icon: '👑', name: 'تستی استاد', desc: 'چهار گزینه‌ای فوق‌پیشرفته', badge: '📝 افسانه', class: 'expert' }
+      ]
+    },
+    'tashrihi': {
+      levels: [
+        { id: 'easy', icon: '✍️', name: 'تشریحی آسان', desc: 'پاسخ عددی ساده', badge: '✍️ مبتدی', class: 'easy' },
+        { id: 'hard', icon: '📐', name: 'تشریحی سخت', desc: 'پاسخ عددی متوسط', badge: '✍️ متوسط', class: 'hard' },
+        { id: 'expert', icon: '📏', name: 'تشریحی متخصص', desc: 'پاسخ عددی پیشرفته', badge: '✍️ پیشرفته', class: 'expert' },
+        { id: 'master', icon: '🎯', name: 'تشریحی استاد', desc: 'پاسخ عددی فوق‌پیشرفته', badge: '✍️ افسانه', class: 'expert' }
+      ]
+    },
+    'sorati': {
+      levels: [
+        { id: 'easy', icon: '⚡', name: 'سرعتی آسان', desc: '۱۰ ثانیه ساده', badge: '⚡ مبتدی', class: 'easy' },
+        { id: 'hard', icon: '🔥', name: 'سرعتی سخت', desc: '۱۰ ثانیه متوسط', badge: '⚡ متوسط', class: 'hard' },
+        { id: 'expert', icon: '💨', name: 'سرعتی متخصص', desc: '۱۰ ثانیه پیشرفته', badge: '⚡ پیشرفته', class: 'expert' },
+        { id: 'master', icon: '🌟', name: 'سرعتی استاد', desc: '۱۰ ثانیه فوق‌پیشرفته', badge: '⚡ افسانه', class: 'expert' }
+      ]
+    }
+  };
+  
+  const config = configs[mode] || configs['testi'];
+  const grid = document.getElementById('levelGrid');
+  
+  let html = '';
+  config.levels.forEach((level) => {
+    const isLocked = (level.id === 'master' && !state.unlockedMaster);
+    const lockClass = isLocked ? ' locked' : '';
+    const onclick = isLocked ? '' : `onclick="handleLevelClick('${level.id}')"`;
+    const icon = isLocked ? '🔒' : level.icon;
+    const name = isLocked ? 'استاد' : level.name;
+    const desc = isLocked ? '🔒 قفل شده' : level.desc;
+    const badge = isLocked ? '⭐⭐⭐⭐ افسانه' : level.badge;
+    const cardClass = isLocked ? 'expert' : level.class;
+    
+    html += `
+      <div class="level-card ${cardClass}${lockClass}" ${onclick} style="${isLocked ? 'cursor:not-allowed;opacity:0.4;' : ''}">
+        <span class="level-icon">${icon}</span>
+        <div class="level-name">${name}</div>
+        <div class="level-desc">${desc}</div>
+        <div class="level-badge">${badge}</div>
+      </div>
+    `;
+  });
+  
+  grid.innerHTML = html;
+}
+
+// ============================================
+// SET MODE
+// ============================================
+function setMode(mode) {
+  state.mode = mode;
+  document.querySelectorAll('.mode-btn').forEach(el => el.classList.toggle('active', el.dataset.mode === mode));
+  
+  if (mode === 'duel') {
+    showDuelOptions();
+    return;
+  }
+  
+  buildNormalMenu(mode);
+}
+
+function showDuelOptions() {
+  const grid = document.getElementById('levelGrid');
+  grid.innerHTML = `
+    <div class="level-card duel-hard" onclick="showDuelRobotMenu()" style="border-color:rgba(255,71,87,0.25);">
+      <span class="level-icon">🤖</span>
+      <div class="level-name" style="color:var(--red);">دوئل با ربات</div>
+      <div class="level-desc">مبارزه با هوش مصنوعی</div>
+      <div class="level-badge" style="background:var(--red-dim);color:var(--red);">⚔️ تک‌نفره</div>
+    </div>
+    <div class="level-card" onclick="return false;" style="border-color:rgba(100,100,150,0.25); opacity: 0.6; cursor: not-allowed;">
+      <span class="level-icon">🌐</span>
+      <div class="level-name" style="color:var(--muted);">دوئل آنلاین</div>
+      <div class="level-desc">بازی با دوستان از راه دور</div>
+      <div class="level-badge" style="background:rgba(100,100,150,0.2); color:var(--muted);">⏳ به زودی</div>
+    </div>
+  `;
+}
+
+function showJoinLobby() {
+  showLobbyScreen(false);
+  document.getElementById('lobbyLinkSection').style.display = 'none';
+  document.getElementById('lobbyLevelSection').style.display = 'none';
+  document.getElementById('lobbyStartBtn').style.display = 'none';
+  document.getElementById('lobbyJoinSection').style.display = 'block';
+  document.getElementById('lobbyStatus').textContent = '🔑 کد لابی را وارد کنید';
+  document.getElementById('lobbyStatus').className = 'lobby-status waiting';
+  document.getElementById('lobbyJoinInput').value = '';
+  document.getElementById('lobbyJoinBtn').disabled = false;
+  document.getElementById('lobbyJoinBtn').textContent = '✅ تایید';
+  document.getElementById('lobbyWaitMsg').style.display = 'none';
+  show('lobbyScreen');
+}
+
+function showDuelRobotMenu() {
+  const grid = document.getElementById('levelGrid');
+  grid.innerHTML = `
+    <div class="level-card duel-easy" onclick="startDuel('easy')" style="border-color:rgba(79,172,254,0.25);">
+      <span class="level-icon">📐</span>
+      <div class="level-name" style="color:var(--duel-blue);">دوئل آسان</div>
+      <div class="level-desc">معادلات درجه یک</div>
+      <div class="level-badge" style="background:var(--duel-blue-dim);color:var(--duel-blue);">⭐ مبتدی</div>
+    </div>
+    <div class="level-card duel-medium" onclick="startDuel('hard')" style="border-color:rgba(255,159,67,0.25);">
+      <span class="level-icon">🔢</span>
+      <div class="level-name" style="color:var(--duel-orange);">دوئل سخت</div>
+      <div class="level-desc">معادلات درجه یک (سریع‌تر)</div>
+      <div class="level-badge" style="background:var(--duel-orange-dim);color:var(--duel-orange);">⭐⭐ متوسط</div>
+    </div>
+    <div class="level-card duel-hard" onclick="startDuel('expert')" style="border-color:rgba(255,71,87,0.25);">
+      <span class="level-icon">🧠</span>
+      <div class="level-name" style="color:var(--red);">دوئل متخصص</div>
+      <div class="level-desc">معادلات کسری و توانی</div>
+      <div class="level-badge" style="background:var(--red-dim);color:var(--red);">⭐⭐⭐ پیشرفته</div>
+    </div>
+    <div class="level-card expert" onclick="startDuel('master')" style="border-color:rgba(255,107,205,0.25);">
+      <span class="level-icon">👑</span>
+      <div class="level-name" style="color:var(--pink);">دوئل استاد</div>
+      <div class="level-desc">معادلات فوق پیشرفته</div>
+      <div class="level-badge" style="background:var(--pink-dim);color:var(--pink);">⭐⭐⭐⭐ افسانه</div>
+    </div>
+    <div class="level-card" onclick="showDuelOptions()" style="grid-column:span 2;border-color:var(--border);">
+      <span class="level-icon">🔙</span>
+      <div class="level-name" style="color:var(--muted);">بازگشت</div>
+      <div class="level-desc">برگشت به منوی دوئل</div>
+      <div class="level-badge" style="background:var(--surface);color:var(--muted);">← بازگشت</div>
+    </div>
+  `;
+}
+
+function handleLevelClick(level) {
+  if (state.mode === 'duel') return;
+  startGame(level);
+}
+
+// ============================================
+// DUEL AI SYSTEM (ROBOT)
+// ============================================
+const DUEL_DIFFICULTY = {
+  easy: { delay: { min:3000, max:6000 }, errorRate:0.35, label:'آسان' },
+  medium: { delay: { min:1500, max:3500 }, errorRate:0.12, label:'سخت (سریع‌تر)' },
+  hard: { delay: { min:500, max:1500 }, errorRate:0.03, label:'متخصص' },
+  master: { delay: { min:200, max:800 }, errorRate:0.01, label:'استاد' }
+};
+function getDuelDelay(diff){ const c=DUEL_DIFFICULTY[diff]||DUEL_DIFFICULTY.easy; return randInt(c.delay.min,c.delay.max); }
+function getDuelRobotAnswer(q,diff){
+  const c=DUEL_DIFFICULTY[diff]||DUEL_DIFFICULTY.easy;
+  const correct=q.answer[0];
+  if(Math.random()<c.errorRate){
+    const wrong=q.options.filter(o=>Math.abs(o-correct)>0.01);
+    if(wrong.length) return wrong[randInt(0,wrong.length-1)];
+    return correct + randInt(1,5)*(Math.random()>0.5?1:-1);
+  }
+  return correct;
+}
+
+function startDuel(level) {
+  if(level==='master' && !state.unlockedMaster){ alert('🔒 سطح استاد قفل است!'); return; }
+  
+  const genMap = {
+    'easy': generateLinear,
+    'hard': generateLinear,
+    'expert': ()=>[generateFractional,generateExponential][randInt(0,1)](),
+    'master': generateMaster
+  };
+  const lvlMap = { 
+    'easy':'easy', 
+    'hard':'medium',
+    'expert':'hard', 
+    'master':'master' 
+  };
+  const dl = lvlMap[level] || 'easy';
+  const gen = genMap[level] || generateLinear;
+  
+  state.isDuelMode = true; 
+  state.isFriendDuel = false; 
+  state.duelLevel = dl; 
+  state.duelPlayerScore = 0; 
+  state.duelRobotScore = 0;
+  state.duelDrawCount = 0; 
+  state.duelCurrentRound = 0; 
+  state.duelTotalRounds = 5; 
+  state.duelAnswered = false; 
+  state.duelRoundActive = false;
+  state.questions = []; 
+  for(let i=0;i<state.duelTotalRounds;i++) state.questions.push(gen());
+  state.current = 0; 
+  state.totalQ = state.questions.length; 
+  state.level = 'duel-' + dl;
+  
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  if (state.duelTimeout) { clearTimeout(state.duelTimeout); state.duelTimeout = null; }
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  if (reviewTimerInterval) { clearInterval(reviewTimerInterval); reviewTimerInterval = null; }
+  
+  document.getElementById('powerupsBar').style.display = 'none'; 
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('duelContainer').style.display = 'block'; 
+  document.getElementById('duelTimers').style.display = 'flex';
+  document.getElementById('answerTimer').style.display = 'flex';
+  document.getElementById('reviewTimer').style.display = 'none';
+  document.getElementById('duelResult').style.display = 'none';
+  document.getElementById('duelPlayerName').textContent = account ? account.username : 'شما';
+  document.getElementById('duelPlayerAvatar').textContent = account ? account.avatar : '👤';
+  document.getElementById('duelRobotName').textContent = 'ربات'; 
+  document.getElementById('duelRobotAvatar').textContent = '🤖';
+  
+  const labels = { 
+    easy:'⚔️ دوئل آسان', 
+    medium:'⚔️ دوئل سخت (سریع‌تر)', 
+    hard:'⚔️ دوئل متخصص', 
+    master:'⚔️ دوئل استاد' 
+  };
+  document.getElementById('levelLabel').textContent = labels[dl] || '⚔️ دوئل';
+  
+  const dots = { 
+    easy:'dot-blue', 
+    medium:'dot-orange', 
+    hard:'dot-red', 
+    master:'dot-pink' 
+  };
+  document.getElementById('levelChip').querySelector('.dot').className = `dot ${dots[dl] || 'dot-blue'}`;
+  
+  document.getElementById('speedScore').style.display = 'none'; 
+  document.getElementById('wrongChip').style.display = 'none';
+  document.getElementById('comboChip').style.display = 'none'; 
+  document.getElementById('timerWrap').style.display = 'none';
+  document.getElementById('livesDisplay').style.display = 'none';
+  document.getElementById('questionCounter').textContent = `⚔️ دور ${state.duelCurrentRound+1} از ${state.duelTotalRounds}`;
+  updateDuelScore(); 
+  renderDuelQuestion(); 
+  show('gameScreen');
+}
+
+function renderDuelQuestion() {
+  if(state.duelCurrentRound >= state.duelTotalRounds){ showDuelResult(); return; }
+  const q = state.questions[state.duelCurrentRound];
+  state.duelAnswered = false; 
+  state.duelRoundActive = false; 
+  state.duelPlayerAnswer = null; 
+  state.duelRobotAnswer = null;
+  const qNum = state.duelCurrentRound + 1;
+  document.getElementById('qLabel').textContent = `⚔️ دوئل - دور ${qNum}`;
+  document.getElementById('questionCounter').textContent = `⚔️ دور ${qNum} از ${state.duelTotalRounds}`;
+  document.getElementById('qEquation').textContent = q.eq; 
+  document.getElementById('qHint').textContent = q.hint;
+  document.getElementById('qDifficulty').textContent = q.difficulty || '⭐';
+  document.getElementById('questionCard').className = 'question-card';
+  document.getElementById('duelPlayerAnswer').textContent = '❓'; 
+  document.getElementById('duelRobotAnswer').textContent = '❓';
+  document.getElementById('duelPlayerStatus').textContent = '⏳ منتظر پاسخ...';
+  document.getElementById('duelRobotStatus').textContent = '⏳ در حال محاسبه...';
+  document.getElementById('duelResult').style.display = 'none';
+  document.getElementById('duelPlayerBox').className = 'duel-player active';
+  document.getElementById('duelRobotBox').className = 'duel-player';
+  document.getElementById('feedbackBox').className = 'feedback-box';
+  document.getElementById('nextBtn').classList.remove('show');
+  renderDuelInput(); 
+  startDuelRound();
+}
+
+function renderDuelInput() {
+  numpadValues = { ans1: '', ans2: '' }; 
+  activeField = 'ans1';
+  document.getElementById('inputArea').innerHTML = `
+    <div class="numpad">
+      <div id="disp_ans1" class="numpad-display focused" onclick="setActiveField('ans1')"><span class="placeholder">x = ?</span></div>
+      <div class="keys-grid">
+        <div class="key" onclick="numpadKey('7')">7</div><div class="key" onclick="numpadKey('8')">8</div><div class="key" onclick="numpadKey('9')">9</div><div class="key key-del" onclick="numpadKey('⌫')">⌫</div>
+        <div class="key" onclick="numpadKey('4')">4</div><div class="key" onclick="numpadKey('5')">5</div><div class="key" onclick="numpadKey('6')">6</div><div class="key key-minus" onclick="numpadKey('±')">±</div>
+        <div class="key" onclick="numpadKey('1')">1</div><div class="key" onclick="numpadKey('2')">2</div><div class="key" onclick="numpadKey('3')">3</div><div class="key key-check" onclick="submitDuelAnswer()" id="submitBtn">✓</div>
+        <div class="key key-zero" onclick="numpadKey('0')">0</div><div class="key" onclick="numpadKey('.')">.</div>
+      </div>
+    </div>`;
+  refreshDisplays();
+}
+
+function startDuelRound() {
+  state.duelPlayerTime = 0; 
+  state.duelRobotTime = 0; 
+  state.duelRoundActive = true; 
+  state.duelAnswered = false;
+  
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  
+  state.duelInterval = setInterval(() => { 
+    if(!state.duelRoundActive){ clearInterval(state.duelInterval); state.duelInterval = null; return; } 
+    state.duelPlayerTime += 0.1; 
+  }, 100);
+  
+  // Start 30 second answer timer
+  startAnswerTimer(30, () => {
+    if (state.duelRoundActive && !state.duelAnswered) {
+      state.duelAnswered = true;
+      state.duelPlayerAnswer = null;
+      if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+      document.getElementById('duelPlayerStatus').textContent = '⏰ زمان تمام شد!';
+      document.getElementById('submitBtn').disabled = true;
+      // If robot hasn't answered yet, wait a bit then evaluate
+      if (state.duelRobotAnswer === null) {
+        // Robot will answer soon via its own timeout
+        document.getElementById('duelPlayerStatus').textContent = '⏰ زمان تمام شد! منتظر ربات...';
+      } else {
+        evaluateDuelRound();
+      }
+    }
+  });
+  
+  const delay = getDuelDelay(state.duelLevel);
+  
+  state.duelTimeout = setTimeout(() => {
+    if(!state.duelRoundActive) return;
+    const q = state.questions[state.duelCurrentRound];
+    const robotAns = getDuelRobotAnswer(q, state.duelLevel);
+    state.duelRobotAnswer = robotAns; 
+    state.duelRobotTime = delay / 1000;
+    document.getElementById('duelRobotAnswer').textContent = robotAns;
+    document.getElementById('duelRobotStatus').textContent = '✅ پاسخ داد!';
+    document.getElementById('duelRobotBox').className = 'duel-player robot-active';
+    if(!state.duelAnswered) document.getElementById('duelPlayerStatus').textContent = '⏳ در حال پاسخ...';
+    if(state.duelAnswered){ 
+      if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+      evaluateDuelRound(); 
+    }
+  }, delay);
+}
+
+function submitDuelAnswer() {
+  if(state.duelAnswered || !state.duelRoundActive) return;
+  const val = parseFloat(numpadValues.ans1);
+  if(isNaN(val) || numpadValues.ans1.trim() === '' || numpadValues.ans1 === '-'){
+    const el = document.getElementById('disp_ans1');
+    if(el){ el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 500); }
+    return;
+  }
+  state.duelAnswered = true; 
+  state.duelPlayerAnswer = val;
+  document.getElementById('duelPlayerAnswer').textContent = val;
+  document.getElementById('duelPlayerStatus').textContent = '✅ پاسخ داد!';
+  document.getElementById('duelPlayerBox').className = 'duel-player active';
+  if(state.duelRobotAnswer === null){ 
+    document.getElementById('duelPlayerStatus').textContent = '⏳ منتظر پاسخ ربات...'; 
+    const btn = document.getElementById('submitBtn'); 
+    if(btn) btn.disabled = true; 
+    return; 
+  }
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  evaluateDuelRound();
+}
+
+function evaluateDuelRound() {
+  if(!state.duelRoundActive) return; 
+  state.duelRoundActive = false;
+  
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  if (state.duelTimeout) { clearTimeout(state.duelTimeout); state.duelTimeout = null; }
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  
+  const q = state.questions[state.duelCurrentRound]; 
+  const correct = q.answer[0];
+  const pc = state.duelPlayerAnswer !== null && Math.abs(state.duelPlayerAnswer - correct) < 0.01;
+  const rc = state.duelRobotAnswer !== null && Math.abs(state.duelRobotAnswer - correct) < 0.01;
+  let result = 'draw', resultText = '🤝 تساوی!', resultClass = 'draw';
+  if(pc && !rc){ 
+    result = 'win'; 
+    resultText = '🎉 شما برنده شدید!'; 
+    resultClass = 'win'; 
+    state.duelPlayerScore++; 
+    sound.duelWin(); 
+    fireConfetti(15); 
+  }
+  else if(!pc && rc){ 
+    result = 'lose'; 
+    resultText = '😔 ربات برنده شد!'; 
+    resultClass = 'lose'; 
+    state.duelRobotScore++; 
+    sound.duelLose(); 
+  }
+  else if(pc && rc){
+    if(state.duelPlayerTime < state.duelRobotTime){ 
+      result = 'win'; 
+      resultText = '🎉 شما سریع‌تر بودید!'; 
+      resultClass = 'win'; 
+      state.duelPlayerScore++; 
+      sound.duelWin(); 
+      fireConfetti(15); 
+    }
+    else if(state.duelRobotTime < state.duelPlayerTime){ 
+      result = 'lose'; 
+      resultText = '😔 ربات سریع‌تر بود!'; 
+      resultClass = 'lose'; 
+      state.duelRobotScore++; 
+      sound.duelLose(); 
+    }
+    else { 
+      result = 'draw'; 
+      resultText = '🤝 هر دو همزمان!'; 
+      resultClass = 'draw'; 
+      state.duelDrawCount++; 
+    }
+  } else { 
+    result = 'draw'; 
+    resultText = '🤝 هر دو اشتباه!'; 
+    resultClass = 'draw'; 
+    state.duelDrawCount++; 
+  }
+  state.duelRoundResult = result;
+  document.getElementById('duelResult').style.display = 'block';
+  document.getElementById('duelResult').textContent = resultText;
+  document.getElementById('duelResult').className = `duel-result ${resultClass}`;
+  if(result === 'win'){ 
+    document.getElementById('duelPlayerBox').className = 'duel-player winner'; 
+    document.getElementById('duelRobotBox').className = 'duel-player loser'; 
+    document.getElementById('questionCard').className = 'question-card duel-player-win'; 
+  }
+  else if(result === 'lose'){ 
+    document.getElementById('duelPlayerBox').className = 'duel-player loser'; 
+    document.getElementById('duelRobotBox').className = 'duel-player winner'; 
+    document.getElementById('questionCard').className = 'question-card duel-robot-win'; 
+  }
+  else { 
+    document.getElementById('duelPlayerBox').className = 'duel-player'; 
+    document.getElementById('duelRobotBox').className = 'duel-player'; 
+    document.getElementById('questionCard').className = 'question-card duel-draw'; 
+  }
+  document.getElementById('duelPlayerStatus').textContent = pc ? '✅ درست!' : '❌ غلط!';
+  document.getElementById('duelRobotStatus').textContent = rc ? '✅ درست!' : '❌ غلط!';
+  if(state.duelPlayerAnswer === null) document.getElementById('duelPlayerStatus').textContent = '⏰ زمان تمام شد!';
+  
+  const fb = document.getElementById('feedbackBox'); 
+  const title = document.getElementById('feedbackTitle'); 
+  const steps = document.getElementById('feedbackSteps');
+  fb.className = `feedback-box show ${pc ? 'correct' : 'wrong'}`; 
+  title.textContent = `✅ پاسخ صحیح: ${correct}`;
+  steps.innerHTML = q.steps.map((s,i) => `<div style="margin:2px 0;${i === q.steps.length-1 ? 'color:var(--gold);font-weight:700;' : ''}">${s}</div>`).join('');
+  
+  updateDuelScore(); 
+  const btn = document.getElementById('submitBtn'); 
+  if(btn) btn.disabled = true;
+  
+  // Start review timer instead of showing next button
+  startDuelReviewTimer(false);
+}
+
+function updateDuelScore(){
+  document.getElementById('duelPlayerScore').textContent = state.duelPlayerScore;
+  document.getElementById('duelRobotScore').textContent = state.duelRobotScore;
+  document.getElementById('duelDrawCount').textContent = state.duelDrawCount;
+}
+
+function showDuelResult(){
+  clearInterval(state.timerInterval); 
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  if (reviewTimerInterval) { clearInterval(reviewTimerInterval); reviewTimerInterval = null; }
+  const ps = state.duelPlayerScore, rs = state.duelRobotScore;
+  let trophy, title, stars;
+  if(ps > rs){ 
+    trophy = '🏆'; 
+    title = '🎉 شما برنده دوئل شدید!'; 
+    stars = '⭐⭐⭐⭐⭐'; 
+    sound.duelWin(); 
+    fireConfetti(50); 
+  }
+  else if(rs > ps){ 
+    trophy = '🤖'; 
+    title = '😔 ربات برنده شد!'; 
+    stars = '⭐⭐'; 
+    sound.duelLose(); 
+  }
+  else { 
+    trophy = '🤝'; 
+    title = 'تساوی!'; 
+    stars = '⭐⭐⭐'; 
+  }
+  document.getElementById('resultTrophy').textContent = trophy;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultStars').textContent = stars;
+  const lvls = { 
+    'duel-easy':'دوئل آسان', 
+    'duel-medium':'دوئل سخت (سریع‌تر)', 
+    'duel-hard':'دوئل متخصص', 
+    'duel-master':'دوئل استاد' 
+  };
+  document.getElementById('resultSubtitle').textContent = `⚔️ ${lvls[state.level] || 'دوئل'} · ${state.duelTotalRounds} دور`;
+  document.getElementById('rCorrect').textContent = ps;
+  document.getElementById('rWrong').textContent = rs;
+  document.getElementById('rScore').textContent = ps * 10;
+  document.getElementById('rStreak').textContent = state.duelDrawCount;
+  document.getElementById('resultDetails').innerHTML = `👤 شما: ${ps} برد &nbsp;|&nbsp;🤖 ربات: ${rs} برد &nbsp;|&nbsp;🤝 تساوی: ${state.duelDrawCount}`;
+  state.totalPlayed++; 
+  state.totalCorrect += ps; 
+  state.totalWrong += rs; 
+  saveStats(); 
+  updatePieChart(state.totalCorrect, state.totalWrong);
+  document.getElementById('duelTimers').style.display = 'none';
+  show('resultScreen');
+}
+
+// ============================================
+// OVERRIDE FUNCTIONS
+// ============================================
+const originalNextQuestion = nextQuestion;
+nextQuestion = function() {
+  if(state.isDuelMode && !state.isFriendDuel){ 
+    state.duelCurrentRound++; 
+    if(state.duelCurrentRound >= state.duelTotalRounds) showDuelResult(); 
+    else renderDuelQuestion(); 
+    return; 
+  }
+  if(state.isFriendDuel){ 
+    friendDuelCurrent++; 
+    if(friendDuelCurrent >= friendDuelTotal) sendGameOver(); 
+    else renderFriendQuestion(); 
+    return; 
+  }
+  originalNextQuestion();
+};
+const originalGoHome = goHome;
+goHome = function() {
+  clearInterval(state.timerInterval); 
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  if(state.freezeTimeout) clearTimeout(state.freezeTimeout); 
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  if (reviewTimerInterval) { clearInterval(reviewTimerInterval); reviewTimerInterval = null; }
+  state.isFrozen = false; 
+  state.isDuelMode = false; 
+  state.isFriendDuel = false;
+  document.getElementById('duelContainer').style.display = 'none';
+  document.getElementById('duelTimers').style.display = 'none';
+  document.getElementById('powerupsBar').style.display = 'flex';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('timerWrap').style.display = 'flex';
+  document.getElementById('livesDisplay').style.display = 'flex';
+  document.getElementById('comboChip').style.display = 'flex';
+  document.getElementById('wrongChip').style.display = 'flex';
+  document.getElementById('speedScore').style.display = 'none';
+  if(state.level === 'daily') state.level = 'easy';
+  if(state.mode !== 'duel'){ buildNormalMenu(state.mode); }
+  else showDuelOptions();
+  show('homeScreen'); 
+  sound.updateUI();
+};
+const originalRestart = restartGame;
+restartGame = function() {
+  if(state.isDuelMode && !state.isFriendDuel) startDuel(state.duelLevel);
+  else if(state.isFriendDuel) createLobby();
+  else startGame(state.level);
+};
+
+// ============================================
+// QUESTION GENERATORS
+// ============================================
+function generateLinear() {
+  const a=randInt(1,9), x=randInt(0,15), b=randInt(-15,15), c=a*x+b;
+  const aStr=a===1?'':`${a}`;
+  const bStr=b===0?'':b>0?` + ${b}`:` - ${Math.abs(b)}`;
+  const eq=`${aStr}x${bStr} = ${c}`;
+  const opts=[x]; while(opts.length<4){ const o=x+randInt(-5,5); if(!opts.includes(o)&&o>=-10&&o<=20) opts.push(o); } shuffle(opts);
+  const steps=[`📌 ${aStr}x${bStr} = ${c}`,`➡️ ${aStr}x = ${c} ${b>=0?'- '+b:'+ '+Math.abs(b)} = ${c-b}`,`➡️ x = ${c-b} / ${a} = ${x}`];
+  return { eq, answer:[x], options:opts, steps, hint:'مقدار x را پیدا کنید', difficulty:'⭐', points:10 };
+}
+
+function generateQuadratic() {
+  const r1=randInt(-3,8); let r2=randInt(-3,8); while(Math.abs(r2-r1)<1 && Math.random()<0.5) r2=randInt(-3,8);
+  const b=-(r1+r2), c=r1*r2;
+  const bStr=b===0?'':b>0?` + ${b}x`:` - ${Math.abs(b)}x`;
+  const cStr=c===0?'':c>0?` + ${c}`:` - ${Math.abs(c)}`;
+  const eq=`x²${bStr}${cStr} = 0`;
+  const correctAnswers = [r1, r2].sort((a,b)=>a-b);
+  const disc=b*b-4*c, sqrtDisc=Math.sqrt(disc);
+  const opts=[r1, r2]; let att=0; while(opts.length<4 && att<50){ const o=randInt(-5,10); if(!opts.includes(o)) opts.push(o); att++; } while(opts.length<4){ const o=randInt(-5,10); if(!opts.includes(o)) opts.push(o); } shuffle(opts);
+  const root1 = (-b + sqrtDisc) / 2;
+  const root2 = (-b - sqrtDisc) / 2;
+  const steps=[`📌 x²${bStr}${cStr} = 0`,`➡️ a=1, b=${b}, c=${c}`,`➡️ Δ = b² - 4ac = ${b}² - 4(${c}) = ${disc}`,`➡️ √Δ = ${sqrtDisc.toFixed(2)}`,`➡️ x₁ = (${-b} + ${sqrtDisc.toFixed(2)}) / 2 = ${root1.toFixed(1)}  ,  x₂ = (${-b} - ${sqrtDisc.toFixed(2)}) / 2 = ${root2.toFixed(1)}`];
+  return { eq, answer: correctAnswers, options:opts, steps, hint:'یکی از ریشه‌های معادله را پیدا کنید', difficulty:'⭐⭐', points:20 };
+}
+
+function generateFractional() {
+  const a=randInt(1,5), b=randInt(-10,10), c=randInt(1,5), d=randInt(-10,10), x=randInt(0,10);
+  const e=(a*x+b)/(c*x+d);
+  if(!isFinite(e) || e<-50 || e>50 || Math.abs(e-Math.round(e))>0.01) return generateFractional();
+  const num=`${a!==1?a:''}x ${b>=0?'+ '+b:'- '+Math.abs(b)}`;
+  const den=`${c!==1?c:''}x ${d>=0?'+ '+d:'- '+Math.abs(d)}`;
+  const eq=`(${num}) / (${den}) = ${Math.round(e)}`;
+  const opts=[x]; while(opts.length<4){ const o=x+randInt(-4,4); if(!opts.includes(o)&&o>=-5&&o<=15) opts.push(o); } shuffle(opts);
+  const steps=[`📌 (${a}x ${b>=0?'+ '+b:'- '+Math.abs(b)}) / (${c}x ${d>=0?'+ '+d:'- '+Math.abs(d)}) = ${Math.round(e)}`,`➡️ ${a}x ${b>=0?'+ '+b:'- '+Math.abs(b)} = ${Math.round(e)}(${c}x ${d>=0?'+ '+d:'- '+Math.abs(d)})`,`➡️ ${a-Math.round(e)*c}x = ${Math.round(e)*d-b}`,`➡️ x = ${x}`];
+  return { eq, answer:[x], options:opts, steps, hint:'مقدار x را پیدا کنید (کسری)', difficulty:'⭐⭐⭐', points:30 };
+}
+
+function generateExponential() {
+  const base=randInt(2,5), exp=randInt(1,8), result=Math.pow(base,exp);
+  const eq=`${base}^x = ${result}`;
+  const opts=[exp]; while(opts.length<4){ const o=exp+randInt(-4,4); if(!opts.includes(o)&&o>=0&&o<=12) opts.push(o); } shuffle(opts);
+  const steps=[`📌 ${base}^x = ${result}`,`➡️ ${base}^x = ${base}^${exp}`,`➡️ x = ${exp}`];
+  return { eq, answer:[exp], options:opts, steps, hint:`مقدار x را پیدا کنید (${base}^x = ${result})`, difficulty:'⭐⭐⭐', points:35 };
+}
+
+function generateMaster() {
+  const types=['quadratic','fractional','exponential'];
+  switch(types[randInt(0,2)]){
+    case 'quadratic': return generateQuadratic();
+    case 'fractional': return generateFractional();
+    case 'exponential': return generateExponential();
+    default: return generateQuadratic();
+  }
+}
+
+function buildQuestions(level, isSpeed=false) {
+  const qs=[]; let gen;
+  switch(level){
+    case 'easy': gen=generateLinear; break;
+    case 'hard': gen=generateQuadratic; break;
+    case 'expert': gen=()=>[generateFractional,generateExponential][randInt(0,1)](); break;
+    case 'master': gen=generateMaster; break;
+    default: gen=generateLinear;
+  }
+  const n=isSpeed?50:{ easy:10, hard:8, expert:6, master:5 }[level]||10;
+  for(let i=0;i<n;i++) qs.push(gen());
+  return shuffle(qs);
+}
+
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function setProgress(idx,total){ const pct=total>0?((idx)/total)*100:0; document.getElementById('progressFill').style.width=`${Math.min(pct,100)}%`; document.getElementById('progressText').textContent=`${Math.round(Math.min(pct,100))}%`; }
+
+// ============================================
+// NUMPAD
+// ============================================
+let numpadValues={ans1:'',ans2:''}; let activeField='ans1'; let selectedOptionIndex=-1; let optionTimeout=null;
+function numpadKey(digit) {
+  if(state.answered || state.isFrozen) return;
+  const cur=numpadValues[activeField];
+  if(digit==='⌫'){ numpadValues[activeField]=cur.slice(0,-1); }
+  else if(digit==='±'){ if(cur.startsWith('-')) numpadValues[activeField]=cur.slice(1); else if(cur!=='' && cur!=='0') numpadValues[activeField]='-'+cur; }
+  else { if(cur==='0' && digit!=='.') numpadValues[activeField]=digit; else if(cur.length<6) numpadValues[activeField]=cur+digit; }
+  refreshDisplays();
+}
+function setActiveField(field){ activeField=field; refreshDisplays(); }
+function refreshDisplays(){
+  ['ans1','ans2'].forEach(id=>{
+    const el=document.getElementById('disp_'+id); if(!el) return;
+    const val=numpadValues[id]; const isFocused=(activeField===id);
+    const isMulti=(state.level==='hard' && state.mode!=='duel');
+    const placeholder=id==='ans1'?(isMulti?'x₁ = ?':'x = ?'):'x₂ = ?';
+    el.innerHTML=(val===''?`<span class="placeholder">${placeholder}</span>`:val)+(isFocused && !state.answered?'<span class="cursor-blink"></span>':'');
+    el.className='numpad-display'+(isFocused?' focused':'')+(el.dataset.state||'');
+  });
+}
+function selectOption(index) {
+  if(state.answered || state.isFrozen) return;
+  selectedOptionIndex=index; const q=state.questions[state.current]; const opts=q.options||['۱','۲','۳','۴'];
+  const display=document.getElementById('selectedOptionDisplay');
+  if(display){ display.textContent=`✅ گزینه ${String.fromCharCode(65+index)}: ${opts[index]} انتخاب شد`; display.style.color='var(--text)'; display.style.background='var(--teal-dim)'; }
+  document.querySelectorAll('#inputArea .key').forEach((el,i)=>{ el.style.borderColor=i===index?'var(--teal)':'var(--border)'; el.style.background=i===index?'var(--teal-dim)':'var(--card)'; });
+  const submitBtn=document.getElementById('submitBtnTest'); if(submitBtn){ submitBtn.disabled=false; submitBtn.className='key key-check active'; }
+  numpadValues.ans1=String(opts[index]);
+}
+function clearSelection() {
+  if(state.answered) return;
+  selectedOptionIndex=-1; numpadValues.ans1='';
+  const display=document.getElementById('selectedOptionDisplay'); if(display){ display.textContent='⚡ یک گزینه را انتخاب کنید'; display.style.color='var(--muted)'; display.style.background='var(--bg)'; }
+  document.querySelectorAll('#inputArea .key').forEach(el=>{ el.style.borderColor='var(--border)'; el.style.background='var(--card)'; });
+  const submitBtn=document.getElementById('submitBtnTest'); if(submitBtn){ submitBtn.disabled=true; submitBtn.className='key key-check inactive'; }
+  if(optionTimeout){ clearTimeout(optionTimeout); optionTimeout=null; }
+}
+function updateLivesUI(){ document.getElementById('livesDisplay').textContent='❤️'.repeat(state.lives)+'🖤'.repeat(state.maxLives-state.lives); }
+function startTimer() {
+  clearInterval(state.timerInterval);
+  const isSorati=state.mode==='sorati';
+  const totalTime=isSorati?10:{ easy:30, hard:45, expert:60, master:90 }[state.level]||30;
+  state.timeLeft=totalTime; updateTimerUI();
+  state.timerInterval=setInterval(()=>{
+    if(state.isFrozen) return;
+    state.timeLeft--; updateTimerUI();
+    if(state.timeLeft<=3 && state.timeLeft>0) sound.tick();
+    if(state.timeLeft<=0){ clearInterval(state.timerInterval);
+      if(state.mode==='sorati'){ if(!state.answered){ state.answered=true; state.wrong++; state.combo=0; sound.wrong(); updateCounts(); } showResult(); }
+      else { if(!state.answered) timeUp(); }
+    }
+  },1000);
+}
+function updateTimerUI(){ const el=document.getElementById('timerNum'); const wrap=document.getElementById('timerWrap'); el.textContent=state.timeLeft; wrap.classList.toggle('urgent',state.timeLeft<=3); }
+function loseLife(){ state.lives--; updateLivesUI(); if(state.lives<=0){ sound.gameOver(); clearInterval(state.timerInterval); showResult(); return true; } return false; }
+function timeUp() {
+  if(state.answered) return;
+  state.answered=true; state.wrong++; state.combo=0; sound.wrong(); updateCounts();
+  const q=state.questions[state.current]; showFeedback(false,q); styleCard(false); styleInputs(false);
+  document.getElementById('nextBtn').classList.add('show');
+  const btn=document.getElementById('submitBtn'); if(btn) btn.disabled=true;
+  const btnTest=document.getElementById('submitBtnTest'); if(btnTest){ btnTest.disabled=true; btnTest.className='key key-check inactive'; }
+  if(loseLife()) return;
+}
+function checkAnswer() {
+  if(state.answered || state.isFrozen) return;
+  if(state.isSpeedMode && state.timeLeft<=0){ showResult(); return; }
+  const q=state.questions[state.current]; const isTesti=state.mode==='testi'; let userAnswers; const isMulti=(state.level==='hard' && state.mode!=='duel');
+  if(isTesti){
+    if(selectedOptionIndex===-1){ const display=document.getElementById('selectedOptionDisplay'); if(display){ display.textContent='⚠️ لطفاً یک گزینه را انتخاب کنید!'; display.style.color='var(--gold)'; display.style.background='var(--gold-dim)'; setTimeout(()=>{ display.style.background='var(--bg)'; },1000); } return; }
+    const opts=q.options||['۱','۲','۳','۴']; userAnswers=[parseFloat(opts[selectedOptionIndex])];
+  } else if(!isMulti){
+    if(numpadValues.ans1.trim()==='' || numpadValues.ans1==='-'){ const el=document.getElementById('disp_ans1'); if(el){ el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),500); } return; }
+    userAnswers=[parseFloat(numpadValues.ans1)];
+  } else {
+    const v1=parseFloat(numpadValues.ans1);
+    const v2=numpadValues.ans2.trim()==='' || numpadValues.ans2==='-' ? v1 : parseFloat(numpadValues.ans2);
+    userAnswers=[v1,v2].sort((a,b)=>a-b);
+  }
+  const expected=[...q.answer].sort((a,b)=>a-b); let isCorrect;
+  if(!isMulti){ isCorrect=Math.abs(userAnswers[0]-expected[0])<0.01; }
+  else {
+    if (userAnswers.length === 2 && expected.length === 2) {
+      isCorrect = Math.abs(userAnswers[0]-expected[0])<0.01 && Math.abs(userAnswers[1]-expected[1])<0.01;
+    } else {
+      isCorrect = expected.some(e => Math.abs(userAnswers[0]-e)<0.01);
+    }
+  }
+  state.answered=true; clearInterval(state.timerInterval);
+  if(optionTimeout){ clearTimeout(optionTimeout); optionTimeout=null; }
+  if(isCorrect){
+    sound.correct(); state.correct++; state.combo++; if(state.combo>state.maxCombo) state.maxCombo=state.combo;
+    const bonus=1+state.combo*0.1; const points=(q.points||10)*(state.isSpeedMode?1.5:1); state.score+=Math.round(points*bonus);
+    if(state.isSpeedMode){ state.speedCorrect++; state.speedTotal++; }
+    if(state.combo>=3){ sound.combo(state.combo); showCombo(state.combo); }
+    if(state.combo===5){ sound.achievement(); showAchievement('🔥 فوق‌العاده!','۵ پاسخ پیاپی صحیح!'); }
+    if(state.combo===10){ sound.achievement(); showAchievement('👑 افسانه!','۱۰ پاسخ پیاپی صحیح!'); }
+    if(state.combo===3) fireConfetti(20);
+  } else {
+    sound.wrong(); state.wrong++; state.combo=0;
+    if(state.isSpeedMode) state.speedTotal++;
+    if(!state.isSpeedMode && loseLife()) return;
+  }
+  updateCounts(); styleCard(isCorrect); styleInputs(isCorrect);
+  if(state.isSpeedMode){
+    const fb=document.getElementById('feedbackBox'); const title=document.getElementById('feedbackTitle');
+    fb.className=`feedback-box show ${isCorrect?'correct':'wrong'}`; title.textContent=isCorrect?'✅':'❌';
+    document.getElementById('feedbackSteps').innerHTML='';
+    setTimeout(()=>{ fb.className='feedback-box'; if(state.timeLeft>0){ state.current++; renderQuestion(); } else showResult(); },300);
+    return;
+  }
+  showFeedback(isCorrect,q); document.getElementById('nextBtn').classList.add('show');
+  const btn=document.getElementById('submitBtn'); if(btn) btn.disabled=true;
+  const btnTest=document.getElementById('submitBtnTest'); if(btnTest){ btnTest.disabled=true; btnTest.className='key key-check inactive'; }
+  if(!state.unlockedMaster && state.score>=100){
+    state.unlockedMaster=true; sound.levelUp(); showAchievement('🔓 قفل باز شد!','سطح استاد باز شد!'); saveStats();
+    if(state.mode !== 'duel') buildNormalMenu(state.mode);
+    fireConfetti(60);
+  }
+}
+function skipQuestion() {
+  if(state.answered || state.skippedThisGame>=state.maxSkips || state.isFrozen || state.isSpeedMode) return;
+  state.answered=true; state.skippedThisGame++; state.wrong++; state.combo=0; sound.wrong(); clearInterval(state.timerInterval); updateCounts();
+  const q=state.questions[state.current]; showFeedback(false,q); styleCard(false); styleInputs(false);
+  document.getElementById('nextBtn').classList.add('show');
+  const btn=document.getElementById('submitBtn'); if(btn) btn.disabled=true;
+  const btnTest=document.getElementById('submitBtnTest'); if(btnTest){ btnTest.disabled=true; btnTest.className='key key-check inactive'; }
+  if(loseLife()) return;
+}
+function styleCard(correct){ const card=document.getElementById('questionCard'); card.className=`question-card ${correct?'correct burst':'wrong shake'}`; setTimeout(()=>{ card.className=`question-card ${correct?'correct':'wrong'}`; },500); }
+function styleInputs(correct){ ['ans1','ans2'].forEach(id=>{ const el=document.getElementById('disp_'+id); if(el){ el.dataset.state=correct?' correct':' wrong'; el.className=`numpad-display ${correct?'correct':'wrong'}`; } }); }
+function showFeedback(correct,q){ const fb=document.getElementById('feedbackBox'); const title=document.getElementById('feedbackTitle'); const steps=document.getElementById('feedbackSteps');
+  fb.className=`feedback-box show ${correct?'correct':'wrong'}`; title.textContent=correct?'✅ آفرین! پاسخ کاملاً درست است!':'❌ پاسخ اشتباه بود. راه حل صحیح:';
+  steps.innerHTML=q.steps.map((s,i)=>`<div style="margin:2px 0;${i===q.steps.length-1?'color:var(--gold);font-weight:700;':''}">${s}</div>`).join('');
+}
+function updateCounts(){ document.getElementById('correctCount').textContent=state.correct; document.getElementById('wrongCount').textContent=state.wrong; document.getElementById('comboCount').textContent=state.combo; if(state.isSpeedMode) document.getElementById('speedScore').textContent=`⭐ ${state.score} امتیاز`; }
+function nextQuestion(){ state.current++; if(state.current>=state.totalQ || state.lives<=0) showResult(); else renderQuestion(); }
+function showCombo(combo){ const el=document.getElementById('comboDisplay'); el.textContent=`🔥 COMBO x${combo}`; el.className='combo-display show'; setTimeout(()=>{ el.className='combo-display'; },800); }
+function showAchievement(title,desc){ const el=document.getElementById('achievementPopup'); document.getElementById('achTitle').textContent='🏆 '+title; document.getElementById('achDesc').textContent=desc; el.className='achievement-popup show'; setTimeout(()=>{ el.className='achievement-popup'; },4000); }
+
+function useHint() {
+  if(state.hintUsed || state.answered || state.isSpeedMode || state.isDuelMode || state.isFriendDuel) return;
+  state.hintUsed=true; document.getElementById('hintBtn').disabled=true;
+  const q=state.questions[state.current]; const firstStep=q.steps[1]||q.steps[0];
+  showAchievement('💡 راهنما',`قدم اول: ${firstStep}`); sound.achievement();
+}
+function useFreeze() {
+  if(state.freezeUsed || state.answered || state.isFrozen || state.isSpeedMode || state.isDuelMode || state.isFriendDuel) return;
+  state.freezeUsed=true; state.isFrozen=true; document.getElementById('freezeBtn').disabled=true;
+  showAchievement('⏸️ توقف زمان','زمان برای ۳ ثانیه متوقف شد!'); sound.achievement();
+  if(state.freezeTimeout) clearTimeout(state.freezeTimeout);
+  state.freezeTimeout=setTimeout(()=>{ state.isFrozen=false; state.freezeTimeout=null; },3000);
+}
+function useSkip() {
+  if(state.skipUsed || state.answered || state.isSpeedMode || state.isDuelMode || state.isFriendDuel) return;
+  state.skipUsed=true; document.getElementById('skipBtn').disabled=true; skipQuestion();
+}
+
+function showResult() {
+  clearInterval(state.timerInterval); 
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  if(state.freezeTimeout) clearTimeout(state.freezeTimeout);
+  if(!state.isSpeedMode) setProgress(state.totalQ,state.totalQ);
+  const total=state.isSpeedMode?(state.speedTotal||state.correct+state.wrong):state.totalQ;
+  const pct=total>0?state.correct/total:0; const score=Math.round(state.score);
+  let trophy,title,stars;
+  if(state.isSpeedMode){
+    if(state.correct>=8){ trophy='👑'; title='افسانه سرعت!'; stars='⭐⭐⭐⭐⭐'; }
+    else if(state.correct>=6){ trophy='🏆'; title='سریع و دقیق!'; stars='⭐⭐⭐⭐'; }
+    else if(state.correct>=4){ trophy='🥇'; title='سرعت خوب!'; stars='⭐⭐⭐'; }
+    else if(state.correct>=2){ trophy='🥈'; title='تلاش خوب!'; stars='⭐⭐'; }
+    else { trophy='🏃'; title='بیشتر تمرین کن!'; stars='⭐'; }
+  } else if(pct===1){ trophy='👑'; title='بی‌نظیر! کامل بود!'; stars='⭐⭐⭐⭐⭐'; }
+  else if(pct>=0.85){ trophy='🏆'; title='عالی! تو یک نابغه‌ای!'; stars='⭐⭐⭐⭐'; }
+  else if(pct>=0.7){ trophy='🥇'; title='خوب بود!'; stars='⭐⭐⭐'; }
+  else if(pct>=0.5){ trophy='🥈'; title='تلاش خوب!'; stars='⭐⭐'; }
+  else if(pct>=0.3){ trophy='🥉'; title='بیشتر تمرین کن!'; stars='⭐'; }
+  else { trophy='📚'; title='نیاز به تمرین بیشتر داری!'; stars=''; }
+  if(state.lives<=0 && !state.isSpeedMode){ trophy='💀'; title='تمام جان‌ها از دست رفت!'; stars='💔'; }
+  document.getElementById('resultTrophy').textContent=trophy;
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultStars').textContent=stars;
+  const modeLabels={ testi:'تستی', tashrihi:'تشریحی', sorati:'⚡ سرعتی (۱۰ث)' };
+  const levelNames={ easy:'آسان', hard:'سخت', expert:'متخصص', master:'استاد', daily:'چالش روزانه' };
+  document.getElementById('resultSubtitle').textContent=`${modeLabels[state.mode]||''} · ${levelNames[state.level]||'آسان'} · ${total} سوال`;
+  document.getElementById('rCorrect').textContent=state.correct;
+  document.getElementById('rWrong').textContent=state.wrong;
+  document.getElementById('rScore').textContent=score;
+  document.getElementById('rStreak').textContent=state.maxCombo;
+  const details=document.getElementById('resultDetails');
+  if(state.isSpeedMode){ details.innerHTML=`✅ پاسخ صحیح: ${state.correct} از ${total} &nbsp;|&nbsp;🔥 بیشترین زنجیره: ${state.maxCombo} &nbsp;|&nbsp;⭐ امتیاز: ${score} &nbsp;|&nbsp;⏱️ زمان: ۱۰ ثانیه`; }
+  else { details.innerHTML=`✅ دقت: ${Math.round(pct*100)}% &nbsp;|&nbsp;🔥 بیشترین زنجیره: ${state.maxCombo} &nbsp;|&nbsp;⭐ امتیاز: ${score} &nbsp;|&nbsp;❤️ جان‌های باقی‌مانده: ${state.lives}`; }
+  state.totalPlayed++; state.totalCorrect+=state.correct; state.totalWrong+=state.wrong; saveStats(); updatePieChart(state.totalCorrect,state.totalWrong);
+  if(pct>=0.7 || state.correct>=4){ sound.levelUp(); fireConfetti(50); } else if(pct<0.3 && state.lives>0) sound.wrong();
+  show('resultScreen');
+}
+function restartGame() {
+  if(state.isDuelMode && !state.isFriendDuel) startDuel(state.duelLevel);
+  else if(state.isFriendDuel) createLobby();
+  else startGame(state.level);
+}
+function goHome() {
+  clearInterval(state.timerInterval); 
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  if(state.freezeTimeout) clearTimeout(state.freezeTimeout); 
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  if (answerTimerInterval) { clearInterval(answerTimerInterval); answerTimerInterval = null; }
+  if (reviewTimerInterval) { clearInterval(reviewTimerInterval); reviewTimerInterval = null; }
+  state.isFrozen=false; state.isDuelMode=false; state.isFriendDuel=false;
+  document.getElementById('duelContainer').style.display='none';
+  document.getElementById('duelTimers').style.display='none';
+  document.getElementById('powerupsBar').style.display='flex';
+  document.getElementById('progressWrap').style.display='block';
+  document.getElementById('timerWrap').style.display='flex';
+  document.getElementById('livesDisplay').style.display='flex';
+  document.getElementById('comboChip').style.display='flex';
+  document.getElementById('wrongChip').style.display='flex';
+  document.getElementById('speedScore').style.display='none';
+  if(state.level==='daily') state.level='easy';
+  if(state.mode!=='duel'){ buildNormalMenu(state.mode); }
+  else showDuelOptions();
+  show('homeScreen'); sound.updateUI();
+}
+
+function startGame(level) {
+  if(level==='master' && !state.unlockedMaster){ alert('🔒 سطح استاد قفل است!'); return; }
+  sound.levelUp();
+  state.isDuelMode=false; state.isFriendDuel=false; state.level=level; state.isSpeedMode=(state.mode==='sorati');
+  state.questions=buildQuestions(level,state.isSpeedMode); state.current=0; state.correct=0; state.wrong=0;
+  state.answered=false; state.totalQ=state.questions.length; state.combo=0; state.maxCombo=0; state.score=0;
+  state.lives=state.maxLives; state.hintUsed=false; state.freezeUsed=false; state.skipUsed=false; state.skippedThisGame=0;
+  state.isFrozen=false; state.speedTotal=0; state.speedCorrect=0;
+  if(state.freezeTimeout) clearTimeout(state.freezeTimeout);
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  selectedOptionIndex=-1; updateLivesUI();
+  const labels={ easy:'آسان', hard:'سخت', expert:'متخصص', master:'استاد' };
+  const dots={ easy:'dot-teal', hard:'dot-gold', expert:'dot-pink', master:'dot-pink' };
+  document.getElementById('levelLabel').textContent=state.isSpeedMode?'⚡ سرعتی':(labels[level]||'آسان');
+  document.getElementById('levelChip').querySelector('.dot').className=`dot ${state.isSpeedMode?'dot-gold':(dots[level]||'dot-teal')}`;
+  document.getElementById('speedScore').style.display=state.isSpeedMode?'inline':'none';
+  document.getElementById('wrongChip').style.display=state.isSpeedMode?'none':'flex';
+  document.getElementById('progressWrap').style.display=state.isSpeedMode?'none':'block';
+  document.getElementById('powerupsBar').style.display='flex';
+  document.getElementById('timerWrap').style.display='flex';
+  document.getElementById('livesDisplay').style.display='flex';
+  document.getElementById('comboChip').style.display='flex';
+  document.getElementById('duelContainer').style.display='none';
+  document.getElementById('duelTimers').style.display='none';
+  document.getElementById('hintBtn').disabled=state.isSpeedMode;
+  document.getElementById('skipBtn').disabled=state.isSpeedMode;
+  document.getElementById('freezeBtn').disabled=state.isSpeedMode;
+  updateCounts(); renderQuestion(); show('gameScreen');
+}
+
+function renderQuestion() {
+  if(state.isSpeedMode && state.current>=state.questions.length){
+    const gen={ easy:generateLinear, hard:generateQuadratic, expert:()=>[generateFractional,generateExponential][randInt(0,1)](), master:generateMaster }[state.level]||generateLinear;
+    state.questions.push(gen());
+  }
+  if(state.current>=state.questions.length){ showResult(); return; }
+  const q=state.questions[state.current]; state.answered=false; selectedOptionIndex=-1;
+  const qNum=state.current+1;
+  document.getElementById('qLabel').textContent=state.isSpeedMode?`سوال #${qNum}`:`سوال ${qNum} از ${state.totalQ}`;
+  document.getElementById('questionCounter').textContent=state.isSpeedMode?`⚡ #${qNum}`:`سوال #${qNum}`;
+  document.getElementById('qEquation').textContent=q.eq;
+  document.getElementById('qHint').textContent=q.hint;
+  document.getElementById('qDifficulty').textContent=q.difficulty||'⭐';
+  if(!state.isSpeedMode) setProgress(state.current,state.totalQ);
+  document.getElementById('questionCard').className='question-card';
+  document.getElementById('feedbackBox').className='feedback-box';
+  document.getElementById('nextBtn').classList.remove('show');
+  renderInputArea(state.level); startTimer();
+  const btn=document.getElementById('submitBtn'); if(btn) btn.disabled=false;
+  const btnTest=document.getElementById('submitBtnTest'); if(btnTest){ btnTest.disabled=true; btnTest.className='key key-check inactive'; }
+  ['ans1','ans2'].forEach(id=>{ const el=document.getElementById('disp_'+id); if(el) el.dataset.state=''; });
+  if(state.isSpeedMode) document.getElementById('speedScore').textContent=`⭐ ${state.score} امتیاز`;
+}
+
+function renderInputArea(level) {
+  numpadValues={ans1:'',ans2:''}; activeField='ans1'; selectedOptionIndex=-1;
+  const area=document.getElementById('inputArea');
+  const isMulti=(level==='hard' && state.mode!=='duel'); 
+  const isTesti=state.mode==='testi';
+  if(isTesti){
+    const q=state.questions[state.current]; const opts=q.options||['۱','۲','۳','۴'];
+    area.innerHTML=`
+      <div class="numpad">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          ${opts.map((opt,i)=>`<button class="key" onclick="selectOption(${i})" style="padding:14px;font-size:16px;background:var(--card);border:2px solid var(--border);border-radius:10px;color:var(--text);cursor:pointer;transition:all 0.2s;" id="opt_${i}">${String.fromCharCode(65+i)}. ${opt}</button>`).join('')}
+        </div>
+        <div id="selectedOptionDisplay" style="text-align:center;font-size:14px;color:var(--muted);padding:6px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">⚡ یک گزینه را انتخاب کنید</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="key key-check inactive" onclick="checkAnswer()" id="submitBtnTest" style="flex:1;padding:12px;font-size:16px;" disabled>✓ تایید پاسخ</button>
+          <button class="key" onclick="clearSelection()" style="flex:0.5;padding:12px;font-size:16px;background:var(--red-dim);border-color:rgba(255,71,87,0.3);color:var(--red);">✕ لغو</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const keysHTML=`
+    <div class="keys-grid">
+      <div class="key" onclick="numpadKey('7')">7</div><div class="key" onclick="numpadKey('8')">8</div><div class="key" onclick="numpadKey('9')">9</div><div class="key key-del" onclick="numpadKey('⌫')">⌫</div>
+      <div class="key" onclick="numpadKey('4')">4</div><div class="key" onclick="numpadKey('5')">5</div><div class="key" onclick="numpadKey('6')">6</div><div class="key key-minus" onclick="numpadKey('±')">±</div>
+      <div class="key" onclick="numpadKey('1')">1</div><div class="key" onclick="numpadKey('2')">2</div><div class="key" onclick="numpadKey('3')">3</div><div class="key key-check" onclick="checkAnswer()" id="submitBtn">✓</div>
+      <div class="key key-zero" onclick="numpadKey('0')">0</div><div class="key" onclick="numpadKey('.')">.</div>
+    </div>`;
+  if(!isMulti){
+    area.innerHTML=`<div class="numpad"><div id="disp_ans1" class="numpad-display focused" onclick="setActiveField('ans1')"></div>${keysHTML}</div>`;
+  } else {
+    area.innerHTML=`<div class="numpad"><div class="quad-numpad-row"><div class="quad-numpad-col"><div class="numpad-label">x₁</div><div id="disp_ans1" class="numpad-display focused" onclick="setActiveField('ans1')"></div></div><div class="quad-numpad-col"><div class="numpad-label">x₂</div><div id="disp_ans2" class="numpad-display" onclick="setActiveField('ans2')"></div></div></div>${keysHTML}</div>`;
+  }
+  refreshDisplays();
+}
+
+function dailyChallenge() {
+  const today=new Date().toDateString();
+  const last=localStorage.getItem('dailyChallengeDate');
+  if(last===today){ alert('📅 شما امروز چالش روزانه را انجام داده‌اید!'); return; }
+  sound.levelUp();
+  const qs=[]; for(let i=0;i<5;i++){ const gs=[generateLinear,generateQuadratic,generateFractional,generateExponential]; qs.push(gs[randInt(0,3)]()); }
+  state.questions=shuffle(qs); state.current=0; state.correct=0; state.wrong=0; state.answered=false; state.totalQ=state.questions.length;
+  state.combo=0; state.maxCombo=0; state.score=0; state.level='daily'; state.lives=state.maxLives; state.hintUsed=false; state.freezeUsed=false;
+  state.skipUsed=false; state.skippedThisGame=0; state.isFrozen=false; state.isSpeedMode=false; state.speedTotal=0; state.speedCorrect=0;
+  state.isDuelMode=false; state.isFriendDuel=false; 
+  if (state.duelInterval) { clearInterval(state.duelInterval); state.duelInterval = null; }
+  selectedOptionIndex=-1; updateLivesUI();
+  document.getElementById('levelLabel').textContent='🌟 چالش روزانه';
+  document.getElementById('levelChip').querySelector('.dot').className='dot dot-gold';
+  document.getElementById('speedScore').style.display='none';
+  document.getElementById('wrongChip').style.display='flex';
+  document.getElementById('progressWrap').style.display='block';
+  document.getElementById('skipBtn').disabled=false;
+  document.getElementById('hintBtn').disabled=false;
+  document.getElementById('freezeBtn').disabled=false;
+  document.getElementById('powerupsBar').style.display='flex';
+  document.getElementById('timerWrap').style.display='flex';
+  document.getElementById('livesDisplay').style.display='flex';
+  document.getElementById('comboChip').style.display='flex';
+  document.getElementById('duelContainer').style.display='none';
+  document.getElementById('duelTimers').style.display='none';
+  updateCounts(); renderQuestion(); show('gameScreen');
+  localStorage.setItem('dailyChallengeDate', today);
+}
+
+function showProfile() {
+  document.getElementById('pCorrect').textContent=state.totalCorrect;
+  document.getElementById('pWrong').textContent=state.totalWrong;
+  document.getElementById('pGames').textContent=state.totalPlayed;
+  const total=state.totalCorrect+state.totalWrong;
+  document.getElementById('pAccuracy').textContent=total>0?Math.round((state.totalCorrect/total)*100)+'%':'۰%';
+  document.getElementById('pMasterStatus').textContent=state.unlockedMaster?'✅ باز شده':'🔒 قفل';
+  document.getElementById('profileAvatar').textContent=account?account.avatar:'🧑‍🎓';
+  document.querySelectorAll('.avatar-option').forEach(el=>el.classList.toggle('selected',el.textContent===(account?account.avatar:'🧑‍🎓')));
+  updatePieChart(state.totalCorrect,state.totalWrong);
+  show('profileScreen');
+}
+function selectAvatar(emoji){
+  if(account){ account.avatar=emoji; saveAccount(); }
+  else { state.avatar=emoji; }
+  document.getElementById('profileAvatar').textContent=emoji;
+  document.querySelectorAll('.avatar-option').forEach(el=>el.classList.toggle('selected',el.textContent===emoji));
+  saveStats();
+}
+function toggleTheme(){
+  document.body.classList.toggle('light-mode');
+  document.querySelector('.theme-toggle').textContent=document.body.classList.contains('light-mode')?'🌙':'🌓';
+}
+
+// ============================================
+// INIT
+// ============================================
+buildNormalMenu('testi');
+loadAccount(); loadStats(); sound.updateUI(); updatePieChart(state.totalCorrect,state.totalWrong);
+document.addEventListener('click', function initAudio(){ sound.startMusic(); sound.updateUI(); document.removeEventListener('click', initAudio); }, { once: true });
+</script>
+</body>
+</html>
