@@ -6,642 +6,364 @@
 <title>⚡ Math Game - نسخه کامل</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
+  * { margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --bg: #0a0a1a;
-    --surface: #111128;
-    --card: #181840;
-    --teal: #00f5d4;
-    --teal-dim: rgba(0,245,212,0.12);
-    --gold: #ffd700;
-    --gold-dim: rgba(255,215,0,0.12);
-    --pink: #ff6bcd;
-    --pink-dim: rgba(255,107,205,0.12);
-    --red: #ff4757;
-    --red-dim: rgba(255,71,87,0.12);
-    --text: #f0f4ff;
-    --muted: #8899bb;
-    --border: rgba(255,255,255,0.06);
-    --radius: 16px;
-    --shadow: 0 10px 40px rgba(0,0,0,0.5);
-    --duel-blue: #4facfe;
-    --duel-blue-dim: rgba(79,172,254,0.12);
-    --duel-orange: #ff9f43;
+    --bg:#0a0a1a; --surface:#111128; --card:#181840;
+    --teal:#00f5d4; --gold:#ffd700; --pink:#ff6bcd; --red:#ff4757;
+    --text:#f0f4ff; --muted:#8899bb; --border:rgba(255,255,255,0.06);
+    --radius:16px; --shadow:0 10px 40px rgba(0,0,0,0.5);
+    --duel-blue:#4facfe; --duel-orange:#ff9f43;
   }
-
-  /* ===== تم‌ها ===== */
-  body.theme-nature {
-    --bg: #0f1f0f; --surface: #1a2f1a; --card: #254f25;
-    --teal: #4caf50; --gold: #ff9800; --pink: #e91e63;
-    --text: #e8f5e9; --muted: #81c784;
-  }
-  body.theme-ocean {
-    --bg: #0a1a2a; --surface: #0f2840; --card: #1a3a5a;
-    --teal: #00bcd4; --gold: #ffd700; --pink: #e91e63;
-    --text: #e0f7fa; --muted: #4dd0e1;
-  }
-  body.theme-galaxy {
-    --bg: #0a0a2a; --surface: #1a0a3a; --card: #2a1a5a;
-    --teal: #9c27b0; --gold: #ffd700; --pink: #e91e63;
-    --text: #f3e5f5; --muted: #ce93d8;
-  }
-  body.theme-sunset {
-    --bg: #1a0a0a; --surface: #2a1515; --card: #3a2020;
-    --teal: #ff6f00; --gold: #ffab00; --pink: #ff1744;
-    --text: #fff3e0; --muted: #ffab91;
-  }
-
   body {
-    font-family: 'Vazirmatn', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-    direction: rtl;
-    transition: all 0.5s ease;
+    font-family:'Vazirmatn',sans-serif;
+    background:var(--bg); color:var(--text);
+    min-height:100vh; display:flex; justify-content:center; align-items:center;
+    padding:12px; direction:rtl;
   }
-
   .app {
-    width: 100%;
-    max-width: 500px;
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 20px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
+    width:100%; max-width:480px;
+    background:var(--surface); border-radius:var(--radius);
+    padding:16px; border:1px solid var(--border); box-shadow:var(--shadow);
   }
-
-  .screen { display: none; }
-  .screen.active { display: block; animation: fadeIn 0.3s ease; }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ===== موشک ===== */
-  .rocket-container {
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    pointer-events: none;
-    font-size: 60px;
-    opacity: 0;
-    transition: all 0.8s;
-  }
-  .rocket-container.launch {
-    bottom: 50%;
-    opacity: 1;
-    animation: rocketLaunch 1.5s forwards;
-  }
-  @keyframes rocketLaunch {
-    0% { bottom: 20%; transform: translateX(-50%) scale(0.5) rotate(-10deg); opacity: 1; }
-    30% { transform: translateX(-50%) scale(1.2) rotate(5deg); }
-    60% { transform: translateX(-50%) scale(1) rotate(-3deg); }
-    100% { bottom: 80%; transform: translateX(-50%) scale(1.5) rotate(0deg); opacity: 0; }
-  }
-  .rocket-trail {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 0;
-    background: linear-gradient(to top, var(--gold), transparent);
-    z-index: 999;
-    pointer-events: none;
-    transition: all 0.3s;
-  }
-  .rocket-trail.active { height: 300px; animation: trailPulse 0.5s infinite alternate; }
-  @keyframes trailPulse { 0% { opacity: 0.4; height: 200px; } 100% { opacity: 1; height: 350px; } }
+  .screen { display:none; }
+  .screen.active { display:block; animation:fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
   .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Vazirmatn', sans-serif;
-    transition: all 0.3s;
-    text-align: center;
-    width: 100%;
+    display:inline-block; padding:8px 16px; border:none; border-radius:8px;
+    font-size:13px; font-weight:700; cursor:pointer;
+    font-family:'Vazirmatn',sans-serif; transition:all 0.3s; text-align:center; width:100%;
   }
-  .btn:hover { transform: scale(1.02); }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--teal), #00d4b8);
-    color: var(--bg);
+  .btn:hover { transform:scale(1.02); }
+  .btn-primary { background:linear-gradient(135deg,var(--teal),#00d4b8); color:var(--bg); }
+  .btn-secondary { background:var(--surface); border:2px solid var(--border); color:var(--text); }
+  .btn-secondary:hover { border-color:rgba(255,255,255,0.2); }
+  .btn-sm { padding:4px 10px; font-size:11px; width:auto; }
+  .btn-gold { background:var(--gold); color:var(--bg); }
+
+  .logo { text-align:center; margin-bottom:10px; }
+  .logo .icon { font-size:40px; display:block; }
+  .logo .title { font-size:22px; font-weight:900; background:linear-gradient(135deg,var(--teal),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .logo .sub { font-size:11px; color:var(--muted); }
+
+  .top-bar {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:8px; flex-wrap:wrap; gap:4px;
   }
-  .btn-secondary {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    color: var(--text);
+  .league-badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:4px 12px; border-radius:20px; font-weight:700; font-size:12px;
   }
-  .btn-secondary:hover { border-color: rgba(255,255,255,0.2); }
-  .btn-gold {
-    background: var(--gold);
-    color: var(--bg);
-  }
-  .btn-danger { background: var(--red); color: white; }
-  .btn-sm { padding: 6px 12px; font-size: 11px; width: auto; }
+  .league-bronze { background:rgba(205,127,50,0.2); color:#cd7f32; border:1px solid #cd7f32; }
+  .league-silver { background:rgba(192,192,192,0.2); color:#c0c0c0; border:1px solid #c0c0c0; }
+  .league-gold { background:rgba(255,215,0,0.2); color:#ffd700; border:1px solid #ffd700; }
+  .league-platinum { background:rgba(229,228,226,0.2); color:#e5e4e2; border:1px solid #e5e4e2; }
+  .league-diamond { background:rgba(185,242,255,0.2); color:#b9f2ff; border:1px solid #b9f2ff; }
 
   .mode-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    gap: 4px;
-    margin: 10px 0;
+    display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+    gap:4px; margin:8px 0;
   }
   .mode-btn {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 4px;
-    cursor: pointer;
-    text-align: center;
-    color: var(--muted);
-    font-family: 'Vazirmatn', sans-serif;
-    transition: all 0.3s;
-    font-size: 10px;
+    background:var(--card); border:2px solid var(--border); border-radius:8px;
+    padding:6px 2px; cursor:pointer; text-align:center;
+    color:var(--muted); font-family:'Vazirmatn',sans-serif; transition:all 0.3s; font-size:9px;
   }
-  .mode-btn:hover { border-color: rgba(255,255,255,0.2); }
-  .mode-btn.active {
-    border-color: var(--teal);
-    color: var(--text);
-    background: var(--teal-dim);
-  }
-  .mode-btn .icon { font-size: 18px; display: block; }
-  .mode-btn .label { font-size: 8px; font-weight: 600; }
+  .mode-btn:hover { border-color:rgba(255,255,255,0.2); }
+  .mode-btn.active { border-color:var(--teal); color:var(--text); background:var(--teal-dim); }
+  .mode-btn .icon { font-size:18px; display:block; }
+  .mode-btn .label { font-size:8px; font-weight:600; }
 
   .level-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin: 10px 0;
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:6px; margin:8px 0;
   }
   .level-card {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 8px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.3s;
+    background:var(--card); border:2px solid var(--border); border-radius:12px;
+    padding:10px 6px; cursor:pointer; text-align:center;
+    transition:all 0.3s;
   }
-  .level-card:hover { transform: translateY(-3px); border-color: var(--teal); }
-  .level-card .icon { font-size: 22px; display: block; }
-  .level-card .name { font-size: 12px; font-weight: 700; margin-top: 4px; }
-  .level-card .desc { font-size: 9px; color: var(--muted); }
+  .level-card:hover { transform:translateY(-3px); border-color:var(--teal); }
+  .level-card .icon { font-size:22px; display:block; }
+  .level-card .name { font-size:12px; font-weight:700; margin-top:4px; }
+  .level-card .desc { font-size:9px; color:var(--muted); }
   .level-card .badge {
-    display: inline-block;
-    font-size: 7px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-top: 4px;
-    background: var(--teal-dim);
-    color: var(--teal);
+    display:inline-block; font-size:7px; padding:2px 8px;
+    border-radius:20px; margin-top:4px;
+    background:var(--teal-dim); color:var(--teal);
   }
-  .level-card.locked { opacity: 0.5; cursor: not-allowed; }
-  .level-card.locked:hover { transform: none; }
 
   .extra-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 4px;
-    margin: 10px 0;
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:4px; margin:8px 0;
   }
   .extra-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 4px;
-    color: var(--muted);
-    font-size: 9px;
-    cursor: pointer;
-    text-align: center;
-    font-family: 'Vazirmatn', sans-serif;
-    transition: all 0.2s;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:8px; padding:6px 4px;
+    color:var(--muted); font-size:9px; cursor:pointer;
+    text-align:center; font-family:'Vazirmatn',sans-serif; transition:all 0.2s;
   }
-  .extra-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-  .extra-btn .icon { font-size: 16px; display: block; }
+  .extra-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
+  .extra-btn .icon { font-size:16px; display:block; }
 
-  /* ===== لیگ ===== */
-  .league-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 13px;
-  }
-  .league-bronze { background: rgba(205,127,50,0.2); color: #cd7f32; border: 1px solid #cd7f32; }
-  .league-silver { background: rgba(192,192,192,0.2); color: #c0c0c0; border: 1px solid #c0c0c0; }
-  .league-gold { background: rgba(255,215,0,0.2); color: #ffd700; border: 1px solid #ffd700; }
-  .league-platinum { background: rgba(229,228,226,0.2); color: #e5e4e2; border: 1px solid #e5e4e2; }
-  .league-diamond { background: rgba(185,242,255,0.2); color: #b9f2ff; border: 1px solid #b9f2ff; }
-
-  /* ===== ماموریت‌ها ===== */
-  .mission-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px;
-    margin: 8px 0;
-  }
-  .mission-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 8px;
-    background: var(--surface);
-    border-radius: 6px;
-    margin-bottom: 3px;
-    border: 1px solid var(--border);
-    font-size: 11px;
-  }
-  .mission-item.done { border-color: var(--teal); background: var(--teal-dim); }
-  .mission-item .bar {
-    width: 50px;
-    height: 3px;
-    background: var(--bg);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .mission-item .fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--gold));
-    border-radius: 3px;
-    transition: width 0.5s;
-  }
-
-  /* ===== دستاوردها ===== */
-  .achieve-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-    margin: 6px 0;
-  }
-  .achieve-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 6px;
-    background: var(--surface);
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 9px;
-  }
-  .achieve-item.done { border-color: var(--teal); background: var(--teal-dim); }
-
-  /* ===== دوئل ===== */
-  .duel-box {
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 10px;
-    border: 1px solid var(--border);
-    margin: 8px 0;
-  }
-  .duel-players {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  .duel-player {
-    flex: 1;
-    text-align: center;
-    padding: 6px;
-    border-radius: 8px;
-    background: var(--card);
-    border: 2px solid var(--border);
-    transition: all 0.3s;
-  }
-  .duel-player.active { border-color: var(--teal); background: var(--teal-dim); }
-  .duel-player.robot-active { border-color: var(--duel-blue); background: var(--duel-blue-dim); }
-  .duel-player.winner { border-color: var(--gold); background: var(--gold-dim); }
-  .duel-player.loser { border-color: var(--red); background: var(--red-dim); }
-  .duel-player .avatar { font-size: 28px; display: block; }
-  .duel-player .name { font-size: 10px; font-weight: 700; }
-  .duel-player .answer { font-size: 18px; font-weight: 700; margin-top: 4px; }
-  .duel-vs { font-size: 18px; font-weight: 900; color: var(--gold); }
-  .duel-score {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    font-size: 12px;
-    font-weight: 700;
-    margin: 6px 0;
-  }
-  .duel-score .p-score { color: var(--teal); }
-  .duel-score .r-score { color: var(--duel-blue); }
-
-  /* ===== گواهینامه ===== */
-  .cert-preview {
-    max-width: 100%;
-    border-radius: 12px;
-    border: 2px solid var(--border);
-  }
-  .cert-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
-  .cert-actions button { flex: 1; padding: 6px; font-size: 10px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Vazirmatn', sans-serif; font-weight: 700; }
-
-  /* ===== بازی ===== */
   .game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 4px;
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:8px; flex-wrap:wrap; gap:4px;
   }
   .game-stats {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
+    display:flex; gap:4px; flex-wrap:wrap;
   }
   .stat-chip {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2px 8px;
-    font-size: 9px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 3px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:20px; padding:2px 8px;
+    font-size:9px; font-weight:700; display:flex; align-items:center; gap:3px;
   }
-  .stat-chip .heart { color: var(--red); }
-  .timer { transition: all 0.3s; }
-  .timer.urgent { color: var(--red); animation: pulse 0.5s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .stat-chip .heart { color:var(--red); }
+  .stat-chip .timer { transition:all 0.3s; }
+  .stat-chip .timer.urgent { color:var(--red); animation:pulse 0.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
   .question-box {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    text-align: center;
-    margin: 10px 0;
-    min-height: 80px;
-    transition: all 0.3s;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:var(--radius); padding:14px;
+    text-align:center; margin:8px 0; min-height:80px;
+    transition:all 0.3s;
   }
-  .question-box.correct { border-color: var(--teal); }
-  .question-box.wrong { border-color: var(--red); }
-  .question-box .q-label { font-size: 9px; color: var(--muted); }
+  .question-box.correct { border-color:var(--teal); }
+  .question-box.wrong { border-color:var(--red); }
+  .question-box .q-label { font-size:9px; color:var(--muted); }
   .question-box .q-eq {
-    font-size: 24px;
-    font-weight: 900;
-    direction: ltr;
-    font-family: 'Times New Roman', serif;
-    margin: 6px 0;
+    font-size:24px; font-weight:900;
+    direction:ltr; font-family:'Times New Roman',serif;
+    margin:4px 0;
   }
-  .question-box .q-hint { font-size: 11px; color: var(--muted); }
+  .question-box .q-hint { font-size:11px; color:var(--muted); }
 
   .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin: 10px 0;
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:6px; margin:8px 0;
   }
   .option-btn {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Vazirmatn', sans-serif;
-    color: var(--text);
-    transition: all 0.3s;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:8px; padding:10px;
+    font-size:14px; font-weight:700; cursor:pointer;
+    font-family:'Vazirmatn',sans-serif; color:var(--text);
+    transition:all 0.3s;
   }
-  .option-btn:hover { border-color: var(--teal); background: var(--teal-dim); }
-  .option-btn.selected { border-color: var(--gold); background: var(--gold-dim); }
-  .option-btn.correct { border-color: var(--teal); background: var(--teal-dim); }
-  .option-btn.wrong { border-color: var(--red); background: var(--red-dim); }
-  .option-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .option-btn:hover { border-color:var(--teal); background:var(--teal-dim); }
+  .option-btn.selected { border-color:var(--gold); background:var(--gold-dim); }
+  .option-btn.correct { border-color:var(--teal); background:var(--teal-dim); }
+  .option-btn.wrong { border-color:var(--red); background:var(--red-dim); }
+  .option-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
   .numpad-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    margin: 8px 0;
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:4px; margin:8px 0;
   }
   .num-key {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    color: var(--text);
-    font-family: 'Vazirmatn', sans-serif;
-    transition: all 0.15s;
-    text-align: center;
+    background:var(--card); border:1.5px solid var(--border);
+    border-radius:6px; padding:10px;
+    font-size:16px; font-weight:700; cursor:pointer;
+    color:var(--text); font-family:'Vazirmatn',sans-serif;
+    transition:all 0.15s; text-align:center;
   }
-  .num-key:active { transform: scale(0.92); }
-  .num-key.del { background: var(--gold-dim); color: var(--gold); }
-  .num-key.minus { background: var(--pink-dim); color: var(--pink); }
-  .num-key.check { background: var(--teal); color: var(--bg); font-size: 18px; }
-  .num-key.check:disabled { opacity: 0.4; cursor: not-allowed; }
-  .num-key.zero { grid-column: span 2; }
+  .num-key:active { transform:scale(0.92); }
+  .num-key.del { background:var(--gold-dim); color:var(--gold); }
+  .num-key.minus { background:var(--pink-dim); color:var(--pink); }
+  .num-key.check { background:var(--teal); color:var(--bg); font-size:18px; }
+  .num-key.check:disabled { opacity:0.4; cursor:not-allowed; }
+  .num-key.zero { grid-column:span 2; }
 
   .display-box {
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-    direction: ltr;
-    font-family: 'Courier New', monospace;
-    min-height: 38px;
-    margin-bottom: 6px;
+    background:var(--bg); border:2px solid var(--border);
+    border-radius:8px; padding:8px 12px;
+    font-size:20px; font-weight:700; text-align:center;
+    direction:ltr; font-family:'Courier New',monospace;
+    min-height:38px; margin-bottom:6px;
   }
-  .display-box .placeholder { color: var(--muted); font-size: 13px; }
+  .display-box .placeholder { color:var(--muted); font-size:13px; }
 
   .feedback {
-    padding: 10px;
-    border-radius: 8px;
-    margin: 8px 0;
-    display: none;
-    font-size: 12px;
-    line-height: 1.6;
+    padding:10px; border-radius:8px;
+    margin:8px 0; display:none;
+    font-size:12px; line-height:1.6;
   }
-  .feedback.show { display: block; }
-  .feedback.correct { background: var(--teal-dim); border: 2px solid rgba(0,245,212,0.25); }
-  .feedback.wrong { background: var(--red-dim); border: 2px solid rgba(255,71,87,0.25); }
-  .feedback .steps { 
-    font-size: 10px; 
-    direction: ltr; 
-    text-align: left; 
-    background: rgba(0,0,0,0.2); 
-    padding: 4px 8px; 
-    border-radius: 6px; 
-    margin-top: 4px;
+  .feedback.show { display:block; }
+  .feedback.correct { background:var(--teal-dim); border:2px solid rgba(0,245,212,0.25); }
+  .feedback.wrong { background:var(--red-dim); border:2px solid rgba(255,71,87,0.25); }
+  .feedback .steps {
+    font-size:10px; direction:ltr; text-align:left;
+    background:rgba(0,0,0,0.15); padding:4px 8px;
+    border-radius:6px; margin-top:4px;
   }
 
   .result-box {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    text-align: center;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:var(--radius); padding:16px;
+    text-align:center;
   }
-  .result-box .trophy { font-size: 48px; }
-  .result-box .title { font-size: 20px; font-weight: 900; margin: 4px 0; }
-  .result-box .subtitle { font-size: 12px; color: var(--muted); }
+  .result-box .trophy { font-size:48px; }
+  .result-box .title { font-size:20px; font-weight:900; margin:4px 0; }
+  .result-box .subtitle { font-size:12px; color:var(--muted); }
   .result-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 4px;
-    margin: 10px 0;
+    display:grid; grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:4px; margin:8px 0;
   }
   .result-stat {
-    background: var(--surface);
-    border-radius: 8px;
-    padding: 6px;
-    border: 1px solid var(--border);
+    background:var(--surface); border-radius:8px;
+    padding:6px; border:1px solid var(--border);
   }
-  .result-stat .num { font-size: 18px; font-weight: 900; }
-  .result-stat .label { font-size: 8px; color: var(--muted); }
+  .result-stat .num { font-size:18px; font-weight:900; }
+  .result-stat .label { font-size:8px; color:var(--muted); }
 
-  /* ===== AI ===== */
+  .duel-box {
+    background:var(--surface); border-radius:12px;
+    padding:10px; border:1px solid var(--border);
+    margin:8px 0;
+  }
+  .duel-players {
+    display:flex; gap:8px; align-items:center;
+  }
+  .duel-player {
+    flex:1; text-align:center; padding:6px;
+    border-radius:8px; background:var(--card);
+    border:2px solid var(--border); transition:all 0.3s;
+  }
+  .duel-player.active { border-color:var(--teal); background:var(--teal-dim); }
+  .duel-player.robot-active { border-color:var(--duel-blue); background:var(--duel-blue-dim); }
+  .duel-player.winner { border-color:var(--gold); background:var(--gold-dim); }
+  .duel-player.loser { border-color:var(--red); background:var(--red-dim); }
+  .duel-player .avatar { font-size:28px; display:block; }
+  .duel-player .name { font-size:10px; font-weight:700; }
+  .duel-player .answer { font-size:18px; font-weight:700; margin-top:4px; }
+  .duel-vs { font-size:18px; font-weight:900; color:var(--gold); }
+  .duel-score {
+    display:flex; justify-content:center; gap:16px;
+    font-size:12px; font-weight:700; margin:6px 0;
+  }
+  .duel-score .p-score { color:var(--teal); }
+  .duel-score .r-score { color:var(--duel-blue); }
+  .duel-result {
+    text-align:center; font-size:16px; font-weight:700;
+    margin-top:4px; display:none;
+  }
+  .duel-result.win { color:var(--teal); }
+  .duel-result.lose { color:var(--red); }
+  .duel-result.draw { color:var(--gold); }
+
   .ai-chat {
-    background: var(--bg);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    padding: 10px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 8px;
+    background:var(--bg); border-radius:10px;
+    border:1px solid var(--border); padding:10px;
+    max-height:200px; overflow-y:auto; margin-bottom:8px;
   }
   .ai-msg {
-    display: flex;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    margin-bottom: 4px;
-    font-size: 12px;
-    line-height: 1.6;
+    display:flex; gap:6px; padding:6px 10px;
+    border-radius:8px; margin-bottom:4px;
+    font-size:12px; line-height:1.6;
   }
-  .ai-msg.user { background: var(--teal-dim); justify-content: flex-end; }
-  .ai-msg.bot { background: var(--surface); border: 1px solid var(--border); }
-  .ai-msg .avatar { font-size: 18px; }
+  .ai-msg.user { background:var(--teal-dim); justify-content:flex-end; }
+  .ai-msg.bot { background:var(--surface); border:1px solid var(--border); }
+  .ai-msg .avatar { font-size:18px; }
   .ai-input-row {
-    display: flex;
-    gap: 6px;
+    display:flex; gap:6px;
   }
   .ai-input-row input {
-    flex: 1;
-    padding: 6px 10px;
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 12px;
-    font-family: 'Vazirmatn', sans-serif;
-    outline: none;
-    direction: rtl;
+    flex:1; padding:6px 10px;
+    background:var(--bg); border:2px solid var(--border);
+    border-radius:8px; color:var(--text);
+    font-size:12px; font-family:'Vazirmatn',sans-serif;
+    outline:none; direction:rtl;
   }
-  .ai-input-row input:focus { border-color: var(--teal); }
+  .ai-input-row input:focus { border-color:var(--teal); }
   .ai-input-row button {
-    padding: 6px 14px;
-    border-radius: 8px;
-    background: var(--teal);
-    color: var(--bg);
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Vazirmatn', sans-serif;
+    padding:6px 14px; border-radius:8px;
+    background:var(--teal); color:var(--bg);
+    border:none; font-weight:700; cursor:pointer;
+    font-family:'Vazirmatn',sans-serif;
   }
   .ai-quick {
-    display: flex;
-    gap: 3px;
-    flex-wrap: wrap;
-    margin-top: 6px;
+    display:flex; gap:3px; flex-wrap:wrap; margin-top:6px;
   }
   .ai-quick button {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 3px 10px;
-    font-size: 8px;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: 'Vazirmatn', sans-serif;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:3px 10px;
+    font-size:8px; color:var(--muted); cursor:pointer;
+    font-family:'Vazirmatn',sans-serif;
   }
-  .ai-quick button:hover { border-color: var(--teal); color: var(--text); }
+  .ai-quick button:hover { border-color:var(--teal); color:var(--text); }
 
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);
+    z-index:1000; display:none;
+    align-items:center; justify-content:center; padding:16px;
   }
-  .modal-overlay.show { display: flex; }
+  .modal-overlay.show { display:flex; }
   .modal-box {
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    max-width: 400px;
-    width: 100%;
-    animation: fadeIn 0.3s ease;
-    max-height: 90vh;
-    overflow-y: auto;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:var(--radius); padding:20px;
+    max-width:400px; width:100%; max-height:90vh; overflow-y:auto;
   }
 
-  .theme-selector {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 6px 0;
-  }
-  .theme-opt {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 3px solid var(--border);
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .theme-opt:hover { transform: scale(1.1); }
-  .theme-opt.active { border-color: var(--gold); }
-  .theme-opt.default { background: #0a0a1a; }
-  .theme-opt.nature { background: #0f1f0f; }
-  .theme-opt.ocean { background: #0a1a2a; }
-  .theme-opt.galaxy { background: #0a0a2a; }
-  .theme-opt.sunset { background: #1a0a0a; }
+  .cert-preview { max-width:100%; border-radius:12px; border:2px solid var(--border); }
+  .cert-actions { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .cert-actions button { flex:1; padding:6px; font-size:10px; border-radius:8px; border:none; cursor:pointer; font-family:'Vazirmatn',sans-serif; font-weight:700; }
 
-  @media (max-width: 480px) {
-    .mode-grid { grid-template-columns: 1fr 1fr 1fr; }
-    .level-grid { grid-template-columns: 1fr 1fr; }
-    .options-grid { grid-template-columns: 1fr 1fr; }
-    .result-stats { grid-template-columns: 1fr 1fr; }
-    .extra-grid { grid-template-columns: 1fr 1fr; }
-    .app { padding: 12px; }
-    .duel-players { flex-direction: column; }
-    .duel-vs { padding: 4px 0; }
+  .rocket-container {
+    position:fixed; bottom:-100px; left:50%; transform:translateX(-50%);
+    z-index:1000; pointer-events:none; font-size:60px; opacity:0;
+    transition:all 0.8s;
+  }
+  .rocket-container.launch { bottom:50%; opacity:1; animation:rocketLaunch 1.5s forwards; }
+  @keyframes rocketLaunch {
+    0%{bottom:20%;transform:translateX(-50%) scale(0.5) rotate(-10deg);opacity:1}
+    30%{transform:translateX(-50%) scale(1.2) rotate(5deg)}
+    60%{transform:translateX(-50%) scale(1) rotate(-3deg)}
+    100%{bottom:80%;transform:translateX(-50%) scale(1.5) rotate(0deg);opacity:0}
+  }
+  .rocket-trail {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:4px; height:0;
+    background:linear-gradient(to top,var(--gold),transparent);
+    z-index:999; pointer-events:none; transition:all 0.3s;
+  }
+  .rocket-trail.active { height:300px; animation:trailPulse 0.5s infinite alternate; }
+  @keyframes trailPulse { 0%{opacity:0.4;height:200px} 100%{opacity:1;height:350px} }
+
+  .mission-box {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:10px; margin:8px 0;
+  }
+  .mission-item {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:4px 8px; background:var(--surface);
+    border-radius:6px; margin-bottom:3px;
+    border:1px solid var(--border); font-size:11px;
+  }
+  .mission-item.done { border-color:var(--teal); background:var(--teal-dim); }
+  .mission-item .bar { width:50px; height:3px; background:var(--bg); border-radius:3px; overflow:hidden; }
+  .mission-item .fill { height:100%; background:linear-gradient(90deg,var(--teal),var(--gold)); border-radius:3px; transition:width 0.5s; }
+
+  .achieve-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:4px; margin:6px 0;
+  }
+  .achieve-item {
+    display:flex; align-items:center; gap:4px;
+    padding:4px 6px; background:var(--surface);
+    border-radius:6px; border:1px solid var(--border); font-size:9px;
+  }
+  .achieve-item.done { border-color:var(--teal); background:var(--teal-dim); }
+
+  @media (max-width:480px) {
+    .mode-grid { grid-template-columns:1fr 1fr 1fr; }
+    .level-grid { grid-template-columns:1fr 1fr; }
+    .options-grid { grid-template-columns:1fr 1fr; }
+    .result-stats { grid-template-columns:1fr 1fr; }
+    .extra-grid { grid-template-columns:1fr 1fr; }
+    .app { padding:12px; }
+    .duel-players { flex-direction:column; }
+    .duel-vs { padding:4px 0; }
   }
 </style>
 </head>
@@ -652,20 +374,18 @@
 
 <div class="app">
 
-  <!-- ===== HOME SCREEN ===== -->
+  <!-- ===== HOME ===== -->
   <div class="screen active" id="homeScreen">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <div style="display:flex;gap:4px;">
-        <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">🌓</button>
-        <button class="btn btn-secondary btn-sm" onclick="toggleMusic()">🔊</button>
-      </div>
+    <div class="top-bar">
+      <button class="btn btn-secondary btn-sm" onclick="toggleMusic()">🔊</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">🌓</button>
       <div id="leagueDisplay"></div>
     </div>
 
-    <div class="logo" style="text-align:center;margin-bottom:8px;">
-      <div style="font-size:40px;">⚡</div>
-      <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--teal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Math Game</div>
-      <div style="font-size:11px;color:var(--muted);">بازی ریاضی هوشمند</div>
+    <div class="logo">
+      <span class="icon">⚡</span>
+      <div class="title">Math Game</div>
+      <div class="sub">بازی ریاضی هوشمند</div>
     </div>
 
     <div class="mode-grid">
@@ -688,7 +408,6 @@
 
     <div class="level-grid" id="levelGrid"></div>
 
-    <!-- ماموریت‌ها -->
     <div class="mission-box" id="missionBox">
       <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;">
         <span>🎯 ماموریت‌ها</span>
@@ -708,7 +427,7 @@
     </div>
   </div>
 
-  <!-- ===== AI SCREEN ===== -->
+  <!-- ===== AI ===== -->
   <div class="screen" id="aiScreen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
@@ -733,7 +452,7 @@
     </div>
   </div>
 
-  <!-- ===== PROFILE SCREEN ===== -->
+  <!-- ===== PROFILE ===== -->
   <div class="screen" id="profileScreen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
@@ -742,7 +461,7 @@
     </div>
     <div class="result-box">
       <div style="font-size:40px;">🧑‍🎓</div>
-      <div style="font-size:16px;font-weight:700;" id="profileName">میهمان</div>
+      <div style="font-size:16px;font-weight:700;" id="profileName">کاربر</div>
       <div id="profileLeague" style="margin:4px 0;"></div>
       <div class="result-stats">
         <div class="result-stat"><div class="num" id="pCorrect">0</div><div class="label">✅ صحیح</div></div>
@@ -750,14 +469,11 @@
         <div class="result-stat"><div class="num" id="pGames">0</div><div class="label">🎮 بازی</div></div>
         <div class="result-stat"><div class="num" id="pAccuracy">0%</div><div class="label">🎯 دقت</div></div>
       </div>
-      
-      <!-- دستاوردها -->
       <div style="margin:8px 0;text-align:right;">
         <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;">🏆 دستاوردها</div>
         <div class="achieve-grid" id="achieveList"></div>
       </div>
-
-      <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:4px;">📜 دریافت گواهینامه</button>
+      <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:4px;">📜 گواهینامه</button>
       <button class="btn btn-secondary" onclick="resetStats()" style="margin-top:4px;">🔄 ریست آمار</button>
     </div>
   </div>
@@ -794,7 +510,7 @@
     </div>
   </div>
 
-  <!-- ===== GAME SCREEN ===== -->
+  <!-- ===== GAME ===== -->
   <div class="screen" id="gameScreen">
     <div class="game-header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">🏠 برگشت</button>
@@ -804,7 +520,7 @@
         <span class="stat-chip">✅ <span id="correctCount">0</span></span>
         <span class="stat-chip">❌ <span id="wrongCount">0</span></span>
         <span class="stat-chip">🔥 <span id="comboCount">0</span></span>
-        <span class="stat-chip timer" id="timerDisplay">⏱ 30</span>
+        <span class="stat-chip"><span class="timer" id="timerDisplay">⏱ 30</span></span>
       </div>
     </div>
 
@@ -819,7 +535,6 @@
       <div class="q-hint" id="qHint">مقدار x را پیدا کن</div>
     </div>
 
-    <!-- دوئل -->
     <div id="duelContainer" style="display:none;">
       <div class="duel-score">
         <span class="p-score">👤 شما: <span id="duelPlayerScore">0</span></span>
@@ -838,7 +553,7 @@
           <div class="answer" id="duelRobotAnswer">❓</div>
         </div>
       </div>
-      <div id="duelResult" style="text-align:center;font-size:16px;font-weight:700;margin-top:4px;display:none;"></div>
+      <div id="duelResult" class="duel-result"></div>
     </div>
 
     <div id="inputArea"></div>
@@ -851,7 +566,7 @@
     <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" style="display:none;">➡️ سوال بعدی</button>
   </div>
 
-  <!-- ===== RESULT SCREEN ===== -->
+  <!-- ===== RESULT ===== -->
   <div class="screen" id="resultScreen">
     <div class="result-box">
       <div class="trophy" id="resultTrophy">🏆</div>
@@ -865,7 +580,7 @@
         <div class="result-stat"><div class="num" id="rStreak">0</div><div class="label">🔥 زنجیره</div></div>
       </div>
       <div style="font-size:11px;color:var(--muted);" id="resultDetails"></div>
-      <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:6px;">📜 دریافت گواهینامه</button>
+      <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:6px;">📜 گواهینامه</button>
       <div style="display:flex;gap:6px;margin-top:6px;">
         <button class="btn btn-primary" onclick="restartGame()">🔄 دوباره</button>
         <button class="btn btn-secondary" onclick="goHome()">🏠 منو</button>
@@ -884,6 +599,8 @@ class SoundSystem {
     this.ctx = null;
     this.volume = 0.5;
     this.isMuted = false;
+    this.isMusicPlaying = false;
+    this.musicInterval = null;
   }
   init() {
     try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -908,12 +625,35 @@ class SoundSystem {
   levelUp() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.play(f,0.15),i*120)); }
   rocket() { [523,659,784,1047,1318].forEach((f,i)=>setTimeout(()=>this.play(f,0.1),i*80)); }
   achievement() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.play(f,0.12),i*100)); }
+  startMusic() {
+    if (this.isMusicPlaying || this.isMuted) return;
+    this.isMusicPlaying = true;
+    this.playMusicLoop();
+  }
+  playMusicLoop() {
+    if (!this.isMusicPlaying || this.isMuted) return;
+    const notes = [523,587,659,523];
+    this.play(notes[this.musicIndex % notes.length], 0.3);
+    this.musicIndex = (this.musicIndex || 0) + 1;
+    this.musicInterval = setTimeout(()=>this.playMusicLoop(), 400);
+  }
+  stopMusic() {
+    this.isMusicPlaying = false;
+    if (this.musicInterval) { clearTimeout(this.musicInterval); this.musicInterval = null; }
+  }
 }
 const sound = new SoundSystem();
+let musicIndex = 0;
 
 function toggleMusic() {
   sound.isMuted = !sound.isMuted;
-  document.querySelector('#homeScreen .btn-secondary:first-child').textContent = sound.isMuted ? '🔇' : '🔊';
+  const btn = document.querySelector('.top-bar .btn:first-child');
+  if (btn) btn.textContent = sound.isMuted ? '🔇' : '🔊';
+  if (!sound.isMuted && !sound.isMusicPlaying) {
+    sound.startMusic();
+  } else if (sound.isMuted) {
+    sound.stopMusic();
+  }
 }
 
 // ============================================
@@ -936,38 +676,24 @@ function fireRocket() {
 // ============================================
 // 🎨 THEME SYSTEM
 // ============================================
-function applyTheme(name) {
-  document.body.className = document.body.className.split(' ').filter(c => !c.startsWith('theme-')).join(' ');
-  if (name !== 'default') document.body.classList.add('theme-' + name);
-  localStorage.setItem('mathTheme', name);
-  document.querySelectorAll('.theme-opt').forEach(el => {
-    el.classList.toggle('active', el.className.includes(name) || (name === 'default' && el.className.includes('default')));
-  });
-}
-function loadTheme() {
-  try { applyTheme(localStorage.getItem('mathTheme') || 'default'); } catch(e) {}
-}
-loadTheme();
-
 function toggleTheme() {
-  const themes = ['default', 'nature', 'ocean', 'galaxy', 'sunset'];
-  const current = document.body.className.match(/theme-(\w+)/)?.[1] || 'default';
-  const idx = (themes.indexOf(current) + 1) % themes.length;
-  applyTheme(themes[idx]);
+  document.body.style.background = document.body.style.background === '#f0f4ff' ? '' : '#f0f4ff';
+  document.body.style.color = document.body.style.color === '#1a1a2e' ? '' : '#1a1a2e';
+  const btn = document.querySelector('.top-bar .btn:nth-child(2)');
+  if (btn) btn.textContent = document.body.style.background === '#f0f4ff' ? '🌙' : '🌓';
 }
 
 // ============================================
 // 🏆 ACHIEVEMENTS
 // ============================================
 const achievements = {
-  firstWin: { name: '🎯 اولین برد', desc: 'یک بازی را کامل کن', unlocked: false },
-  combo3: { name: '🔥 کامبو ۳', desc: '۳ پاسخ پیاپی صحیح', unlocked: false },
-  combo5: { name: '⭐ کامبو ۵', desc: '۵ پاسخ پیاپی صحیح', unlocked: false },
-  perfect: { name: '💎 بدون خطا', desc: 'یک بازی بدون پاسخ غلط', unlocked: false },
-  speedster: { name: '⚡ استاد سرعت', desc: '۱۰ پاسخ صحیح در حالت سرعتی', unlocked: false },
-  duelMaster: { name: '⚔️ سلطان دوئل', desc: '۳ دوئل را ببر', unlocked: false },
-  rocketMan: { name: '🚀 افسانه موشک', desc: '۵ موشک پرتاب کن', unlocked: false },
-  mathWizard: { name: '🧙 نابغه ریاضی', desc: '۱۰۰ سوال حل کن', unlocked: false }
+  firstWin: { name: '🎯 اولین برد', unlocked: false },
+  combo3: { name: '🔥 کامبو ۳', unlocked: false },
+  combo5: { name: '⭐ کامبو ۵', unlocked: false },
+  perfect: { name: '💎 بدون خطا', unlocked: false },
+  speedster: { name: '⚡ استاد سرعت', unlocked: false },
+  duelMaster: { name: '⚔️ سلطان دوئل', unlocked: false },
+  rocketMan: { name: '🚀 افسانه موشک', unlocked: false }
 };
 let rocketCount = 0;
 
@@ -1016,9 +742,6 @@ function checkAchievements() {
   if (rocketCount >= 5 && !achievements.rocketMan.unlocked) {
     achievements.rocketMan.unlocked = true; sound.achievement(); showToast('🚀 افسانه موشک!');
   }
-  if (state.totalCorrect >= 100 && !achievements.mathWizard.unlocked) {
-    achievements.mathWizard.unlocked = true; sound.achievement(); showToast('🧙 نابغه ریاضی!');
-  }
   saveAchievements();
 }
 
@@ -1034,7 +757,7 @@ function updateAchieveUI() {
 
 function showToast(msg) {
   const el = document.createElement('div');
-  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--gold);border-radius:12px;padding:16px 24px;font-size:20px;font-weight:700;z-index:1000;text-align:center;animation:fadeIn 0.3s ease;box-shadow:var(--shadow);';
+  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--gold);border-radius:12px;padding:16px 24px;font-size:18px;font-weight:700;z-index:1000;text-align:center;animation:fadeIn 0.3s ease;box-shadow:var(--shadow);';
   el.textContent = '🏆 ' + msg;
   document.body.appendChild(el);
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'all 0.5s'; }, 1500);
@@ -1073,10 +796,10 @@ function updateLeagueUI() {
 // 🎯 MISSIONS
 // ============================================
 const missions = {
-  solve10: { name: '📝 ۱۰ سوال', desc: '۱۰ سوال حل کن', target: 10, progress: 0, done: false },
-  perfectRound: { name: '🎯 بدون خطا', desc: 'یک دور کامل بدون غلط', target: 1, progress: 0, done: false },
-  combo5: { name: '🔥 کامبو ۵', desc: '۵ پاسخ پیاپی صحیح', target: 5, progress: 0, done: false },
-  speed5: { name: '⚡ سرعت', desc: '۵ پاسخ در حالت سرعتی', target: 5, progress: 0, done: false }
+  solve10: { name: '📝 ۱۰ سوال', target: 10, progress: 0, done: false },
+  perfectRound: { name: '🎯 بدون خطا', target: 1, progress: 0, done: false },
+  combo5: { name: '🔥 کامبو ۵', target: 5, progress: 0, done: false },
+  speed5: { name: '⚡ سرعت', target: 5, progress: 0, done: false }
 };
 
 function loadMissions() {
@@ -1139,7 +862,7 @@ function renderMissions() {
 }
 
 // ============================================
-// 🏆 LEADERBOARD (Local)
+// 🏆 LEADERBOARD
 // ============================================
 function saveLeaderboard(level) {
   const score = state.totalCorrect * 2 - state.totalWrong;
@@ -1308,46 +1031,59 @@ function askAI() {
 
 function quickAI(q) { document.getElementById('aiInput').value = q; askAI(); }
 
-function generateAIResponse(q) {
-  const question = q.toLowerCase().trim();
+function generateAIResponse(question) {
+  const q = question.toLowerCase().trim();
   
-  const linearMatch = question.match(/([+-]?\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*([+-]?\s*\d*\.?\d*)/);
+  const linearMatch = q.match(/([+-]?\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*([+-]?\s*\d*\.?\d*)/);
   if (linearMatch) {
     let a = parseFloat(linearMatch[1] || '1');
     let b = parseFloat(linearMatch[2] || '0');
     let c = parseFloat(linearMatch[3] || '0');
     if (a === 0) return '⚠️ معادله معتبر نیست';
     const x = (c - b) / a;
-    return `<strong>📐 حل معادله</strong><br>${a}x + (${b}) = ${c}<br>➡️ x = ${x.toFixed(3)}`;
+    return `<strong>📐 حل معادله</strong><br>${a}x + (${b}) = ${c}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span>`;
   }
   
-  if (question.includes('x²') || question.includes('x^2')) {
-    const match = question.match(/([+-]?\d*\.?\d*)?\s*x²\s*([+-]?\s*\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*0/);
+  if (q.includes('x²') || q.includes('x^2')) {
+    const match = q.match(/([+-]?\d*\.?\d*)?\s*x²\s*([+-]?\s*\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*0/);
     let a = parseFloat(match?.[1] || '1');
     let b = parseFloat(match?.[2] || '0');
     let c = parseFloat(match?.[3] || '0');
     const disc = b*b - 4*a*c;
-    if (disc < 0) return `🧮 Δ = ${disc}<br>❌ ریشه حقیقی ندارد`;
+    if (disc < 0) return `<strong>🧮 معادله درجه دو</strong><br>${a}x² + ${b}x + ${c} = 0<br>❌ ریشه حقیقی ندارد (Δ = ${disc})`;
     const sqrtDisc = Math.sqrt(disc);
     const x1 = (-b + sqrtDisc) / (2*a);
     const x2 = (-b - sqrtDisc) / (2*a);
-    return `<strong>🧮 حل معادله درجه دو</strong><br>${a}x² + ${b}x + ${c} = 0<br>➡️ x₁ = ${x1.toFixed(3)}<br>➡️ x₂ = ${x2.toFixed(3)}`;
+    return `<strong>🧮 حل معادله درجه دو</strong><br>${a}x² + ${b}x + ${c} = 0<br>➡️ x₁ = <span style="color:var(--teal);font-weight:700;">${x1.toFixed(3)}</span><br>➡️ x₂ = <span style="color:var(--teal);font-weight:700;">${x2.toFixed(3)}</span>`;
   }
   
-  if (question.includes('مشتق')) {
-    return `<strong>📖 مشتق</strong><br>مشتق = نرخ تغییر تابع<br>f'(x) = lim (f(x+h)-f(x))/h<br>• (xⁿ)' = n·xⁿ⁻¹<br>• (sin x)' = cos x<br>• (eˣ)' = eˣ`;
+  if (q.includes('سیستم') && q.includes('y')) {
+    const nums = q.match(/([+-]?\d*\.?\d+)/g);
+    if (nums && nums.length >= 6) {
+      const a1 = parseFloat(nums[0] || '1'), b1 = parseFloat(nums[1] || '1'), c1 = parseFloat(nums[2] || '0');
+      const a2 = parseFloat(nums[3] || '1'), b2 = parseFloat(nums[4] || '1'), c2 = parseFloat(nums[5] || '0');
+      const det = a1*b2 - a2*b1;
+      if (Math.abs(det) < 0.001) return '⚠️ دستگاه منحصربه‌فرد نیست';
+      const x = (c1*b2 - c2*b1) / det;
+      const y = (a1*c2 - a2*c1) / det;
+      return `<strong>📊 حل دستگاه</strong><br>📌 ${a1}x + ${b1}y = ${c1}<br>📌 ${a2}x + ${b2}y = ${c2}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span><br>➡️ y = <span style="color:var(--teal);font-weight:700;">${y.toFixed(3)}</span>`;
+    }
   }
   
-  if (question.includes('انتگرال')) {
-    return `<strong>📖 انتگرال</strong><br>انتگرال = مساحت زیر منحنی<br>• ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C<br>• ∫ sin x dx = -cos x + C<br>• ∫ eˣ dx = eˣ + C`;
+  if (q.includes('مشتق') || q.includes('مفهوم مشتق')) {
+    return `<strong>📖 مفهوم مشتق</strong><br>مشتق = نرخ تغییر تابع<br>🔹 f'(x) = lim (f(x+h)-f(x))/h<br>🔹 (xⁿ)' = n·xⁿ⁻¹<br>🔹 (sin x)' = cos x<br>🔹 (eˣ)' = eˣ`;
   }
   
-  if (question.includes('چالش')) {
-    const a = randInt(2, 5), b = randInt(1, 4), c = randInt(1, 3);
-    return `<strong>🏆 سوال چالش</strong><br>${a}x + ${b} = ${c}x + ${b + a + c}<br>➡️ x = ${a + c}`;
+  if (q.includes('انتگرال') || q.includes('مفهوم انتگرال')) {
+    return `<strong>📖 مفهوم انتگرال</strong><br>انتگرال = مساحت زیر منحنی<br>🔹 ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C<br>🔹 ∫ sin x dx = -cos x + C<br>🔹 ∫ eˣ dx = eˣ + C`;
   }
   
-  return `<strong>🤖 پاسخ</strong><br>سوال شما: "${q}"<br>من می‌توانم معادلات خطی، درجه دو، مشتق، انتگرال را حل کنم.<br>💡 سوال خود را دقیق‌تر بپرسید.`;
+  if (q.includes('چالش') || q.includes('چالش‌برانگیز')) {
+    const a = randInt(2,5), b = randInt(1,4), c = randInt(1,3);
+    return `<strong>🏆 سوال چالش‌برانگیز</strong><br>📌 ${a}x + ${b} = ${c}x + ${b + a + c}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${a + c}</span>`;
+  }
+  
+  return `<strong>🤖 پاسخ هوش مصنوعی</strong><br>سوال شما: "${question}"<br>من می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال را حل کنم.<br>💡 سوال خود را دقیق‌تر بپرسید.`;
 }
 
 // ============================================
@@ -1371,13 +1107,11 @@ const state = {
   timerInterval: null,
   selectedOption: -1,
   numpadValue: '',
-  // آمار
   totalCorrect: 0,
   totalWrong: 0,
   totalPlayed: 0,
   speedCorrect: 0,
   duelWins: 0,
-  // دوئل
   isDuel: false,
   duelRound: 0,
   duelTotal: 5,
@@ -1484,14 +1218,12 @@ function buildLevelMenu() {
   ];
   let html = '';
   levels.forEach(l => {
-    html += `
-      <div class="level-card" onclick="startGame('${l.id}')">
-        <span class="icon">${l.icon}</span>
-        <div class="name">${l.name}</div>
-        <div class="desc">${l.desc}</div>
-        <div class="badge">⭐ شروع</div>
-      </div>
-    `;
+    html += `<div class="level-card" onclick="startGame('${l.id}')">
+      <span class="icon">${l.icon}</span>
+      <div class="name">${l.name}</div>
+      <div class="desc">${l.desc}</div>
+      <div class="badge">⭐ شروع</div>
+    </div>`;
   });
   grid.innerHTML = html;
 }
@@ -1499,21 +1231,19 @@ function buildLevelMenu() {
 function showDuelMenu() {
   const grid = document.getElementById('levelGrid');
   const levels = [
-    { id: 'easy', icon: '📐', name: 'آسان', desc: 'ربات کندتر' },
+    { id: 'easy', icon: '📐', name: 'آسان', desc: 'ربات کند' },
     { id: 'hard', icon: '🔢', name: 'سخت', desc: 'ربات متوسط' },
     { id: 'expert', icon: '🧠', name: 'متخصص', desc: 'ربات سریع' },
     { id: 'master', icon: '👑', name: 'استاد', desc: 'ربات حرفه‌ای' }
   ];
   let html = '';
   levels.forEach(l => {
-    html += `
-      <div class="level-card" onclick="startDuel('${l.id}')">
-        <span class="icon">${l.icon}</span>
-        <div class="name">⚔️ دوئل ${l.name}</div>
-        <div class="desc">${l.desc}</div>
-        <div class="badge">🤖 VS شما</div>
-      </div>
-    `;
+    html += `<div class="level-card" onclick="startDuel('${l.id}')">
+      <span class="icon">${l.icon}</span>
+      <div class="name">⚔️ دوئل ${l.name}</div>
+      <div class="desc">${l.desc}</div>
+      <div class="badge">🤖 VS شما</div>
+    </div>`;
   });
   grid.innerHTML = html;
 }
@@ -1521,26 +1251,16 @@ function showDuelMenu() {
 function startGame(level) {
   state.level = level;
   state.isDuel = false;
-  state.correct = 0;
-  state.wrong = 0;
-  state.combo = 0;
-  state.maxCombo = 0;
-  state.score = 0;
-  state.lives = state.maxLives;
-  state.current = 0;
-  state.answered = false;
-  state.selectedOption = -1;
-  state.numpadValue = '';
+  state.correct = 0; state.wrong = 0; state.combo = 0; state.maxCombo = 0;
+  state.score = 0; state.lives = state.maxLives; state.current = 0;
+  state.answered = false; state.selectedOption = -1; state.numpadValue = '';
   state.speedCorrect = 0;
-  
   const count = state.mode === 'sorati' ? 20 : 10;
   state.totalQ = count;
   state.questions = buildQuestions(level, count);
-  
   const labels = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
   document.getElementById('levelLabel').textContent = state.mode === 'sorati' ? '⚡ سرعتی' : labels[level] || 'آسان';
   document.getElementById('duelContainer').style.display = 'none';
-  
   updateStats();
   renderQuestion();
   showScreen('gameScreen');
@@ -1559,47 +1279,28 @@ const DUEL_DIFF = {
 function startDuel(level) {
   state.level = level;
   state.isDuel = true;
-  state.duelRound = 0;
-  state.duelTotal = 5;
-  state.duelPlayerScore = 0;
-  state.duelRobotScore = 0;
-  state.correct = 0;
-  state.wrong = 0;
-  state.combo = 0;
-  state.maxCombo = 0;
-  state.score = 0;
-  state.current = 0;
-  state.answered = false;
-  state.selectedOption = -1;
-  state.numpadValue = '';
-  
+  state.duelRound = 0; state.duelTotal = 5;
+  state.duelPlayerScore = 0; state.duelRobotScore = 0;
+  state.correct = 0; state.wrong = 0; state.combo = 0; state.maxCombo = 0;
+  state.score = 0; state.current = 0;
+  state.answered = false; state.selectedOption = -1; state.numpadValue = '';
   state.questions = buildQuestions(level, state.duelTotal);
   state.totalQ = state.questions.length;
-  
   const labels = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
   document.getElementById('levelLabel').textContent = '⚔️ دوئل ' + (labels[level] || 'آسان');
   document.getElementById('duelContainer').style.display = 'block';
   document.getElementById('duelPlayerScore').textContent = '0';
   document.getElementById('duelRobotScore').textContent = '0';
   document.getElementById('duelResult').style.display = 'none';
-  
   updateStats();
   renderDuelQuestion();
   showScreen('gameScreen');
 }
 
 function renderDuelQuestion() {
-  if (state.duelRound >= state.duelTotal) {
-    showDuelResult();
-    return;
-  }
-  
-  state.answered = false;
-  state.duelAnswered = false;
-  state.duelRobotAnswer = null;
-  state.selectedOption = -1;
-  state.numpadValue = '';
-  
+  if (state.duelRound >= state.duelTotal) { showDuelResult(); return; }
+  state.answered = false; state.duelAnswered = false; state.duelRobotAnswer = null;
+  state.selectedOption = -1; state.numpadValue = '';
   const q = state.questions[state.duelRound];
   document.getElementById('qLabel').textContent = `⚔️ دوئل - دور ${state.duelRound + 1}`;
   document.getElementById('questionCounter').textContent = `⚔️ دور ${state.duelRound + 1} از ${state.duelTotal}`;
@@ -1613,13 +1314,11 @@ function renderDuelQuestion() {
   document.getElementById('duelRobotAnswer').textContent = '❓';
   document.getElementById('duelPlayerBox').className = 'duel-player active';
   document.getElementById('duelRobotBox').className = 'duel-player';
-  
   if (state.mode === 'testi') {
     renderOptions(q);
   } else {
     renderNumpad();
   }
-  
   updateStats();
   startDuelTimer();
 }
@@ -1628,12 +1327,9 @@ function startDuelTimer() {
   clearInterval(state.timerInterval);
   state.timeLeft = 30;
   document.getElementById('timerDisplay').textContent = state.timeLeft;
-  document.getElementById('timerDisplay').className = 'stat-chip timer';
-  
-  // ربات بعد از تاخیر پاسخ می‌دهد
+  document.getElementById('timerDisplay').className = 'timer';
   const diff = DUEL_DIFF[state.level] || DUEL_DIFF.easy;
   const delay = randInt(diff.delay.min, diff.delay.max);
-  
   if (state.duelTimeout) clearTimeout(state.duelTimeout);
   state.duelTimeout = setTimeout(() => {
     if (!state.duelAnswered) {
@@ -1648,35 +1344,22 @@ function startDuelTimer() {
       state.duelRobotAnswer = robotAns;
       document.getElementById('duelRobotAnswer').textContent = robotAns;
       document.getElementById('duelRobotBox').className = 'duel-player robot-active';
-      
-      if (state.answered) {
-        evaluateDuelRound();
-      } else {
-        document.getElementById('duelPlayerStatus') && (document.getElementById('duelPlayerStatus').textContent = '⏳ در حال پاسخ...');
-      }
+      if (state.answered) { evaluateDuelRound(); }
     }
   }, delay);
-  
   state.timerInterval = setInterval(() => {
     state.timeLeft--;
     document.getElementById('timerDisplay').textContent = state.timeLeft;
-    if (state.timeLeft <= 3) document.getElementById('timerDisplay').className = 'stat-chip timer urgent';
+    if (state.timeLeft <= 3) document.getElementById('timerDisplay').className = 'timer urgent';
     if (state.timeLeft <= 0) {
       clearInterval(state.timerInterval);
       if (!state.answered) {
-        state.answered = true;
-        state.duelAnswered = true;
-        state.wrong++;
-        state.combo = 0;
+        state.answered = true; state.duelAnswered = true;
+        state.wrong++; state.combo = 0;
         if (state.duelTimeout) clearTimeout(state.duelTimeout);
         document.getElementById('duelPlayerAnswer').textContent = '⏰';
         document.getElementById('duelPlayerBox').className = 'duel-player loser';
-        if (state.duelRobotAnswer !== null) {
-          evaluateDuelRound();
-        } else {
-          document.getElementById('duelResult').style.display = 'block';
-          document.getElementById('duelResult').textContent = '⏳ منتظر ربات...';
-        }
+        if (state.duelRobotAnswer !== null) { evaluateDuelRound(); }
       }
     }
   }, 1000);
@@ -1685,11 +1368,9 @@ function startDuelTimer() {
 function evaluateDuelRound() {
   const q = state.questions[state.duelRound];
   const correct = q.answer[0];
-  
   const playerAns = state.numpadValue ? parseFloat(state.numpadValue) : null;
   const isPlayerCorrect = playerAns !== null && Math.abs(playerAns - correct) < 0.01;
   const isRobotCorrect = state.duelRobotAnswer !== null && Math.abs(state.duelRobotAnswer - correct) < 0.01;
-  
   let result = 'draw', resultText = '🤝 تساوی!', resultClass = 'draw';
   if (isPlayerCorrect && !isRobotCorrect) {
     result = 'win'; resultText = '🎉 شما برنده شدید!'; resultClass = 'win';
@@ -1702,18 +1383,14 @@ function evaluateDuelRound() {
     sound.wrong();
   } else if (isPlayerCorrect && isRobotCorrect) {
     result = 'draw'; resultText = '🤝 هر دو درست!'; resultClass = 'draw';
-    state.correct++; state.combo++;
-    sound.correct();
+    state.correct++; state.combo++; sound.correct();
   } else {
     result = 'draw'; resultText = '🤝 هر دو اشتباه!'; resultClass = 'draw';
-    state.wrong++; state.combo = 0;
-    sound.wrong();
+    state.wrong++; state.combo = 0; sound.wrong();
   }
-  
   document.getElementById('duelResult').style.display = 'block';
   document.getElementById('duelResult').textContent = resultText;
   document.getElementById('duelResult').className = `duel-result ${resultClass}`;
-  
   if (result === 'win') {
     document.getElementById('duelPlayerBox').className = 'duel-player winner';
     document.getElementById('duelRobotBox').className = 'duel-player loser';
@@ -1722,24 +1399,16 @@ function evaluateDuelRound() {
     document.getElementById('duelPlayerBox').className = 'duel-player loser';
     document.getElementById('duelRobotBox').className = 'duel-player winner';
     document.getElementById('questionBox').className = 'question-box wrong';
-  } else {
-    document.getElementById('duelPlayerBox').className = 'duel-player';
-    document.getElementById('duelRobotBox').className = 'duel-player';
   }
-  
   document.getElementById('duelPlayerScore').textContent = state.duelPlayerScore;
   document.getElementById('duelRobotScore').textContent = state.duelRobotScore;
-  
-  // نمایش فیدبک
   const fb = document.getElementById('feedback');
   const title = document.getElementById('feedbackTitle');
   const steps = document.getElementById('feedbackSteps');
   fb.className = `feedback show ${isPlayerCorrect ? 'correct' : 'wrong'}`;
   title.textContent = `✅ پاسخ صحیح: ${correct}`;
   steps.innerHTML = q.steps.map(s => `<div>${s}</div>`).join('');
-  
   updateStats();
-  
   if (state.duelTimeout) clearTimeout(state.duelTimeout);
   document.getElementById('nextBtn').style.display = 'block';
 }
@@ -1747,15 +1416,12 @@ function evaluateDuelRound() {
 function showDuelResult() {
   clearInterval(state.timerInterval);
   if (state.duelTimeout) clearTimeout(state.duelTimeout);
-  
   const ps = state.duelPlayerScore, rs = state.duelRobotScore;
   let trophy, title, stars;
   if (ps > rs) { trophy = '🏆'; title = '🎉 شما برنده دوئل شدید!'; stars = '⭐⭐⭐⭐⭐'; sound.levelUp(); fireRocket(); }
   else if (rs > ps) { trophy = '🤖'; title = '😔 ربات برنده شد!'; stars = '⭐⭐'; sound.wrong(); }
   else { trophy = '🤝'; title = 'تساوی!'; stars = '⭐⭐⭐'; }
-  
   if (ps > rs) { state.duelWins++; checkAchievements(); }
-  
   document.getElementById('resultTrophy').textContent = trophy;
   document.getElementById('resultTitle').textContent = title;
   document.getElementById('resultStars').textContent = stars;
@@ -1765,12 +1431,8 @@ function showDuelResult() {
   document.getElementById('rScore').textContent = ps * 10;
   document.getElementById('rStreak').textContent = state.maxCombo;
   document.getElementById('resultDetails').textContent = `👤 شما: ${ps} برد · 🤖 ربات: ${rs} برد`;
-  
-  state.totalPlayed++;
-  state.totalCorrect += ps;
-  state.totalWrong += rs;
-  saveStats();
-  updateLeagueUI();
+  state.totalPlayed++; state.totalCorrect += ps; state.totalWrong += rs;
+  saveStats(); updateLeagueUI();
   showScreen('resultScreen');
 }
 
@@ -1778,15 +1440,8 @@ function showDuelResult() {
 // 🎮 RENDER QUESTION
 // ============================================
 function renderQuestion() {
-  if (state.current >= state.totalQ || state.lives <= 0) {
-    showResult();
-    return;
-  }
-  
-  state.answered = false;
-  state.selectedOption = -1;
-  state.numpadValue = '';
-  
+  if (state.current >= state.totalQ || state.lives <= 0) { showResult(); return; }
+  state.answered = false; state.selectedOption = -1; state.numpadValue = '';
   const q = state.questions[state.current];
   document.getElementById('qLabel').textContent = `سوال ${state.current + 1} از ${state.totalQ}`;
   document.getElementById('questionCounter').textContent = `سوال ${state.current + 1} از ${state.totalQ}`;
@@ -1795,13 +1450,11 @@ function renderQuestion() {
   document.getElementById('questionBox').className = 'question-box';
   document.getElementById('feedback').className = 'feedback';
   document.getElementById('nextBtn').style.display = 'none';
-  
   if (state.mode === 'testi') {
     renderOptions(q);
   } else {
     renderNumpad();
   }
-  
   updateStats();
   startTimer();
 }
@@ -1813,8 +1466,7 @@ function renderOptions(q) {
   opts.forEach((opt, i) => {
     html += `<button class="option-btn" onclick="selectOption(${i})" id="opt_${i}">${String.fromCharCode(65 + i)}. ${opt}</button>`;
   });
-  html += '</div>';
-  html += `<button class="btn btn-primary" onclick="checkAnswer()" id="submitBtn">✓ تایید پاسخ</button>`;
+  html += '</div><button class="btn btn-primary" onclick="checkAnswer()" id="submitBtn">✓ تایید پاسخ</button>';
   area.innerHTML = html;
 }
 
@@ -1878,10 +1530,8 @@ function selectOption(index) {
 
 function checkAnswer() {
   if (state.answered) return;
-  
   const q = state.questions[state.current];
   let userAnswer;
-  
   if (state.mode === 'testi') {
     if (state.selectedOption === -1) {
       document.getElementById('submitBtn').disabled = true;
@@ -1897,43 +1547,29 @@ function checkAnswer() {
     }
     userAnswer = [val];
   }
-  
   state.answered = true;
   clearInterval(state.timerInterval);
-  
   const expected = q.answer.sort((a, b) => a - b);
   const userSorted = [...userAnswer].sort((a, b) => a - b);
   const isCorrect = userSorted.length === expected.length && userSorted.every((v, i) => Math.abs(v - expected[i]) < 0.01);
-  
   if (isCorrect) {
-    sound.correct();
-    state.correct++;
-    state.combo++;
+    sound.correct(); state.correct++; state.combo++;
     if (state.combo > state.maxCombo) state.maxCombo = state.combo;
     const bonus = 1 + state.combo * 0.1;
     const points = Math.round((q.points || 10) * bonus);
     state.score += points;
-    if (state.combo >= 3) {
-      showCombo(state.combo);
-      if (state.combo === 5) { showToast('🔥 کامبو ۵!'); fireRocket(); }
-      if (state.combo === 10) { showToast('👑 کامبو ۱۰!'); fireRocket(); }
-    }
+    if (state.combo >= 3) { showCombo(state.combo); }
+    if (state.combo === 5) { showToast('🔥 کامبو ۵!'); fireRocket(); }
+    if (state.combo === 10) { showToast('👑 کامبو ۱۰!'); fireRocket(); }
     if (state.mode === 'sorati') state.speedCorrect++;
     if (state.correct % 5 === 0 && state.correct > 0) { fireRocket(); rocketCount++; checkAchievements(); }
   } else {
-    sound.wrong();
-    state.wrong++;
-    state.combo = 0;
-    if (!state.isDuel) {
-      state.lives--;
-      if (state.lives <= 0) { showResult(); return; }
-    }
+    sound.wrong(); state.wrong++; state.combo = 0;
+    if (!state.isDuel) { state.lives--; if (state.lives <= 0) { showResult(); return; } }
   }
-  
   updateStats();
   showFeedback(isCorrect, q);
   styleQuestion(isCorrect);
-  
   if (state.mode === 'testi') {
     document.querySelectorAll('.option-btn').forEach((el, i) => {
       el.disabled = true;
@@ -1945,29 +1581,19 @@ function checkAnswer() {
     const btn = document.getElementById('submitBtn');
     if (btn) btn.disabled = true;
   }
-  
-  // آپدیت ماموریت‌ها
   updateMissions('solve');
   if (state.combo >= 5) updateMissions('combo', state.combo);
   if (state.mode === 'sorati' && state.speedCorrect >= 5) updateMissions('speed', state.speedCorrect);
   if (state.wrong === 0 && state.correct >= 5) updateMissions('perfect', 1);
-  
   checkAchievements();
-  
   if (!state.isDuel) {
     document.getElementById('nextBtn').style.display = 'block';
   } else {
-    // در دوئل، پاسخ کاربر ثبت شد
     state.duelAnswered = true;
     const val = state.mode === 'testi' ? q.options[state.selectedOption] : parseFloat(state.numpadValue);
     document.getElementById('duelPlayerAnswer').textContent = val;
     document.getElementById('duelPlayerBox').className = 'duel-player active';
-    if (state.duelRobotAnswer !== null) {
-      evaluateDuelRound();
-    } else {
-      document.getElementById('duelResult').style.display = 'block';
-      document.getElementById('duelResult').textContent = '⏳ منتظر پاسخ ربات...';
-    }
+    if (state.duelRobotAnswer !== null) { evaluateDuelRound(); }
   }
 }
 
@@ -1997,22 +1623,16 @@ function startTimer() {
   const total = state.mode === 'sorati' ? 10 : 30;
   state.timeLeft = total;
   document.getElementById('timerDisplay').textContent = state.timeLeft;
-  document.getElementById('timerDisplay').className = 'stat-chip timer';
-  
+  document.getElementById('timerDisplay').className = 'timer';
   state.timerInterval = setInterval(() => {
     state.timeLeft--;
     document.getElementById('timerDisplay').textContent = state.timeLeft;
-    if (state.timeLeft <= 3) document.getElementById('timerDisplay').className = 'stat-chip timer urgent';
+    if (state.timeLeft <= 3) document.getElementById('timerDisplay').className = 'timer urgent';
     if (state.timeLeft <= 0) {
       clearInterval(state.timerInterval);
       if (!state.answered) {
-        state.answered = true;
-        state.wrong++;
-        state.combo = 0;
-        if (!state.isDuel) {
-          state.lives--;
-          updateStats();
-        }
+        state.answered = true; state.wrong++; state.combo = 0;
+        if (!state.isDuel) { state.lives--; updateStats(); }
         showFeedback(false, state.questions[state.current]);
         styleQuestion(false);
         document.getElementById('nextBtn').style.display = 'block';
@@ -2024,14 +1644,11 @@ function startTimer() {
           const btn = document.getElementById('submitBtn');
           if (btn) btn.disabled = true;
         }
-        // در دوئل
         if (state.isDuel) {
           state.duelAnswered = true;
           document.getElementById('duelPlayerAnswer').textContent = '⏰';
           document.getElementById('duelPlayerBox').className = 'duel-player loser';
-          if (state.duelRobotAnswer !== null) {
-            evaluateDuelRound();
-          }
+          if (state.duelRobotAnswer !== null) { evaluateDuelRound(); }
         }
       }
     }
@@ -2063,7 +1680,6 @@ function showResult() {
   const total = state.correct + state.wrong;
   const pct = total > 0 ? state.correct / total : 0;
   const score = state.score;
-  
   let trophy, title, stars;
   if (pct === 1) { trophy = '👑'; title = 'بی‌نظیر! کامل بود!'; stars = '⭐⭐⭐⭐⭐'; fireRocket(); }
   else if (pct >= 0.85) { trophy = '🏆'; title = 'عالی!'; stars = '⭐⭐⭐⭐'; }
@@ -2072,11 +1688,9 @@ function showResult() {
   else if (pct >= 0.3) { trophy = '🥉'; title = 'بیشتر تمرین کن!'; stars = '⭐'; }
   else { trophy = '📚'; title = 'نیاز به تمرین داری!'; stars = ''; }
   if (state.lives <= 0 && !state.isDuel) { trophy = '💀'; title = 'تمام جان‌ها از دست رفت!'; stars = '💔'; }
-  
   document.getElementById('resultTrophy').textContent = trophy;
   document.getElementById('resultTitle').textContent = title;
   document.getElementById('resultStars').textContent = stars;
-  
   const levelNames = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
   document.getElementById('resultSubtitle').textContent = `${state.mode === 'testi' ? 'تستی' : state.mode === 'tashrihi' ? 'تشریحی' : '⚡ سرعتی'} · ${levelNames[state.level] || 'آسان'}`;
   document.getElementById('rCorrect').textContent = state.correct;
@@ -2084,17 +1698,9 @@ function showResult() {
   document.getElementById('rScore').textContent = score;
   document.getElementById('rStreak').textContent = state.maxCombo;
   document.getElementById('resultDetails').textContent = `✅ دقت: ${Math.round(pct * 100)}% · 🔥 زنجیره: ${state.maxCombo}`;
-  
-  // ذخیره در رتبه‌بندی
-  if (state.correct >= 3) {
-    saveLeaderboard(state.level);
-  }
-  
-  state.totalPlayed++;
-  state.totalCorrect += state.correct;
-  state.totalWrong += state.wrong;
-  saveStats();
-  updateLeagueUI();
+  if (state.correct >= 3) saveLeaderboard(state.level);
+  state.totalPlayed++; state.totalCorrect += state.correct; state.totalWrong += state.wrong;
+  saveStats(); updateLeagueUI();
   showScreen('resultScreen');
 }
 
@@ -2113,17 +1719,10 @@ function dailyChallenge() {
   for (let i = 0; i < 5; i++) qs.push(gens[randInt(0, 3)]());
   state.isDuel = false;
   state.questions = shuffle(qs);
-  state.correct = 0;
-  state.wrong = 0;
-  state.combo = 0;
-  state.maxCombo = 0;
-  state.score = 0;
-  state.lives = state.maxLives;
-  state.current = 0;
-  state.totalQ = state.questions.length;
-  state.answered = false;
-  state.selectedOption = -1;
-  state.numpadValue = '';
+  state.correct = 0; state.wrong = 0; state.combo = 0; state.maxCombo = 0;
+  state.score = 0; state.lives = state.maxLives; state.current = 0;
+  state.totalQ = state.questions.length; state.answered = false;
+  state.selectedOption = -1; state.numpadValue = '';
   document.getElementById('levelLabel').textContent = '🌟 چالش روزانه';
   document.getElementById('duelContainer').style.display = 'none';
   updateStats();
@@ -2146,16 +1745,11 @@ function showProfile() {
 
 function resetStats() {
   if (confirm('آیا از ریست کردن آمار مطمئنی؟')) {
-    state.totalCorrect = 0;
-    state.totalWrong = 0;
-    state.totalPlayed = 0;
-    state.duelWins = 0;
-    rocketCount = 0;
+    state.totalCorrect = 0; state.totalWrong = 0; state.totalPlayed = 0;
+    state.duelWins = 0; rocketCount = 0;
     Object.keys(achievements).forEach(k => achievements[k].unlocked = false);
     Object.keys(missions).forEach(k => { missions[k].progress = 0; missions[k].done = false; });
-    saveAchievements();
-    saveMissions();
-    saveStats();
+    saveAchievements(); saveMissions(); saveStats();
     showProfile();
   }
 }
@@ -2163,10 +1757,8 @@ function resetStats() {
 function saveStats() {
   try {
     localStorage.setItem('mathStats', JSON.stringify({
-      totalCorrect: state.totalCorrect,
-      totalWrong: state.totalWrong,
-      totalPlayed: state.totalPlayed,
-      duelWins: state.duelWins
+      totalCorrect: state.totalCorrect, totalWrong: state.totalWrong,
+      totalPlayed: state.totalPlayed, duelWins: state.duelWins
     }));
   } catch(e) {}
 }
@@ -2208,19 +1800,16 @@ buildLevelMenu();
 updateLeagueUI();
 renderMissions();
 
-// اضافه کردن استایل انیمیشن کامبو
-const style = document.createElement('style');
-style.textContent = `
+const styleAnim = document.createElement('style');
+styleAnim.textContent = `
   @keyframes comboAnim {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
     100% { opacity: 0; transform: translate(-50%, -75%) scale(1); }
   }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 `;
-document.head.appendChild(style);
+document.head.appendChild(styleAnim);
 
-// کلیک برای فعال‌سازی صدا
 document.addEventListener('click', () => {
   if (!sound.ctx) sound.init();
 }, { once: true });
