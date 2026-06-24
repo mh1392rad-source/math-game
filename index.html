@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>⚡ Math Game + AI - نسخه ۳.۰</title>
+<title>⚡ Math Game + AI - نسخه حرفه‌ای</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -32,56 +33,55 @@
     --orange-dim:rgba(255,159,67,0.12);
   }
 
-  /* ===== 10 تم مختلف ===== */
   body.theme-forest {
     --bg:#0f1f0f; --surface:#1a2f1a; --card:#254f25;
     --teal:#4caf50; --gold:#ff9800; --pink:#e91e63;
-    --text:#e8f5e9; --muted:#81c784; --border:rgba(76,175,80,0.2);
+    --text:#e8f5e9; --muted:#81c784;
   }
   body.theme-ocean {
     --bg:#0a1a2a; --surface:#0f2840; --card:#1a3a5a;
     --teal:#00bcd4; --gold:#ffd700; --pink:#e91e63;
-    --text:#e0f7fa; --muted:#4dd0e1; --border:rgba(0,188,212,0.2);
+    --text:#e0f7fa; --muted:#4dd0e1;
   }
   body.theme-galaxy {
     --bg:#0a0a2a; --surface:#1a0a3a; --card:#2a1a5a;
     --teal:#9c27b0; --gold:#ffd700; --pink:#e91e63;
-    --text:#f3e5f5; --muted:#ce93d8; --border:rgba(156,39,176,0.2);
+    --text:#f3e5f5; --muted:#ce93d8;
   }
   body.theme-sunset {
     --bg:#1a0a0a; --surface:#2a1515; --card:#3a2020;
     --teal:#ff6f00; --gold:#ffab00; --pink:#ff1744;
-    --text:#fff3e0; --muted:#ffab91; --border:rgba(255,111,0,0.2);
+    --text:#fff3e0; --muted:#ffab91;
   }
   body.theme-cyber {
     --bg:#0a0a0a; --surface:#1a0a1a; --card:#2a0a2a;
     --teal:#00ff88; --gold:#ff0080; --pink:#ff00ff;
-    --text:#f0f0ff; --muted:#8888aa; --border:rgba(0,255,136,0.2);
+    --text:#f0f0ff; --muted:#8888aa;
   }
   body.theme-ice {
     --bg:#0a1a2a; --surface:#1a2a3a; --card:#2a3a4a;
     --teal:#00e5ff; --gold:#b0e0e6; --pink:#ff80ab;
-    --text:#e0f7fa; --muted:#80deea; --border:rgba(0,229,255,0.2);
+    --text:#e0f7fa; --muted:#80deea;
   }
   body.theme-fire {
     --bg:#1a0a0a; --surface:#2a1515; --card:#3a2020;
     --teal:#ff5722; --gold:#ffab00; --pink:#ff1744;
-    --text:#fff3e0; --muted:#ff8a65; --border:rgba(255,87,34,0.2);
+    --text:#fff3e0; --muted:#ff8a65;
   }
   body.theme-candy {
     --bg:#1a0a1a; --surface:#2a1a2a; --card:#3a2a3a;
     --teal:#ff6b6b; --gold:#ffd93d; --pink:#ff6bcd;
-    --text:#fdf0f0; --muted:#cc9a9a; --border:rgba(255,107,107,0.2);
+    --text:#fdf0f0; --muted:#cc9a9a;
   }
   body.theme-matrix {
     --bg:#0a0a0a; --surface:#0f1f0f; --card:#1a2a1a;
     --teal:#00ff41; --gold:#ffd700; --pink:#ff6bcd;
-    --text:#d0f0c0; --muted:#7fbf7f; --border:rgba(0,255,65,0.2);
+    --text:#d0f0c0; --muted:#7fbf7f;
   }
   body.theme-night {
     --bg:#0a0a0a; --surface:#151525; --card:#202035;
     --teal:#7f5af0; --gold:#ffd700; --pink:#ff6bcd;
-    --text:#e0e0ff; --muted:#8888aa; --border:rgba(127,90,240,0.2);
+    --text:#e0e0ff; --muted:#8888aa;
   }
 
   body {
@@ -127,16 +127,6 @@
   .btn-pink { background:linear-gradient(135deg,var(--pink),#d6336c); color:#fff; }
   .btn-purple { background:linear-gradient(135deg,var(--purple),#7c5cbf); color:#fff; }
   .btn-red { background:var(--red); color:#fff; }
-  .btn-outline { background:transparent; border:2px solid var(--border); color:var(--text); }
-
-  .badge {
-    display:inline-block; padding:2px 10px; border-radius:20px;
-    font-size:8px; font-weight:700;
-  }
-  .badge-teal { background:var(--teal-dim); color:var(--teal); }
-  .badge-gold { background:var(--gold-dim); color:var(--gold); }
-  .badge-pink { background:var(--pink-dim); color:var(--pink); }
-  .badge-purple { background:var(--purple-dim); color:var(--purple); }
 
   .logo { text-align:center; margin-bottom:12px; }
   .logo-icon { font-size:44px; display:block; animation:float 3s ease-in-out infinite; }
@@ -161,7 +151,6 @@
   .league-platinum { background:rgba(229,228,226,0.2); color:#e5e4e2; border:1px solid #e5e4e2; }
   .league-diamond { background:rgba(185,242,255,0.2); color:#b9f2ff; border:1px solid #b9f2ff; }
 
-  /* ===== سربرگ‌های هیجانی ===== */
   .mode-grid {
     display:grid; grid-template-columns:repeat(5,1fr);
     gap:4px; margin:8px 0;
@@ -177,7 +166,6 @@
   .mode-btn .icon { font-size:18px; display:block; }
   .mode-btn .label { font-size:8px; font-weight:600; }
 
-  /* ===== سطوح هیجانی ===== */
   .level-grid {
     display:grid; grid-template-columns:1fr 1fr;
     gap:6px; margin:8px 0;
@@ -209,6 +197,31 @@
   }
   .extra-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); transform:scale(1.03); }
   .extra-btn .icon { font-size:16px; display:block; }
+
+  /* ===== AVATAR SELECTOR ===== */
+  .avatar-grid {
+    display:grid; grid-template-columns:repeat(5,1fr);
+    gap:6px; margin:8px 0;
+  }
+  .avatar-option {
+    font-size:28px; padding:8px; border:2px solid var(--border);
+    border-radius:10px; cursor:pointer; text-align:center;
+    transition:all 0.3s; background:var(--surface);
+  }
+  .avatar-option:hover { transform:scale(1.1); border-color:var(--teal); }
+  .avatar-option.selected { border-color:var(--gold); background:var(--gold-dim); }
+
+  /* ===== STATS DASHBOARD ===== */
+  .stats-grid {
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:6px; margin:8px 0;
+  }
+  .stats-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:10px; text-align:center;
+  }
+  .stats-card .number { font-size:20px; font-weight:900; color:var(--gold); }
+  .stats-card .label { font-size:8px; color:var(--muted); }
 
   .mission-box {
     background:var(--card); border:1px solid var(--border);
@@ -568,6 +581,18 @@
     box-shadow:var(--shadow); max-width:90%;
   }
 
+  .language-selector {
+    display:flex; gap:4px; flex-wrap:wrap;
+  }
+  .lang-btn {
+    padding:2px 8px; border-radius:4px; border:1px solid var(--border);
+    background:var(--surface); color:var(--muted);
+    cursor:pointer; font-size:9px; font-family:'Vazirmatn',sans-serif;
+    transition:all 0.3s;
+  }
+  .lang-btn:hover { border-color:var(--teal); color:var(--text); }
+  .lang-btn.active { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
+
   @media (max-width:480px) {
     .mode-grid { grid-template-columns:repeat(3,1fr); }
     .level-grid { grid-template-columns:1fr 1fr; }
@@ -581,6 +606,8 @@
     .question-box .q-eq { font-size:18px; }
     .header { flex-direction:column; align-items:stretch; gap:6px; }
     .header-left, .header-right { justify-content:center; }
+    .avatar-grid { grid-template-columns:repeat(4,1fr); }
+    .stats-grid { grid-template-columns:1fr 1fr; }
   }
 </style>
 </head>
@@ -613,6 +640,11 @@
           </select>
           <button class="music-btn" onclick="nextMusic()">⏭</button>
         </div>
+        <div class="language-selector">
+          <button class="lang-btn active" onclick="changeLanguage('fa')">🇮🇷</button>
+          <button class="lang-btn" onclick="changeLanguage('en')">🇬🇧</button>
+          <button class="lang-btn" onclick="changeLanguage('ar')">🇸🇦</button>
+        </div>
       </div>
       <div class="header-right">
         <div id="leagueDisplay"></div>
@@ -621,45 +653,43 @@
 
     <div class="logo">
       <span class="logo-icon">⚡</span>
-      <div class="logo-title">Math Game + AI</div>
-      <div class="logo-sub">نسخه ۳.۰ · هوش مصنوعی · ۱۰ تم · ۱۰ آهنگ</div>
+      <div class="logo-title" data-lang="title">Math Game + AI</div>
+      <div class="logo-sub" data-lang="sub">نسخه حرفه‌ای · هوش مصنوعی · ۱۰ تم · ۱۰ آهنگ</div>
     </div>
 
-    <!-- ===== سربرگ‌های هیجانی ===== -->
     <div class="mode-grid">
       <button class="mode-btn active" data-mode="testi" onclick="setMode('testi')">
-        <span class="icon">🎯</span><span class="label">هدف‌یاب</span>
+        <span class="icon">🎯</span><span class="label" data-lang="mode1">هدف‌یاب</span>
       </button>
       <button class="mode-btn" data-mode="tashrihi" onclick="setMode('tashrihi')">
-        <span class="icon">✍️</span><span class="label">نابغه‌نویس</span>
+        <span class="icon">✍️</span><span class="label" data-lang="mode2">نابغه‌نویس</span>
       </button>
       <button class="mode-btn" data-mode="sorati" onclick="setMode('sorati')">
-        <span class="icon">⚡</span><span class="label">تندباد</span>
+        <span class="icon">⚡</span><span class="label" data-lang="mode3">تندباد</span>
       </button>
       <button class="mode-btn" data-mode="duel" onclick="setMode('duel')">
-        <span class="icon">⚔️</span><span class="label">نبردگاه</span>
+        <span class="icon">⚔️</span><span class="label" data-lang="mode4">نبردگاه</span>
       </button>
       <button class="mode-btn" data-mode="ai" onclick="setMode('ai')">
-        <span class="icon">🤖</span><span class="label">مغز دیجیتال</span>
+        <span class="icon">🤖</span><span class="label" data-lang="mode5">مغز دیجیتال</span>
       </button>
     </div>
 
-    <!-- ===== سطوح هیجانی با مباحث جدید ===== -->
     <div class="level-grid" id="levelGrid"></div>
 
     <div class="mission-box" id="missionBox">
       <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;">
-        <span>🎯 ماموریت‌ها</span>
+        <span data-lang="missions">🎯 ماموریت‌ها</span>
         <span id="missionProgress">۰/۰</span>
       </div>
       <div id="missionList"></div>
     </div>
 
     <div class="extra-grid">
-      <button class="extra-btn" onclick="dailyChallenge()"><span class="icon">📅</span>چالش روزانه</button>
-      <button class="extra-btn" onclick="showProfile()"><span class="icon">👤</span>پروفایل</button>
-      <button class="extra-btn" onclick="showLeaderboard()"><span class="icon">🏆</span>رتبه‌بندی</button>
-      <button class="extra-btn" onclick="showSettings()"><span class="icon">⚙️</span>تنظیمات</button>
+      <button class="extra-btn" onclick="dailyChallenge()"><span class="icon">📅</span><span data-lang="daily">چالش روزانه</span></button>
+      <button class="extra-btn" onclick="showProfile()"><span class="icon">👤</span><span data-lang="profile">پروفایل</span></button>
+      <button class="extra-btn" onclick="showLeaderboard()"><span class="icon">🏆</span><span data-lang="leaderboard">رتبه‌بندی</span></button>
+      <button class="extra-btn" onclick="showSettings()"><span class="icon">⚙️</span><span data-lang="settings">تنظیمات</span></button>
     </div>
 
     <div class="credit-box">
@@ -674,13 +704,13 @@
   <div class="screen" id="aiScreen">
     <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;font-size:14px;">🤖 مغز دیجیتال</span>
+      <span style="font-weight:700;font-size:14px;" data-lang="aiTitle">🤖 مغز دیجیتال</span>
       <div style="width:50px;"></div>
     </div>
     <div class="ai-chat" id="aiChat">
       <div class="ai-msg bot">
         <span class="avatar">🤖</span>
-        <div>سلام! 👋 من مغز دیجیتال هستم.<br>می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات و ... را حل کنم.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span></div>
+        <div data-lang="aiWelcome">سلام! 👋 من مغز دیجیتال هستم.<br>می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات و ... را حل کنم.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span></div>
       </div>
     </div>
     <div class="ai-input-row">
@@ -702,12 +732,12 @@
   <div class="screen" id="settingsScreen">
     <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;font-size:14px;">⚙️ تنظیمات</span>
+      <span style="font-weight:700;font-size:14px;" data-lang="settingsTitle">⚙️ تنظیمات</span>
       <div style="width:50px;"></div>
     </div>
     <div class="result-box">
       <div class="setting-item">
-        <label>⏱️ زمان تایمر</label>
+        <label data-lang="timer">⏱️ زمان تایمر</label>
         <select id="timerSetting" onchange="updateSettings()">
           <option value="15">۱۵ ثانیه</option>
           <option value="20">۲۰ ثانیه</option>
@@ -717,7 +747,7 @@
         </select>
       </div>
       <div class="setting-item">
-        <label>📊 تعداد سوالات</label>
+        <label data-lang="questions">📊 تعداد سوالات</label>
         <select id="questionCount" onchange="updateSettings()">
           <option value="5">۵ سوال</option>
           <option value="10" selected>۱۰ سوال</option>
@@ -727,7 +757,7 @@
         </select>
       </div>
       <div class="setting-item">
-        <label>🎯 سطح ربات</label>
+        <label data-lang="robotLevel">🎯 سطح ربات</label>
         <select id="robotLevel" onchange="updateSettings()">
           <option value="easy">آسان</option>
           <option value="medium" selected>متوسط</option>
@@ -736,14 +766,14 @@
         </select>
       </div>
       <div class="setting-item">
-        <label>🔊 افکت‌های صوتی</label>
+        <label data-lang="sfx">🔊 افکت‌های صوتی</label>
         <select id="sfxSetting" onchange="updateSettings()">
           <option value="on" selected>فعال</option>
           <option value="off">غیرفعال</option>
         </select>
       </div>
       <div style="margin-top:10px;">
-        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:6px;">🎨 انتخاب تم (۱۰ تم)</label>
+        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:6px;" data-lang="themes">🎨 انتخاب تم (۱۰ تم)</label>
         <div class="theme-selector">
           <div class="theme-opt default active" onclick="applyTheme('default')" title="پیش‌فرض"></div>
           <div class="theme-opt forest" onclick="applyTheme('forest')" title="جنگل"></div>
@@ -759,8 +789,8 @@
         </div>
       </div>
       <div style="display:flex;gap:6px;margin-top:10px;">
-        <button class="btn btn-secondary" onclick="resetStats()" style="flex:1;">🔄 ریست آمار</button>
-        <button class="btn btn-red" onclick="resetAll()" style="flex:1;">🗑️ ریست کامل</button>
+        <button class="btn btn-secondary" onclick="resetStats()" style="flex:1;" data-lang="resetStats">🔄 ریست آمار</button>
+        <button class="btn btn-red" onclick="resetAll()" style="flex:1;" data-lang="resetAll">🗑️ ریست کامل</button>
       </div>
     </div>
   </div>
@@ -769,26 +799,57 @@
   <div class="screen" id="profileScreen">
     <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;font-size:14px;">👤 پروفایل</span>
+      <span style="font-weight:700;font-size:14px;" data-lang="profileTitle">👤 پروفایل</span>
       <div style="width:50px;"></div>
     </div>
     <div class="result-box">
-      <div style="font-size:40px;">🧑‍🎓</div>
+      <div style="font-size:40px;" id="profileAvatarDisplay">🧑‍🎓</div>
       <div style="font-size:16px;font-weight:700;" id="profileName">کاربر عزیز</div>
       <div id="profileLeague" style="margin:4px 0;"></div>
-      <div class="result-stats">
-        <div class="result-stat"><div class="num" id="pCorrect">0</div><div class="label">✅ صحیح</div></div>
-        <div class="result-stat"><div class="num" id="pWrong">0</div><div class="label">❌ غلط</div></div>
-        <div class="result-stat"><div class="num" id="pGames">0</div><div class="label">🎮 بازی</div></div>
-        <div class="result-stat"><div class="num" id="pAccuracy">0%</div><div class="label">🎯 دقت</div></div>
+      
+      <!-- انتخاب آواتار -->
+      <div style="margin:8px 0;">
+        <div style="font-size:10px;font-weight:600;color:var(--gold);margin-bottom:4px;" data-lang="chooseAvatar">🎨 انتخاب آواتار</div>
+        <div class="avatar-grid" id="avatarGrid">
+          <div class="avatar-option selected" onclick="selectAvatar('🧑‍🎓')">🧑‍🎓</div>
+          <div class="avatar-option" onclick="selectAvatar('👨‍🎓')">👨‍🎓</div>
+          <div class="avatar-option" onclick="selectAvatar('👩‍🎓')">👩‍🎓</div>
+          <div class="avatar-option" onclick="selectAvatar('🧙')">🧙</div>
+          <div class="avatar-option" onclick="selectAvatar('🦊')">🦊</div>
+          <div class="avatar-option" onclick="selectAvatar('🐉')">🐉</div>
+          <div class="avatar-option" onclick="selectAvatar('🚀')">🚀</div>
+          <div class="avatar-option" onclick="selectAvatar('🌟')">🌟</div>
+          <div class="avatar-option" onclick="selectAvatar('👾')">👾</div>
+          <div class="avatar-option" onclick="selectAvatar('🤖')">🤖</div>
+        </div>
       </div>
+
+      <!-- آمار پیشرفته -->
+      <div style="margin:8px 0;">
+        <div style="font-size:10px;font-weight:600;color:var(--gold);margin-bottom:4px;" data-lang="stats">📊 آمار پیشرفته</div>
+        <div class="stats-grid">
+          <div class="stats-card"><div class="number" id="statGames">0</div><div class="label" data-lang="totalGames">🎮 بازی</div></div>
+          <div class="stats-card"><div class="number" id="statWinRate">0%</div><div class="label" data-lang="winRate">🏆 برد</div></div>
+          <div class="stats-card"><div class="number" id="statAchievements">0</div><div class="label" data-lang="achieveCount">🏅 دستاورد</div></div>
+          <div class="stats-card"><div class="number" id="statBestStreak">0</div><div class="label" data-lang="bestStreak">🔥 زنجیره</div></div>
+          <div class="stats-card"><div class="number" id="statAvgScore">0</div><div class="label" data-lang="avgScore">⭐ میانگین</div></div>
+          <div class="stats-card"><div class="number" id="statTotalTime">۰</div><div class="label" data-lang="totalTime">⏱️ زمان</div></div>
+        </div>
+      </div>
+
+      <!-- نمودار پیشرفت -->
+      <div style="margin:8px 0;background:var(--surface);border-radius:10px;padding:10px;border:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:600;color:var(--gold);margin-bottom:4px;" data-lang="progressChart">📈 نمودار پیشرفت</div>
+        <canvas id="progressChart" style="max-height:120px;width:100%;"></canvas>
+      </div>
+
       <div style="margin:8px 0;text-align:right;">
-        <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;">🏆 دستاوردها</div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;" data-lang="achievements">🏆 دستاوردها</div>
         <div class="achieve-grid" id="achieveList"></div>
       </div>
       <div style="display:flex;gap:6px;">
-        <button class="btn btn-gold" onclick="generateCertificate()" style="flex:1;">📜 گواهینامه</button>
-        <button class="btn btn-secondary" onclick="showSettings()" style="flex:1;">⚙️ تنظیمات</button>
+        <button class="btn btn-gold" onclick="generateCertificate()" style="flex:1;" data-lang="certificate">📜 گواهینامه</button>
+        <button class="btn btn-secondary" onclick="showSettings()" style="flex:1;" data-lang="settingsBtn">⚙️ تنظیمات</button>
       </div>
     </div>
   </div>
@@ -797,7 +858,7 @@
   <div class="screen" id="leaderboardScreen">
     <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;font-size:14px;">🏆 رتبه‌بندی</span>
+      <span style="font-weight:700;font-size:14px;" data-lang="leaderboardTitle">🏆 رتبه‌بندی</span>
       <div style="width:50px;"></div>
     </div>
     <div class="result-box">
@@ -815,13 +876,13 @@
   <!-- ===== CERTIFICATE MODAL ===== -->
   <div class="modal-overlay" id="certModal">
     <div class="modal-box" style="text-align:center;">
-      <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;">🎉 گواهینامه شما</div>
+      <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;" data-lang="yourCertificate">🎉 گواهینامه شما</div>
       <img id="certImage" class="cert-preview">
       <div class="cert-actions">
-        <button class="btn btn-primary btn-sm" onclick="downloadCert()">📥 دانلود</button>
-        <button class="btn btn-secondary btn-sm" onclick="shareCert()">📤 اشتراک</button>
+        <button class="btn btn-primary btn-sm" onclick="downloadCert()" data-lang="download">📥 دانلود</button>
+        <button class="btn btn-secondary btn-sm" onclick="shareCert()" data-lang="share">📤 اشتراک</button>
       </div>
-      <button class="modal-close" onclick="document.getElementById('certModal').classList.remove('show')" style="margin-top:8px;">بستن</button>
+      <button class="modal-close" onclick="document.getElementById('certModal').classList.remove('show')" style="margin-top:8px;" data-lang="close">بستن</button>
     </div>
   </div>
 
@@ -898,10 +959,10 @@
       </div>
       <div style="font-size:10px;color:var(--muted);" id="resultDetails"></div>
       <div style="display:flex;gap:6px;margin-top:8px;">
-        <button class="btn btn-gold" onclick="generateCertificate()" style="flex:1;">📜 گواهینامه</button>
-        <button class="btn btn-primary" onclick="restartGame()" style="flex:1;">🔄 دوباره</button>
+        <button class="btn btn-gold" onclick="generateCertificate()" style="flex:1;" data-lang="certificateBtn">📜 گواهینامه</button>
+        <button class="btn btn-primary" onclick="restartGame()" style="flex:1;" data-lang="playAgain">🔄 دوباره</button>
       </div>
-      <button class="btn btn-secondary" onclick="goHome()" style="margin-top:4px;">🏠 منو</button>
+      <button class="btn btn-secondary" onclick="goHome()" style="margin-top:4px;" data-lang="menu">🏠 منو</button>
     </div>
   </div>
 
@@ -909,7 +970,100 @@
 
 <script>
 // ============================================
-// 🎵 SOUND SYSTEM با ۱۰ آهنگ مختلف
+// 🌍 MULTI-LANGUAGE SYSTEM
+// ============================================
+const translations = {
+  fa: {
+    title: 'Math Game + AI',
+    sub: 'نسخه حرفه‌ای · هوش مصنوعی · ۱۰ تم · ۱۰ آهنگ',
+    mode1: 'هدف‌یاب', mode2: 'نابغه‌نویس', mode3: 'تندباد', mode4: 'نبردگاه', mode5: 'مغز دیجیتال',
+    missions: '🎯 ماموریت‌ها', daily: 'چالش روزانه', profile: 'پروفایل',
+    leaderboard: 'رتبه‌بندی', settings: 'تنظیمات',
+    aiTitle: '🤖 مغز دیجیتال', aiWelcome: 'سلام! 👋 من مغز دیجیتال هستم.<br>می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات و ... را حل کنم.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span>',
+    settingsTitle: '⚙️ تنظیمات', timer: '⏱️ زمان تایمر', questions: '📊 تعداد سوالات',
+    robotLevel: '🎯 سطح ربات', sfx: '🔊 افکت‌های صوتی', themes: '🎨 انتخاب تم (۱۰ تم)',
+    resetStats: '🔄 ریست آمار', resetAll: '🗑️ ریست کامل',
+    profileTitle: '👤 پروفایل', chooseAvatar: '🎨 انتخاب آواتار', stats: '📊 آمار پیشرفته',
+    totalGames: '🎮 بازی', winRate: '🏆 برد', achieveCount: '🏅 دستاورد',
+    bestStreak: '🔥 زنجیره', avgScore: '⭐ میانگین', totalTime: '⏱️ زمان',
+    progressChart: '📈 نمودار پیشرفت', achievements: '🏆 دستاوردها',
+    certificate: '📜 گواهینامه', settingsBtn: '⚙️ تنظیمات',
+    leaderboardTitle: '🏆 رتبه‌بندی', yourCertificate: '🎉 گواهینامه شما',
+    download: '📥 دانلود', share: '📤 اشتراک', close: 'بستن',
+    certificateBtn: '📜 گواهینامه', playAgain: '🔄 دوباره', menu: '🏠 منو'
+  },
+  en: {
+    title: 'Math Game + AI',
+    sub: 'Pro Version · AI · 10 Themes · 10 Tracks',
+    mode1: 'Aim Master', mode2: 'Genius Writer', mode3: 'Speed Storm', mode4: 'Battle Arena', mode5: 'Digital Brain',
+    missions: '🎯 Missions', daily: 'Daily Challenge', profile: 'Profile',
+    leaderboard: 'Leaderboard', settings: 'Settings',
+    aiTitle: '🤖 Digital Brain', aiWelcome: 'Hello! 👋 I am the Digital Brain.<br>I can solve linear, quadratic, systems, derivatives, integrals, trigonometry and more.<br>Example: <span style="color:var(--gold);">2x + 3 = 7</span>',
+    settingsTitle: '⚙️ Settings', timer: '⏱️ Timer', questions: '📊 Questions',
+    robotLevel: '🎯 Robot Level', sfx: '🔊 Sound Effects', themes: '🎨 Select Theme (10)',
+    resetStats: '🔄 Reset Stats', resetAll: '🗑️ Reset All',
+    profileTitle: '👤 Profile', chooseAvatar: '🎨 Choose Avatar', stats: '📊 Advanced Stats',
+    totalGames: '🎮 Games', winRate: '🏆 Win Rate', achieveCount: '🏅 Achievements',
+    bestStreak: '🔥 Best Streak', avgScore: '⭐ Avg Score', totalTime: '⏱️ Time',
+    progressChart: '📈 Progress Chart', achievements: '🏆 Achievements',
+    certificate: '📜 Certificate', settingsBtn: '⚙️ Settings',
+    leaderboardTitle: '🏆 Leaderboard', yourCertificate: '🎉 Your Certificate',
+    download: '📥 Download', share: '📤 Share', close: 'Close',
+    certificateBtn: '📜 Certificate', playAgain: '🔄 Play Again', menu: '🏠 Menu'
+  },
+  ar: {
+    title: 'لعبة الرياضيات + الذكاء الاصطناعي',
+    sub: 'نسخة احترافية · ذكاء اصطناعي · ١٠ ثيمات · ١٠ أغان',
+    mode1: 'هدف‌یاب', mode2: 'نابغه‌نویس', mode3: 'تندباد', mode4: 'نبردگاه', mode5: 'مغز دیجیتال',
+    missions: '🎯 المهمات', daily: 'تحدي اليوم', profile: 'الملف الشخصي',
+    leaderboard: 'لوحة المتصدرين', settings: 'الإعدادات',
+    aiTitle: '🤖 الدماغ الرقمي', aiWelcome: 'مرحباً! 👋 أنا الدماغ الرقمي.<br>يمكنني حل المعادلات الخطية والتربيعية والأنظمة والمشتقات والتكاملات وعلم المثلثات والمزيد.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span>',
+    settingsTitle: '⚙️ الإعدادات', timer: '⏱️ المؤقت', questions: '📊 الأسئلة',
+    robotLevel: '🎯 مستوى الروبوت', sfx: '🔊 المؤثرات الصوتية', themes: '🎨 اختيار الثيم (١٠)',
+    resetStats: '🔄 إعادة تعيين الإحصائيات', resetAll: '🗑️ إعادة تعيين الكل',
+    profileTitle: '👤 الملف الشخصي', chooseAvatar: '🎨 اختيار الصورة الرمزية', stats: '📊 إحصائيات متقدمة',
+    totalGames: '🎮 الألعاب', winRate: '🏆 معدل الفوز', achieveCount: '🏅 الإنجازات',
+    bestStreak: '🔥 أفضل سلسلة', avgScore: '⭐ متوسط النقاط', totalTime: '⏱️ الوقت',
+    progressChart: '📈 مخطط التقدم', achievements: '🏆 الإنجازات',
+    certificate: '📜 الشهادة', settingsBtn: '⚙️ الإعدادات',
+    leaderboardTitle: '🏆 لوحة المتصدرين', yourCertificate: '🎉 شهادتك',
+    download: '📥 تحميل', share: '📤 مشاركة', close: 'إغلاق',
+    certificateBtn: '📜 شهادة', playAgain: '🔄 لعب مرة أخرى', menu: '🏠 القائمة'
+  }
+};
+
+let currentLang = 'fa';
+
+function changeLanguage(lang) {
+  currentLang = lang;
+  const texts = translations[lang];
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    const key = el.dataset.lang;
+    if (texts[key]) {
+      if (key === 'title' || key === 'sub') {
+        if (key === 'title') document.querySelector('.logo-title').textContent = texts[key];
+        else document.querySelector('.logo-sub').textContent = texts[key];
+      } else {
+        el.innerHTML = texts[key];
+      }
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(el => {
+    el.classList.toggle('active', el.textContent.includes(lang === 'fa' ? '🇮🇷' : lang === 'en' ? '🇬🇧' : '🇸🇦'));
+  });
+  localStorage.setItem('language', lang);
+}
+
+function loadLanguage() {
+  try {
+    const lang = localStorage.getItem('language') || 'fa';
+    changeLanguage(lang);
+  } catch(e) {}
+}
+loadLanguage();
+
+// ============================================
+// 🎵 SOUND SYSTEM با ۳۰ آهنگ
 // ============================================
 const MUSIC_PATTERNS = [
   { notes: [523,587,659,523], delay: 500, type: 'sine' },
@@ -921,7 +1075,27 @@ const MUSIC_PATTERNS = [
   { notes: [523,587,659,784,659,587,523], delay: 300, type: 'sine' },
   { notes: [392,440,523,392,440,523], delay: 450, type: 'sine' },
   { notes: [392,523,659,784,659,523,392], delay: 350, type: 'sawtooth' },
-  { notes: [440,440,523,523,587,587,523,523], delay: 550, type: 'sine' }
+  { notes: [440,440,523,523,587,587,523,523], delay: 550, type: 'sine' },
+  { notes: [330,392,440,523,440,392,330], delay: 400, type: 'sine' },
+  { notes: [523,523,587,659,659,587,523], delay: 300, type: 'sine' },
+  { notes: [440,554,659,880,880,659,554], delay: 350, type: 'sawtooth' },
+  { notes: [392,523,659,784,659,523,392], delay: 400, type: 'sine' },
+  { notes: [330,440,523,659,523,440,330], delay: 450, type: 'sine' },
+  { notes: [523,659,784,1047,784,659,523], delay: 300, type: 'sine' },
+  { notes: [440,523,659,880,659,523,440], delay: 350, type: 'sawtooth' },
+  { notes: [392,440,523,659,523,440,392], delay: 400, type: 'sine' },
+  { notes: [330,392,523,659,523,392,330], delay: 450, type: 'sine' },
+  { notes: [523,587,659,784,659,587,523], delay: 250, type: 'square' },
+  { notes: [440,554,659,880,880,659,554], delay: 300, type: 'sawtooth' },
+  { notes: [392,523,659,784,659,523,392], delay: 350, type: 'sine' },
+  { notes: [330,440,523,659,523,440,330], delay: 400, type: 'sine' },
+  { notes: [523,659,784,1047,784,659,523], delay: 280, type: 'sine' },
+  { notes: [440,523,659,880,659,523,440], delay: 320, type: 'sawtooth' },
+  { notes: [392,440,523,659,523,440,392], delay: 380, type: 'sine' },
+  { notes: [330,392,523,659,523,392,330], delay: 420, type: 'sine' },
+  { notes: [523,587,659,784,1047,784,659], delay: 300, type: 'sine' },
+  { notes: [440,554,659,880,1047,880,659], delay: 350, type: 'sawtooth' },
+  { notes: [392,523,659,784,1047,784,659], delay: 400, type: 'sine' }
 ];
 
 class SoundSystem {
@@ -958,6 +1132,8 @@ class SoundSystem {
   levelUp() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.play(f,0.15),i*120)); }
   rocket() { [523,659,784,1047,1318].forEach((f,i)=>setTimeout(()=>this.play(f,0.1),i*80)); }
   achievement() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.play(f,0.12),i*100)); }
+  timerTick() { this.play(800,0.04,'sine'); }
+  gameOver() { [440,370,330,280].forEach((f,i)=>setTimeout(()=>this.play(f,0.3,'sawtooth'),i*200)); }
   startMusic() {
     if (this.isMusicPlaying || this.isMuted) return;
     this.isMusicPlaying = true;
@@ -978,10 +1154,7 @@ class SoundSystem {
   }
   setPattern(index) {
     this.currentPattern = Math.min(Math.max(index, 0), MUSIC_PATTERNS.length - 1);
-    if (this.isMusicPlaying) {
-      this.stopMusic();
-      this.startMusic();
-    }
+    if (this.isMusicPlaying) { this.stopMusic(); this.startMusic(); }
   }
 }
 const sound = new SoundSystem();
@@ -1002,15 +1175,13 @@ function changeMusic(val) {
 function nextMusic() {
   const sel = document.getElementById('musicSelect');
   const val = (parseInt(sel.value) + 1) % MUSIC_PATTERNS.length;
-  sel.value = val;
-  changeMusic(val);
+  sel.value = val; changeMusic(val);
 }
 
 function prevMusic() {
   const sel = document.getElementById('musicSelect');
   const val = (parseInt(sel.value) - 1 + MUSIC_PATTERNS.length) % MUSIC_PATTERNS.length;
-  sel.value = val;
-  changeMusic(val);
+  sel.value = val; changeMusic(val);
 }
 
 // ============================================
@@ -1031,7 +1202,7 @@ function fireRocket() {
 }
 
 // ============================================
-// 🎨 THEME SYSTEM - ۱۰ تم
+// 🎨 THEME SYSTEM
 // ============================================
 function applyTheme(name) {
   document.body.className = document.body.className.split(' ').filter(c => !c.startsWith('theme-')).join(' ');
@@ -1041,7 +1212,6 @@ function applyTheme(name) {
     el.classList.toggle('active', el.className.includes(name) || (name === 'default' && el.className.includes('default')));
   });
 }
-
 function loadTheme() {
   try { const theme = localStorage.getItem('mathTheme') || 'default'; applyTheme(theme); } catch(e) {}
 }
@@ -1082,6 +1252,37 @@ function updateSettings() {
 
 function showSettings() { loadSettings(); showScreen('settingsScreen'); }
 loadSettings();
+
+// ============================================
+// 👤 ACCOUNT & AVATAR SYSTEM
+// ============================================
+let account = { username: 'کاربر عزیز', avatar: '🧑‍🎓' };
+
+function loadAccount() {
+  try {
+    const data = JSON.parse(localStorage.getItem('mathAccount'));
+    if (data) Object.assign(account, data);
+  } catch(e) {}
+  updateAvatarUI();
+}
+loadAccount();
+
+function saveAccount() {
+  localStorage.setItem('mathAccount', JSON.stringify(account));
+}
+
+function selectAvatar(emoji) {
+  account.avatar = emoji;
+  saveAccount();
+  updateAvatarUI();
+}
+
+function updateAvatarUI() {
+  document.getElementById('profileAvatarDisplay').textContent = account.avatar;
+  document.querySelectorAll('.avatar-option').forEach(el => {
+    el.classList.toggle('selected', el.textContent === account.avatar);
+  });
+}
 
 // ============================================
 // 🏆 ACHIEVEMENTS
@@ -1280,7 +1481,7 @@ function renderMissions() {
 // ============================================
 function saveLeaderboard(level) {
   const score = state.totalCorrect * 2 - state.totalWrong + state.score;
-  const data = { name: 'کاربر', score: score, correct: state.totalCorrect, wrong: state.totalWrong, streak: state.maxCombo, date: new Date().toLocaleDateString('fa-IR') };
+  const data = { name: account.username || 'کاربر', avatar: account.avatar || '🧑‍🎓', score: score, correct: state.totalCorrect, wrong: state.totalWrong, streak: state.maxCombo, date: new Date().toLocaleDateString('fa-IR') };
   const key = 'leaderboardV2_' + level;
   const list = JSON.parse(localStorage.getItem(key) || '[]');
   list.push(data);
@@ -1314,6 +1515,7 @@ function loadLeaderboard(level) {
     html += `
       <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--surface);border-radius:6px;margin-bottom:3px;border:1px solid var(--border);font-size:10px;">
         <span style="font-weight:700;min-width:28px;font-size:12px;">${medal}</span>
+        <span style="font-size:16px;">${item.avatar || '👤'}</span>
         <span style="font-weight:600;flex:1;">${item.name || 'کاربر'}</span>
         <span style="color:var(--muted);font-size:8px;">${item.level || ''}</span>
         <span style="color:var(--gold);font-weight:700;">${item.score} ⭐</span>
@@ -1344,7 +1546,7 @@ function generateCertificate() {
   ctx.fillStyle = '#ffd700'; ctx.fillText('🏆', 400, 80);
   ctx.font = 'bold 36px Vazirmatn, sans-serif'; ctx.fillStyle = '#00f5d4'; ctx.fillText('گواهینامه افتخار', 400, 140);
   ctx.strokeStyle = '#00f5d4'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(200,165); ctx.lineTo(600,165); ctx.stroke();
-  ctx.font = 'bold 32px Vazirmatn, sans-serif'; ctx.fillStyle = '#ffd700'; ctx.fillText('به کاربر عزیز', 400, 220);
+  ctx.font = 'bold 32px Vazirmatn, sans-serif'; ctx.fillStyle = '#ffd700'; ctx.fillText(account.username || 'کاربر عزیز', 400, 220);
   const totalScore = state.totalCorrect * 2 - state.totalWrong + state.score;
   const accuracy = state.totalCorrect + state.totalWrong > 0 ? Math.round((state.totalCorrect / (state.totalCorrect + state.totalWrong)) * 100) : 0;
   const league = getLeague(totalScore);
@@ -1361,7 +1563,7 @@ function generateCertificate() {
   ctx.font = '16px Vazirmatn, sans-serif'; ctx.fillStyle = '#8899bb';
   ctx.fillText(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, 400, 480);
   ctx.font = '14px Vazirmatn, sans-serif'; ctx.fillStyle = 'rgba(136,153,187,0.5)';
-  ctx.fillText('⚡ Math Game + AI v3.0', 400, 540);
+  ctx.fillText('⚡ Math Game + AI v4.0', 400, 540);
   certDataURL = canvas.toDataURL('image/png');
   document.getElementById('certImage').src = certDataURL;
   document.getElementById('certModal').classList.add('show');
@@ -1374,7 +1576,7 @@ function downloadCert() {
 }
 
 function shareCert() {
-  navigator.clipboard.writeText('من در Math Game + AI v3.0 به موفقیت رسیدم! 🏆');
+  navigator.clipboard.writeText('من در Math Game + AI v4.0 به موفقیت رسیدم! 🏆');
   showToast('📋 کپی شد!');
 }
 
@@ -1466,6 +1668,98 @@ function generateAIResponse(question) {
 }
 
 // ============================================
+// 📊 PROGRESS CHART
+// ============================================
+let progressChartInstance = null;
+
+function updateProgressChart() {
+  const ctx = document.getElementById('progressChart');
+  if (!ctx) return;
+  const weekDays = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+  const data = getWeeklyData();
+  if (progressChartInstance) progressChartInstance.destroy();
+  progressChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: weekDays,
+      datasets: [
+        { label: 'امتیاز', data: data.scores, borderColor: '#00f5d4', backgroundColor: 'rgba(0,245,212,0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#00f5d4' },
+        { label: 'پاسخ صحیح', data: data.corrects, borderColor: '#ffd700', backgroundColor: 'rgba(255,215,0,0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#ffd700' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#8899bb', font: { size: 8 } } } },
+      scales: {
+        x: { ticks: { color: '#8899bb', font: { size: 7 } }, grid: { color: 'rgba(136,153,187,0.1)' } },
+        y: { ticks: { color: '#8899bb', font: { size: 7 } }, grid: { color: 'rgba(136,153,187,0.1)' } }
+      }
+    }
+  });
+}
+
+function getWeeklyData() {
+  const scores = [], corrects = [];
+  for (let i = 0; i < 7; i++) {
+    const dayData = JSON.parse(localStorage.getItem(`mathDay_${i}`) || '{"score":0,"correct":0}');
+    scores.push(dayData.score || 0);
+    corrects.push(dayData.correct || 0);
+  }
+  return { scores, corrects };
+}
+
+function saveDayData(score, correct) {
+  const day = new Date().getDay();
+  const current = JSON.parse(localStorage.getItem(`mathDay_${day}`) || '{"score":0,"correct":0}');
+  current.score += score; current.correct += correct;
+  localStorage.setItem(`mathDay_${day}`, JSON.stringify(current));
+}
+
+// ============================================
+// 🎁 REWARD SYSTEM
+// ============================================
+const rewards = [
+  { id: 'r1', name: '🎖️ نشان طلا', condition: () => state.totalCorrect >= 100, claimed: false },
+  { id: 'r2', name: '🎖️ نشان الماس', condition: () => state.totalCorrect >= 500, claimed: false },
+  { id: 'r3', name: '🎖️ نشان پلاتین', condition: () => state.totalCorrect >= 1000, claimed: false },
+  { id: 'r4', name: '🎖️ نشان سرعت', condition: () => state.speedCorrect >= 50, claimed: false },
+  { id: 'r5', name: '🎖️ نشان دوئل', condition: () => state.duelWins >= 10, claimed: false }
+];
+
+function loadRewards() {
+  try {
+    const data = JSON.parse(localStorage.getItem('mathRewards'));
+    if (data) {
+      rewards.forEach(r => { if (data[r.id] !== undefined) r.claimed = data[r.id]; });
+    }
+  } catch(e) {}
+}
+loadRewards();
+
+function saveRewards() {
+  try {
+    const data = {};
+    rewards.forEach(r => { data[r.id] = r.claimed; });
+    localStorage.setItem('mathRewards', JSON.stringify(data));
+  } catch(e) {}
+}
+
+function checkRewards() {
+  let updated = false;
+  rewards.forEach(reward => {
+    if (!reward.claimed && reward.condition()) {
+      reward.claimed = true;
+      updated = true;
+      state.score += 50;
+      showToast(`🎁 ${reward.name} دریافت شد! +۵۰⭐`);
+      fireRocket();
+      sound.achievement();
+    }
+  });
+  if (updated) { saveRewards(); saveStats(); }
+}
+
+// ============================================
 // 🎮 GAME STATE
 // ============================================
 const state = {
@@ -1479,7 +1773,8 @@ const state = {
   isDuel: false, duelRound: 0, duelTotal: 5,
   duelPlayerScore: 0, duelRobotScore: 0,
   duelAnswered: false, duelRobotAnswer: null,
-  duelTimeout: null, answerTime: 0, timeBonus: 0
+  duelTimeout: null, answerTime: 0, timeBonus: 0,
+  totalTime: 0
 };
 
 // ============================================
@@ -1925,6 +2220,7 @@ function checkAnswer() {
     if(state.combo===10){ showToast('👑 کامبو ۱۰!'); fireRocket(); }
     if(state.correct%5===0&&state.correct>0){ fireRocket(); rocketCount++; checkAchievements(); }
     if(timeBonus>0){ const bonusEl=document.getElementById('timeBonusDisplay'); bonusEl.style.display='inline'; bonusEl.textContent=`⚡ +${timeBonus}`; setTimeout(()=>{ bonusEl.style.display='none'; },1500); }
+    saveDayData(points, 1);
   } else {
     sound.wrong(); state.wrong++; state.combo=0;
     if(!state.isDuel){ state.lives--; if(state.lives<=0){ showResult(); return; } }
@@ -1948,6 +2244,7 @@ function checkAnswer() {
   if(state.mode==='sorati'&&state.speedCorrect>=5) updateMissions('speed',state.speedCorrect);
   if(state.wrong===0&&state.correct>=5) updateMissions('perfect',1);
   checkAchievements();
+  checkRewards();
   if(!state.isDuel){
     document.getElementById('nextBtn').style.display='block';
   } else {
@@ -2062,7 +2359,8 @@ function showResult() {
   document.getElementById('resultDetails').textContent=`✅ دقت: ${Math.round(pct*100)}% · 🔥 زنجیره: ${state.maxCombo}`;
   if(state.correct>=3) saveLeaderboard(state.level);
   state.totalPlayed++; state.totalCorrect+=state.correct; state.totalWrong+=state.wrong;
-  saveStats(); updateLeagueUI();
+  state.totalTime += (userSettings.timer || 30) - state.timeLeft;
+  saveStats(); updateLeagueUI(); updateProgressChart(); updateAdvancedStats();
   showScreen('resultScreen');
 }
 
@@ -2094,24 +2392,43 @@ function dailyChallenge() {
   localStorage.setItem('dailyChallengeDateV2', today);
 }
 
+// ============================================
+// 📊 ADVANCED STATS
+// ============================================
+function updateAdvancedStats() {
+  document.getElementById('statGames').textContent = state.totalPlayed;
+  const total = state.totalCorrect + state.totalWrong;
+  document.getElementById('statWinRate').textContent = total > 0 ? Math.round((state.totalCorrect / total) * 100) + '%' : '۰%';
+  document.getElementById('statAchievements').textContent = Object.values(achievements).filter(a => a.unlocked).length;
+  document.getElementById('statBestStreak').textContent = state.maxCombo;
+  document.getElementById('statAvgScore').textContent = state.totalPlayed > 0 ? Math.round(state.score / state.totalPlayed) : 0;
+  const hours = Math.floor(state.totalTime / 3600);
+  const minutes = Math.floor((state.totalTime % 3600) / 60);
+  document.getElementById('statTotalTime').textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}
+
+// ============================================
+// 👤 PROFILE
+// ============================================
 function showProfile() {
-  document.getElementById('profileName').textContent='کاربر عزیز';
-  document.getElementById('pCorrect').textContent=state.totalCorrect;
-  document.getElementById('pWrong').textContent=state.totalWrong;
-  document.getElementById('pGames').textContent=state.totalPlayed;
-  const total=state.totalCorrect+state.totalWrong;
-  document.getElementById('pAccuracy').textContent=total>0?Math.round((state.totalCorrect/total)*100)+'%':'۰%';
-  updateAchieveUI(); updateLeagueUI();
+  document.getElementById('profileName').textContent = account.username || 'کاربر عزیز';
+  document.getElementById('pCorrect').textContent = state.totalCorrect;
+  document.getElementById('pWrong').textContent = state.totalWrong;
+  document.getElementById('pGames').textContent = state.totalPlayed;
+  const total = state.totalCorrect + state.totalWrong;
+  document.getElementById('pAccuracy').textContent = total > 0 ? Math.round((state.totalCorrect / total) * 100) + '%' : '۰%';
+  updateAchieveUI(); updateLeagueUI(); updateAdvancedStats(); updateProgressChart();
   showScreen('profileScreen');
 }
 
 function resetStats() {
   if(confirm('آیا از ریست کردن آمار مطمئنی؟')){
     state.totalCorrect=0; state.totalWrong=0; state.totalPlayed=0;
-    state.duelWins=0; rocketCount=0;
+    state.duelWins=0; rocketCount=0; state.totalTime=0;
     Object.keys(achievements).forEach(k=>achievements[k].unlocked=false);
     Object.keys(missions).forEach(k=>{ missions[k].progress=0; missions[k].done=false; });
-    saveAchievements(); saveMissions(); saveStats();
+    rewards.forEach(r=>r.claimed=false);
+    saveAchievements(); saveMissions(); saveRewards(); saveStats();
     showProfile();
   }
 }
@@ -2123,14 +2440,19 @@ function resetAll() {
     localStorage.removeItem('mathMissionsV2');
     localStorage.removeItem('mathSettingsV2');
     localStorage.removeItem('dailyChallengeDateV2');
+    localStorage.removeItem('mathAccount');
+    localStorage.removeItem('mathRewards');
+    for(let i=0;i<7;i++) localStorage.removeItem(`mathDay_${i}`);
     for(let key in localStorage){ if(key.startsWith('leaderboardV2_')) localStorage.removeItem(key); }
     state.totalCorrect=0; state.totalWrong=0; state.totalPlayed=0;
-    state.duelWins=0; rocketCount=0;
+    state.duelWins=0; rocketCount=0; state.totalTime=0;
     Object.keys(achievements).forEach(k=>achievements[k].unlocked=false);
     Object.keys(missions).forEach(k=>{ missions[k].progress=0; missions[k].done=false; });
+    rewards.forEach(r=>r.claimed=false);
+    account = { username: 'کاربر عزیز', avatar: '🧑‍🎓' };
     userSettings={timer:30,questionCount:10,robotLevel:'medium',sfx:'on'};
-    loadSettings();
-    saveAchievements(); saveMissions(); saveStats();
+    loadSettings(); saveAccount();
+    saveAchievements(); saveMissions(); saveRewards(); saveStats();
     showToast('🗑️ همه چیز ریست شد!');
     setTimeout(()=>location.reload(),1000);
   }
@@ -2140,7 +2462,8 @@ function saveStats() {
   try {
     localStorage.setItem('mathStats', JSON.stringify({
       totalCorrect: state.totalCorrect, totalWrong: state.totalWrong,
-      totalPlayed: state.totalPlayed, duelWins: state.duelWins
+      totalPlayed: state.totalPlayed, duelWins: state.duelWins,
+      totalTime: state.totalTime
     }));
   } catch(e) {}
 }
@@ -2153,6 +2476,7 @@ function loadStats() {
       state.totalWrong=data.totalWrong||0;
       state.totalPlayed=data.totalPlayed||0;
       state.duelWins=data.duelWins||0;
+      state.totalTime=data.totalTime||0;
     }
   } catch(e) {}
 }
@@ -2178,10 +2502,13 @@ loadStats();
 loadAchievements();
 loadMissions();
 loadSettings();
+loadAccount();
 buildLevelMenu();
 updateLeagueUI();
 renderMissions();
 updateAchieveUI();
+updateAdvancedStats();
+updateProgressChart();
 
 document.addEventListener('click', ()=>{
   if(!sound.ctx) sound.init();
