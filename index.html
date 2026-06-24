@@ -14,11 +14,39 @@
     --radius:16px; --shadow:0 10px 40px rgba(0,0,0,0.5);
     --duel-blue:#4facfe; --duel-orange:#ff9f43;
   }
+  
+  /* ===== تم‌ها ===== */
+  body.theme-nature {
+    --bg:#0f1f0f; --surface:#1a2f1a; --card:#254f25;
+    --teal:#4caf50; --gold:#ff9800; --pink:#e91e63;
+    --text:#e8f5e9; --muted:#81c784;
+  }
+  body.theme-ocean {
+    --bg:#0a1a2a; --surface:#0f2840; --card:#1a3a5a;
+    --teal:#00bcd4; --gold:#ffd700; --pink:#e91e63;
+    --text:#e0f7fa; --muted:#4dd0e1;
+  }
+  body.theme-galaxy {
+    --bg:#0a0a2a; --surface:#1a0a3a; --card:#2a1a5a;
+    --teal:#9c27b0; --gold:#ffd700; --pink:#e91e63;
+    --text:#f3e5f5; --muted:#ce93d8;
+  }
+  body.theme-sunset {
+    --bg:#1a0a0a; --surface:#2a1515; --card:#3a2020;
+    --teal:#ff6f00; --gold:#ffab00; --pink:#ff1744;
+    --text:#fff3e0; --muted:#ffab91;
+  }
+  body.theme-cyber {
+    --bg:#0a0a0a; --surface:#1a0a1a; --card:#2a0a2a;
+    --teal:#00ff88; --gold:#ff0080; --pink:#ff00ff;
+    --text:#f0f0ff; --muted:#8888aa;
+  }
+
   body {
     font-family:'Vazirmatn',sans-serif;
     background:var(--bg); color:var(--text);
     min-height:100vh; display:flex; justify-content:center; align-items:center;
-    padding:12px; direction:rtl;
+    padding:12px; direction:rtl; transition:all 0.5s ease;
   }
   .app {
     width:100%; max-width:480px;
@@ -355,6 +383,51 @@
   }
   .achieve-item.done { border-color:var(--teal); background:var(--teal-dim); }
 
+  .setting-item {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 0; border-bottom:1px solid var(--border);
+  }
+  .setting-item label { font-size:12px; font-weight:600; }
+  .setting-item select {
+    background:var(--bg); border:2px solid var(--border);
+    border-radius:6px; padding:4px 8px;
+    color:var(--text); font-size:11px; font-family:'Vazirmatn',sans-serif;
+  }
+  .theme-selector {
+    display:flex; gap:6px; flex-wrap:wrap; margin:6px 0;
+  }
+  .theme-opt {
+    width:32px; height:32px; border-radius:50%;
+    border:3px solid var(--border); cursor:pointer;
+    transition:all 0.3s;
+  }
+  .theme-opt:hover { transform:scale(1.1); }
+  .theme-opt.active { border-color:var(--gold); }
+  .theme-opt.default { background:#0a0a1a; }
+  .theme-opt.nature { background:#0f1f0f; }
+  .theme-opt.ocean { background:#0a1a2a; }
+  .theme-opt.galaxy { background:#0a0a2a; }
+  .theme-opt.sunset { background:#1a0a0a; }
+  .theme-opt.cyber { background:#0a0a0a; }
+
+  .credit-box {
+    text-align:center; padding:8px 0;
+    border-top:1px solid var(--border); margin-top:8px;
+  }
+  .credit-box .name { font-size:11px; font-weight:600; color:var(--muted); }
+  .credit-box .name span { color:var(--teal); }
+  .credit-box .links {
+    display:flex; justify-content:center; gap:8px;
+    margin-top:4px; flex-wrap:wrap;
+  }
+  .credit-box .links a {
+    color:var(--teal); text-decoration:none;
+    font-size:10px; padding:2px 10px;
+    border:1px solid var(--teal-dim); border-radius:12px;
+    transition:all 0.3s;
+  }
+  .credit-box .links a:hover { background:var(--teal-dim); }
+
   @media (max-width:480px) {
     .mode-grid { grid-template-columns:1fr 1fr 1fr; }
     .level-grid { grid-template-columns:1fr 1fr; }
@@ -378,7 +451,7 @@
   <div class="screen active" id="homeScreen">
     <div class="top-bar">
       <button class="btn btn-secondary btn-sm" onclick="toggleMusic()">🔊</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">🌓</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleThemeMode()">🌓</button>
       <div id="leagueDisplay"></div>
     </div>
 
@@ -422,16 +495,15 @@
       <button class="extra-btn" onclick="showLeaderboard()"><span class="icon">🏆</span>رتبه‌بندی</button>
     </div>
 
-  <div class="credit-box">
-      <div class="credit-name">⚡ ساخته شده توسط <span>  سید ارتیمان میری و تدوین گر محمد حسین حبیبی راد</span></div>
-      <a href="https://eitaa.com/irandigital_python" 
-         target="_blank" 
-         class="credit-link">
-        📱 کانال ما در ایتا
-      </a>
+    <!-- ===== CREDIT SECTION ===== -->
+    <div class="credit-box">
+      <div class="name">⚡ ساخته شده توسط <span>محمد حسین حبیبی راد</span> و <span>ارتیمان میری</span></div>
+      <div class="links">
+        <a href="https://eitaa.com/irandigital_python" target="_blank">📱 کانال Python</a>
+        <a href="https://eitaa.com/riyaziyateallamehelli2arak" target="_blank">📐 ریاضی علامه حلی</a>
+      </div>
     </div>
   </div>
-
 
   <!-- ===== AI ===== -->
   <div class="screen" id="aiScreen">
@@ -443,7 +515,7 @@
     <div class="ai-chat" id="aiChat">
       <div class="ai-msg bot">
         <span class="avatar">🤖</span>
-        <div>سلام! 👋 هر سوال ریاضی بپرس.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span></div>
+        <div>سلام! 👋 من دستیار ریاضی هستم.<br>می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال را حل کنم.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span></div>
       </div>
     </div>
     <div class="ai-input-row">
@@ -454,7 +526,59 @@
       <button onclick="quickAI('2x + 3 = 7 را حل کن')">📐 2x+3=7</button>
       <button onclick="quickAI('x² - 4 = 0 را حل کن')">📐 x²-4=0</button>
       <button onclick="quickAI('مفهوم مشتق را توضیح بده')">📖 مشتق</button>
+      <button onclick="quickAI('مفهوم انتگرال را توضیح بده')">📖 انتگرال</button>
       <button onclick="quickAI('یک سوال چالش‌برانگیز بده')">🏆 چالش</button>
+      <button onclick="quickAI('سیستم 2x+y=5 و x-y=1 را حل کن')">📊 سیستم</button>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS ===== -->
+  <div class="screen" id="settingsScreen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
+      <span style="font-weight:700;">⚙️ تنظیمات</span>
+      <div style="width:50px;"></div>
+    </div>
+    <div class="result-box">
+      <div class="setting-item">
+        <label>⏱️ زمان تایمر</label>
+        <select id="timerSetting" onchange="updateSettings()">
+          <option value="20">۲۰ ثانیه</option>
+          <option value="30" selected>۳۰ ثانیه</option>
+          <option value="45">۴۵ ثانیه</option>
+          <option value="60">۶۰ ثانیه</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>📊 تعداد سوالات</label>
+        <select id="questionCount" onchange="updateSettings()">
+          <option value="5">۵ سوال</option>
+          <option value="10" selected>۱۰ سوال</option>
+          <option value="15">۱۵ سوال</option>
+          <option value="20">۲۰ سوال</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>🎯 سطح ربات</label>
+        <select id="robotLevel" onchange="updateSettings()">
+          <option value="easy">آسان</option>
+          <option value="medium" selected>متوسط</option>
+          <option value="hard">سخت</option>
+          <option value="master">استاد</option>
+        </select>
+      </div>
+      <div style="margin-top:10px;">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">🎨 تم‌ها</label>
+        <div class="theme-selector">
+          <div class="theme-opt default active" onclick="applyTheme('default')" title="پیش‌فرض"></div>
+          <div class="theme-opt nature" onclick="applyTheme('nature')" title="طبیعت"></div>
+          <div class="theme-opt ocean" onclick="applyTheme('ocean')" title="اقیانوس"></div>
+          <div class="theme-opt galaxy" onclick="applyTheme('galaxy')" title="کهکشان"></div>
+          <div class="theme-opt sunset" onclick="applyTheme('sunset')" title="غروب"></div>
+          <div class="theme-opt cyber" onclick="applyTheme('cyber')" title="سایبر"></div>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="resetStats()" style="margin-top:10px;">🔄 ریست همه چیز</button>
     </div>
   </div>
 
@@ -480,7 +604,7 @@
         <div class="achieve-grid" id="achieveList"></div>
       </div>
       <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:4px;">📜 گواهینامه</button>
-      <button class="btn btn-secondary" onclick="resetStats()" style="margin-top:4px;">🔄 ریست آمار</button>
+      <button class="btn btn-secondary" onclick="showSettings()" style="margin-top:4px;">⚙️ تنظیمات</button>
     </div>
   </div>
 
@@ -607,6 +731,7 @@ class SoundSystem {
     this.isMuted = false;
     this.isMusicPlaying = false;
     this.musicInterval = null;
+    this.musicIndex = 0;
   }
   init() {
     try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -634,13 +759,14 @@ class SoundSystem {
   startMusic() {
     if (this.isMusicPlaying || this.isMuted) return;
     this.isMusicPlaying = true;
+    this.musicIndex = 0;
     this.playMusicLoop();
   }
   playMusicLoop() {
     if (!this.isMusicPlaying || this.isMuted) return;
     const notes = [523,587,659,523];
     this.play(notes[this.musicIndex % notes.length], 0.3);
-    this.musicIndex = (this.musicIndex || 0) + 1;
+    this.musicIndex++;
     this.musicInterval = setTimeout(()=>this.playMusicLoop(), 400);
   }
   stopMusic() {
@@ -649,7 +775,6 @@ class SoundSystem {
   }
 }
 const sound = new SoundSystem();
-let musicIndex = 0;
 
 function toggleMusic() {
   sound.isMuted = !sound.isMuted;
@@ -682,11 +807,56 @@ function fireRocket() {
 // ============================================
 // 🎨 THEME SYSTEM
 // ============================================
-function toggleTheme() {
-  document.body.style.background = document.body.style.background === '#f0f4ff' ? '' : '#f0f4ff';
-  document.body.style.color = document.body.style.color === '#1a1a2e' ? '' : '#1a1a2e';
-  const btn = document.querySelector('.top-bar .btn:nth-child(2)');
-  if (btn) btn.textContent = document.body.style.background === '#f0f4ff' ? '🌙' : '🌓';
+function applyTheme(name) {
+  document.body.className = document.body.className.split(' ').filter(c => !c.startsWith('theme-')).join(' ');
+  if (name !== 'default') document.body.classList.add('theme-' + name);
+  localStorage.setItem('mathTheme', name);
+  document.querySelectorAll('.theme-opt').forEach(el => {
+    el.classList.toggle('active', el.className.includes(name) || (name === 'default' && el.className.includes('default')));
+  });
+}
+
+function loadTheme() {
+  try { 
+    const theme = localStorage.getItem('mathTheme') || 'default';
+    applyTheme(theme);
+  } catch(e) {}
+}
+loadTheme();
+
+function toggleThemeMode() {
+  const themes = ['default', 'nature', 'ocean', 'galaxy', 'sunset', 'cyber'];
+  const current = document.body.className.match(/theme-(\w+)/)?.[1] || 'default';
+  const idx = (themes.indexOf(current) + 1) % themes.length;
+  applyTheme(themes[idx]);
+}
+
+// ============================================
+// ⚙️ SETTINGS
+// ============================================
+let userSettings = { timer: 30, questionCount: 10, robotLevel: 'medium' };
+
+function loadSettings() {
+  try {
+    const data = JSON.parse(localStorage.getItem('mathSettings'));
+    if (data) Object.assign(userSettings, data);
+  } catch(e) {}
+  document.getElementById('timerSetting').value = userSettings.timer;
+  document.getElementById('questionCount').value = userSettings.questionCount;
+  document.getElementById('robotLevel').value = userSettings.robotLevel;
+}
+loadSettings();
+
+function updateSettings() {
+  userSettings.timer = parseInt(document.getElementById('timerSetting').value);
+  userSettings.questionCount = parseInt(document.getElementById('questionCount').value);
+  userSettings.robotLevel = document.getElementById('robotLevel').value;
+  localStorage.setItem('mathSettings', JSON.stringify(userSettings));
+}
+
+function showSettings() {
+  loadSettings();
+  showScreen('settingsScreen');
 }
 
 // ============================================
@@ -699,7 +869,8 @@ const achievements = {
   perfect: { name: '💎 بدون خطا', unlocked: false },
   speedster: { name: '⚡ استاد سرعت', unlocked: false },
   duelMaster: { name: '⚔️ سلطان دوئل', unlocked: false },
-  rocketMan: { name: '🚀 افسانه موشک', unlocked: false }
+  rocketMan: { name: '🚀 افسانه موشک', unlocked: false },
+  mathWizard: { name: '🧙 نابغه ریاضی', unlocked: false }
 };
 let rocketCount = 0;
 
@@ -747,6 +918,9 @@ function checkAchievements() {
   }
   if (rocketCount >= 5 && !achievements.rocketMan.unlocked) {
     achievements.rocketMan.unlocked = true; sound.achievement(); showToast('🚀 افسانه موشک!');
+  }
+  if (state.totalCorrect >= 100 && !achievements.mathWizard.unlocked) {
+    achievements.mathWizard.unlocked = true; sound.achievement(); showToast('🧙 نابغه ریاضی!');
   }
   saveAchievements();
 }
@@ -1019,7 +1193,7 @@ function shareCert() {
 }
 
 // ============================================
-// 🧠 AI SYSTEM
+// 🧠 AI SYSTEM - کامل
 // ============================================
 function askAI() {
   const input = document.getElementById('aiInput');
@@ -1040,29 +1214,34 @@ function quickAI(q) { document.getElementById('aiInput').value = q; askAI(); }
 function generateAIResponse(question) {
   const q = question.toLowerCase().trim();
   
+  // 1. معادلات خطی
   const linearMatch = q.match(/([+-]?\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*([+-]?\s*\d*\.?\d*)/);
   if (linearMatch) {
     let a = parseFloat(linearMatch[1] || '1');
     let b = parseFloat(linearMatch[2] || '0');
     let c = parseFloat(linearMatch[3] || '0');
-    if (a === 0) return '⚠️ معادله معتبر نیست';
+    if (a === 0) return '⚠️ معادله معتبر نیست (ضریب x صفر است)';
     const x = (c - b) / a;
-    return `<strong>📐 حل معادله</strong><br>${a}x + (${b}) = ${c}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span>`;
+    return `<strong>📐 حل معادله خطی</strong><br>📌 ${a}x + (${b}) = ${c}<br>➡️ ${a}x = ${c - b}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span>`;
   }
   
+  // 2. معادلات درجه دو
   if (q.includes('x²') || q.includes('x^2')) {
     const match = q.match(/([+-]?\d*\.?\d*)?\s*x²\s*([+-]?\s*\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*0/);
     let a = parseFloat(match?.[1] || '1');
     let b = parseFloat(match?.[2] || '0');
     let c = parseFloat(match?.[3] || '0');
     const disc = b*b - 4*a*c;
-    if (disc < 0) return `<strong>🧮 معادله درجه دو</strong><br>${a}x² + ${b}x + ${c} = 0<br>❌ ریشه حقیقی ندارد (Δ = ${disc})`;
+    if (disc < 0) {
+      return `<strong>🧮 معادله درجه دو</strong><br>📌 ${a}x² + ${b}x + ${c} = 0<br>❌ ریشه حقیقی ندارد (Δ = ${disc} < 0)`;
+    }
     const sqrtDisc = Math.sqrt(disc);
     const x1 = (-b + sqrtDisc) / (2*a);
     const x2 = (-b - sqrtDisc) / (2*a);
-    return `<strong>🧮 حل معادله درجه دو</strong><br>${a}x² + ${b}x + ${c} = 0<br>➡️ x₁ = <span style="color:var(--teal);font-weight:700;">${x1.toFixed(3)}</span><br>➡️ x₂ = <span style="color:var(--teal);font-weight:700;">${x2.toFixed(3)}</span>`;
+    return `<strong>🧮 حل معادله درجه دو</strong><br>📌 ${a}x² + ${b}x + ${c} = 0<br>➡️ Δ = ${disc}<br>➡️ x₁ = <span style="color:var(--teal);font-weight:700;">${x1.toFixed(3)}</span><br>➡️ x₂ = <span style="color:var(--teal);font-weight:700;">${x2.toFixed(3)}</span>`;
   }
   
+  // 3. دستگاه دو معادله
   if (q.includes('سیستم') && q.includes('y')) {
     const nums = q.match(/([+-]?\d*\.?\d+)/g);
     if (nums && nums.length >= 6) {
@@ -1072,24 +1251,56 @@ function generateAIResponse(question) {
       if (Math.abs(det) < 0.001) return '⚠️ دستگاه منحصربه‌فرد نیست';
       const x = (c1*b2 - c2*b1) / det;
       const y = (a1*c2 - a2*c1) / det;
-      return `<strong>📊 حل دستگاه</strong><br>📌 ${a1}x + ${b1}y = ${c1}<br>📌 ${a2}x + ${b2}y = ${c2}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span><br>➡️ y = <span style="color:var(--teal);font-weight:700;">${y.toFixed(3)}</span>`;
+      return `<strong>📊 حل دستگاه دو معادله</strong><br>📌 ${a1}x + ${b1}y = ${c1}<br>📌 ${a2}x + ${b2}y = ${c2}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span><br>➡️ y = <span style="color:var(--teal);font-weight:700;">${y.toFixed(3)}</span>`;
     }
   }
   
+  // 4. مشتق
   if (q.includes('مشتق') || q.includes('مفهوم مشتق')) {
-    return `<strong>📖 مفهوم مشتق</strong><br>مشتق = نرخ تغییر تابع<br>🔹 f'(x) = lim (f(x+h)-f(x))/h<br>🔹 (xⁿ)' = n·xⁿ⁻¹<br>🔹 (sin x)' = cos x<br>🔹 (eˣ)' = eˣ`;
+    return `<strong>📖 مفهوم مشتق</strong><br>مشتق = نرخ تغییر تابع<br>🔹 f'(x) = lim (f(x+h)-f(x))/h<br>🔹 (xⁿ)' = n·xⁿ⁻¹<br>🔹 (sin x)' = cos x<br>🔹 (cos x)' = -sin x<br>🔹 (eˣ)' = eˣ<br>🔹 (ln x)' = 1/x`;
   }
   
+  // 5. انتگرال
   if (q.includes('انتگرال') || q.includes('مفهوم انتگرال')) {
-    return `<strong>📖 مفهوم انتگرال</strong><br>انتگرال = مساحت زیر منحنی<br>🔹 ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C<br>🔹 ∫ sin x dx = -cos x + C<br>🔹 ∫ eˣ dx = eˣ + C`;
+    return `<strong>📖 مفهوم انتگرال</strong><br>انتگرال = مساحت زیر منحنی<br>🔹 ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C<br>🔹 ∫ sin x dx = -cos x + C<br>🔹 ∫ cos x dx = sin x + C<br>🔹 ∫ eˣ dx = eˣ + C<br>🔹 ∫ 1/x dx = ln|x| + C`;
   }
   
+  // 6. سوال چالش
   if (q.includes('چالش') || q.includes('چالش‌برانگیز')) {
     const a = randInt(2,5), b = randInt(1,4), c = randInt(1,3);
-    return `<strong>🏆 سوال چالش‌برانگیز</strong><br>📌 ${a}x + ${b} = ${c}x + ${b + a + c}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${a + c}</span>`;
+    return `<strong>🏆 سوال چالش‌برانگیز</strong><br>📌 ${a}x + ${b} = ${c}x + ${b + a + c}<br>➡️ همه x‌ها را به یک طرف ببرید<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${a + c}</span>`;
   }
   
-  return `<strong>🤖 پاسخ هوش مصنوعی</strong><br>سوال شما: "${question}"<br>من می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال را حل کنم.<br>💡 سوال خود را دقیق‌تر بپرسید.`;
+  // 7. محاسبه ساده
+  const calcMatch = q.match(/(\d+)\s*([+\-*/])\s*(\d+)/);
+  if (calcMatch && !q.includes('x') && !q.includes('y')) {
+    const n1 = parseFloat(calcMatch[1]), op = calcMatch[2], n2 = parseFloat(calcMatch[3]);
+    let result;
+    switch(op) {
+      case '+': result = n1 + n2; break;
+      case '-': result = n1 - n2; break;
+      case '*': result = n1 * n2; break;
+      case '/': result = n2 !== 0 ? n1 / n2 : 'تعریف نشده (تقسیم بر صفر)'; break;
+    }
+    return `<strong>🧮 محاسبه عبارت</strong><br>📌 ${n1} ${op} ${n2} = ${result}`;
+  }
+  
+  // 8. مثلثات
+  if (q.includes('sin') || q.includes('cos') || q.includes('tan')) {
+    const match = q.match(/(sin|cos|tan)\s*\(?\s*(\d+)\s*\)?/);
+    if (match) {
+      const func = match[1], angle = parseInt(match[2]);
+      const rad = angle * Math.PI / 180;
+      let value;
+      if (func === 'sin') value = Math.sin(rad);
+      else if (func === 'cos') value = Math.cos(rad);
+      else value = Math.tan(rad);
+      const rounded = Math.round(value * 1000) / 1000;
+      return `<strong>📐 محاسبه مثلثاتی</strong><br>📌 ${func}(${angle}°) = ?<br>➡️ ${func}(${angle}°) = <span style="color:var(--teal);font-weight:700;">${rounded}</span>`;
+    }
+  }
+  
+  return `<strong>🤖 پاسخ هوش مصنوعی</strong><br>سوال شما: "${question}"<br>من می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات را حل کنم.<br>💡 سوال خود را دقیق‌تر بپرسید.`;
 }
 
 // ============================================
@@ -1261,7 +1472,7 @@ function startGame(level) {
   state.score = 0; state.lives = state.maxLives; state.current = 0;
   state.answered = false; state.selectedOption = -1; state.numpadValue = '';
   state.speedCorrect = 0;
-  const count = state.mode === 'sorati' ? 20 : 10;
+  const count = state.mode === 'sorati' ? 20 : (userSettings.questionCount || 10);
   state.totalQ = count;
   state.questions = buildQuestions(level, count);
   const labels = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
@@ -1277,10 +1488,15 @@ function startGame(level) {
 // ============================================
 const DUEL_DIFF = {
   easy: { delay: { min: 3000, max: 5000 }, error: 0.3 },
-  hard: { delay: { min: 1500, max: 3000 }, error: 0.15 },
-  expert: { delay: { min: 500, max: 1500 }, error: 0.05 },
+  medium: { delay: { min: 1500, max: 3000 }, error: 0.15 },
+  hard: { delay: { min: 500, max: 1500 }, error: 0.05 },
   master: { delay: { min: 200, max: 800 }, error: 0.01 }
 };
+
+function getDuelDiff(level) {
+  const map = { easy: 'easy', hard: 'medium', expert: 'hard', master: 'master' };
+  return DUEL_DIFF[map[level] || 'easy'];
+}
 
 function startDuel(level) {
   state.level = level;
@@ -1334,7 +1550,7 @@ function startDuelTimer() {
   state.timeLeft = 30;
   document.getElementById('timerDisplay').textContent = state.timeLeft;
   document.getElementById('timerDisplay').className = 'timer';
-  const diff = DUEL_DIFF[state.level] || DUEL_DIFF.easy;
+  const diff = getDuelDiff(state.level);
   const delay = randInt(diff.delay.min, diff.delay.max);
   if (state.duelTimeout) clearTimeout(state.duelTimeout);
   state.duelTimeout = setTimeout(() => {
@@ -1626,7 +1842,7 @@ function updateStats() {
 
 function startTimer() {
   clearInterval(state.timerInterval);
-  const total = state.mode === 'sorati' ? 10 : 30;
+  const total = state.mode === 'sorati' ? 10 : (userSettings.timer || 30);
   state.timeLeft = total;
   document.getElementById('timerDisplay').textContent = state.timeLeft;
   document.getElementById('timerDisplay').className = 'timer';
@@ -1750,7 +1966,7 @@ function showProfile() {
 }
 
 function resetStats() {
-  if (confirm('آیا از ریست کردن آمار مطمئنی؟')) {
+  if (confirm('آیا از ریست کردن همه چیز مطمئنی؟')) {
     state.totalCorrect = 0; state.totalWrong = 0; state.totalPlayed = 0;
     state.duelWins = 0; rocketCount = 0;
     Object.keys(achievements).forEach(k => achievements[k].unlocked = false);
@@ -1802,6 +2018,7 @@ function goHome() {
 loadStats();
 loadAchievements();
 loadMissions();
+loadSettings();
 buildLevelMenu();
 updateLeagueUI();
 renderMissions();
@@ -1818,6 +2035,9 @@ document.head.appendChild(styleAnim);
 
 document.addEventListener('click', () => {
   if (!sound.ctx) sound.init();
+  if (!sound.isMusicPlaying && !sound.isMuted) {
+    sound.startMusic();
+  }
 }, { once: true });
 </script>
 </body>
