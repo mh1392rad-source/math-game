@@ -3,43 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>⚡ Math Game - نسخه کامل</title>
+<title>⚡ Math Game + AI - نسخه ۳.۰</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --bg:#0a0a1a; --surface:#111128; --card:#181840;
-    --teal:#00f5d4; --gold:#ffd700; --pink:#ff6bcd; --red:#ff4757;
-    --text:#f0f4ff; --muted:#8899bb; --border:rgba(255,255,255,0.06);
-    --radius:16px; --shadow:0 10px 40px rgba(0,0,0,0.5);
-    --duel-blue:#4facfe; --duel-orange:#ff9f43;
+    --bg:#0a0a1a;
+    --surface:#111128;
+    --card:#181840;
+    --teal:#00f5d4;
+    --teal-dim:rgba(0,245,212,0.12);
+    --gold:#ffd700;
+    --gold-dim:rgba(255,215,0,0.12);
+    --pink:#ff6bcd;
+    --pink-dim:rgba(255,107,205,0.12);
+    --red:#ff4757;
+    --red-dim:rgba(255,71,87,0.12);
+    --text:#f0f4ff;
+    --muted:#8899bb;
+    --border:rgba(255,255,255,0.06);
+    --radius:16px;
+    --shadow:0 10px 40px rgba(0,0,0,0.5);
+    --duel-blue:#4facfe;
+    --duel-blue-dim:rgba(79,172,254,0.12);
+    --purple:#a29bfe;
+    --purple-dim:rgba(162,155,254,0.12);
+    --orange:#ff9f43;
+    --orange-dim:rgba(255,159,67,0.12);
   }
-  
-  /* ===== تم‌ها ===== */
-  body.theme-nature {
+
+  /* ===== 10 تم مختلف ===== */
+  body.theme-forest {
     --bg:#0f1f0f; --surface:#1a2f1a; --card:#254f25;
     --teal:#4caf50; --gold:#ff9800; --pink:#e91e63;
-    --text:#e8f5e9; --muted:#81c784;
+    --text:#e8f5e9; --muted:#81c784; --border:rgba(76,175,80,0.2);
   }
   body.theme-ocean {
     --bg:#0a1a2a; --surface:#0f2840; --card:#1a3a5a;
     --teal:#00bcd4; --gold:#ffd700; --pink:#e91e63;
-    --text:#e0f7fa; --muted:#4dd0e1;
+    --text:#e0f7fa; --muted:#4dd0e1; --border:rgba(0,188,212,0.2);
   }
   body.theme-galaxy {
     --bg:#0a0a2a; --surface:#1a0a3a; --card:#2a1a5a;
     --teal:#9c27b0; --gold:#ffd700; --pink:#e91e63;
-    --text:#f3e5f5; --muted:#ce93d8;
+    --text:#f3e5f5; --muted:#ce93d8; --border:rgba(156,39,176,0.2);
   }
   body.theme-sunset {
     --bg:#1a0a0a; --surface:#2a1515; --card:#3a2020;
     --teal:#ff6f00; --gold:#ffab00; --pink:#ff1744;
-    --text:#fff3e0; --muted:#ffab91;
+    --text:#fff3e0; --muted:#ffab91; --border:rgba(255,111,0,0.2);
   }
   body.theme-cyber {
     --bg:#0a0a0a; --surface:#1a0a1a; --card:#2a0a2a;
     --teal:#00ff88; --gold:#ff0080; --pink:#ff00ff;
-    --text:#f0f0ff; --muted:#8888aa;
+    --text:#f0f0ff; --muted:#8888aa; --border:rgba(0,255,136,0.2);
+  }
+  body.theme-ice {
+    --bg:#0a1a2a; --surface:#1a2a3a; --card:#2a3a4a;
+    --teal:#00e5ff; --gold:#b0e0e6; --pink:#ff80ab;
+    --text:#e0f7fa; --muted:#80deea; --border:rgba(0,229,255,0.2);
+  }
+  body.theme-fire {
+    --bg:#1a0a0a; --surface:#2a1515; --card:#3a2020;
+    --teal:#ff5722; --gold:#ffab00; --pink:#ff1744;
+    --text:#fff3e0; --muted:#ff8a65; --border:rgba(255,87,34,0.2);
+  }
+  body.theme-candy {
+    --bg:#1a0a1a; --surface:#2a1a2a; --card:#3a2a3a;
+    --teal:#ff6b6b; --gold:#ffd93d; --pink:#ff6bcd;
+    --text:#fdf0f0; --muted:#cc9a9a; --border:rgba(255,107,107,0.2);
+  }
+  body.theme-matrix {
+    --bg:#0a0a0a; --surface:#0f1f0f; --card:#1a2a1a;
+    --teal:#00ff41; --gold:#ffd700; --pink:#ff6bcd;
+    --text:#d0f0c0; --muted:#7fbf7f; --border:rgba(0,255,65,0.2);
+  }
+  body.theme-night {
+    --bg:#0a0a0a; --surface:#151525; --card:#202035;
+    --teal:#7f5af0; --gold:#ffd700; --pink:#ff6bcd;
+    --text:#e0e0ff; --muted:#8888aa; --border:rgba(127,90,240,0.2);
   }
 
   body {
@@ -48,39 +90,70 @@
     min-height:100vh; display:flex; justify-content:center; align-items:center;
     padding:12px; direction:rtl; transition:all 0.5s ease;
   }
+
   .app {
-    width:100%; max-width:480px;
+    width:100%; max-width:500px;
     background:var(--surface); border-radius:var(--radius);
     padding:16px; border:1px solid var(--border); box-shadow:var(--shadow);
+    position:relative; overflow:hidden;
   }
+
   .screen { display:none; }
-  .screen.active { display:block; animation:fadeIn 0.3s ease; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .screen.active { display:block; animation:fadeSlide 0.4s ease; }
+  @keyframes fadeSlide {
+    from{opacity:0;transform:translateY(20px) scale(0.96)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  .header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:10px; flex-wrap:wrap; gap:4px;
+  }
+  .header-left { display:flex; gap:4px; flex-wrap:wrap; }
+  .header-right { display:flex; gap:4px; align-items:center; }
 
   .btn {
-    display:inline-block; padding:8px 16px; border:none; border-radius:8px;
-    font-size:13px; font-weight:700; cursor:pointer;
-    font-family:'Vazirmatn',sans-serif; transition:all 0.3s; text-align:center; width:100%;
+    display:inline-block; padding:6px 14px; border:none; border-radius:8px;
+    font-size:11px; font-weight:700; cursor:pointer;
+    font-family:'Vazirmatn',sans-serif; transition:all 0.3s;
+    text-align:center;
   }
-  .btn:hover { transform:scale(1.02); }
+  .btn:hover { transform:scale(1.04); }
   .btn-primary { background:linear-gradient(135deg,var(--teal),#00d4b8); color:var(--bg); }
   .btn-secondary { background:var(--surface); border:2px solid var(--border); color:var(--text); }
-  .btn-secondary:hover { border-color:rgba(255,255,255,0.2); }
-  .btn-sm { padding:4px 10px; font-size:11px; width:auto; }
-  .btn-gold { background:var(--gold); color:var(--bg); }
+  .btn-secondary:hover { border-color:rgba(255,255,255,0.3); }
+  .btn-sm { padding:4px 10px; font-size:9px; width:auto; }
+  .btn-gold { background:linear-gradient(135deg,var(--gold),#f0a500); color:var(--bg); }
+  .btn-pink { background:linear-gradient(135deg,var(--pink),#d6336c); color:#fff; }
+  .btn-purple { background:linear-gradient(135deg,var(--purple),#7c5cbf); color:#fff; }
+  .btn-red { background:var(--red); color:#fff; }
+  .btn-outline { background:transparent; border:2px solid var(--border); color:var(--text); }
 
-  .logo { text-align:center; margin-bottom:10px; }
-  .logo .icon { font-size:40px; display:block; }
-  .logo .title { font-size:22px; font-weight:900; background:linear-gradient(135deg,var(--teal),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .logo .sub { font-size:11px; color:var(--muted); }
-
-  .top-bar {
-    display:flex; justify-content:space-between; align-items:center;
-    margin-bottom:8px; flex-wrap:wrap; gap:4px;
+  .badge {
+    display:inline-block; padding:2px 10px; border-radius:20px;
+    font-size:8px; font-weight:700;
   }
+  .badge-teal { background:var(--teal-dim); color:var(--teal); }
+  .badge-gold { background:var(--gold-dim); color:var(--gold); }
+  .badge-pink { background:var(--pink-dim); color:var(--pink); }
+  .badge-purple { background:var(--purple-dim); color:var(--purple); }
+
+  .logo { text-align:center; margin-bottom:12px; }
+  .logo-icon { font-size:44px; display:block; animation:float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .logo-title {
+    font-size:22px; font-weight:900;
+    background:linear-gradient(135deg,var(--teal),var(--gold),var(--pink));
+    background-size:200% 200%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation:gradientShift 4s ease-in-out infinite;
+  }
+  @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  .logo-sub { font-size:10px; color:var(--muted); }
+
   .league-badge {
     display:inline-flex; align-items:center; gap:4px;
-    padding:4px 12px; border-radius:20px; font-weight:700; font-size:12px;
+    padding:4px 12px; border-radius:20px; font-weight:700; font-size:11px;
   }
   .league-bronze { background:rgba(205,127,50,0.2); color:#cd7f32; border:1px solid #cd7f32; }
   .league-silver { background:rgba(192,192,192,0.2); color:#c0c0c0; border:1px solid #c0c0c0; }
@@ -88,88 +161,117 @@
   .league-platinum { background:rgba(229,228,226,0.2); color:#e5e4e2; border:1px solid #e5e4e2; }
   .league-diamond { background:rgba(185,242,255,0.2); color:#b9f2ff; border:1px solid #b9f2ff; }
 
+  /* ===== سربرگ‌های هیجانی ===== */
   .mode-grid {
-    display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+    display:grid; grid-template-columns:repeat(5,1fr);
     gap:4px; margin:8px 0;
   }
   .mode-btn {
-    background:var(--card); border:2px solid var(--border); border-radius:8px;
-    padding:6px 2px; cursor:pointer; text-align:center;
-    color:var(--muted); font-family:'Vazirmatn',sans-serif; transition:all 0.3s; font-size:9px;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:10px; padding:8px 2px; cursor:pointer;
+    text-align:center; color:var(--muted); font-family:'Vazirmatn',sans-serif;
+    transition:all 0.3s; font-size:9px;
   }
-  .mode-btn:hover { border-color:rgba(255,255,255,0.2); }
+  .mode-btn:hover { border-color:rgba(255,255,255,0.2); transform:scale(1.03); }
   .mode-btn.active { border-color:var(--teal); color:var(--text); background:var(--teal-dim); }
   .mode-btn .icon { font-size:18px; display:block; }
   .mode-btn .label { font-size:8px; font-weight:600; }
 
+  /* ===== سطوح هیجانی ===== */
   .level-grid {
     display:grid; grid-template-columns:1fr 1fr;
     gap:6px; margin:8px 0;
   }
   .level-card {
-    background:var(--card); border:2px solid var(--border); border-radius:12px;
-    padding:10px 6px; cursor:pointer; text-align:center;
-    transition:all 0.3s;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:12px; padding:12px 8px; cursor:pointer;
+    text-align:center; transition:all 0.3s; position:relative; overflow:hidden;
   }
-  .level-card:hover { transform:translateY(-3px); border-color:var(--teal); }
+  .level-card:hover { transform:translateY(-4px) scale(1.02); border-color:var(--teal); }
   .level-card .icon { font-size:22px; display:block; }
   .level-card .name { font-size:12px; font-weight:700; margin-top:4px; }
-  .level-card .desc { font-size:9px; color:var(--muted); }
+  .level-card .desc { font-size:8px; color:var(--muted); }
   .level-card .badge {
-    display:inline-block; font-size:7px; padding:2px 8px;
+    display:inline-block; font-size:7px; padding:2px 10px;
     border-radius:20px; margin-top:4px;
     background:var(--teal-dim); color:var(--teal);
   }
 
   .extra-grid {
-    display:grid; grid-template-columns:1fr 1fr 1fr;
+    display:grid; grid-template-columns:repeat(4,1fr);
     gap:4px; margin:8px 0;
   }
   .extra-btn {
     background:var(--surface); border:1px solid var(--border);
-    border-radius:8px; padding:6px 4px;
-    color:var(--muted); font-size:9px; cursor:pointer;
+    border-radius:8px; padding:8px 4px;
+    color:var(--muted); font-size:8px; cursor:pointer;
     text-align:center; font-family:'Vazirmatn',sans-serif; transition:all 0.2s;
   }
-  .extra-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
+  .extra-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); transform:scale(1.03); }
   .extra-btn .icon { font-size:16px; display:block; }
+
+  .mission-box {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:10px; margin:8px 0;
+  }
+  .mission-item {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:4px 8px; background:var(--surface);
+    border-radius:6px; margin-bottom:3px;
+    border:1px solid var(--border); font-size:10px; transition:all 0.3s;
+  }
+  .mission-item.done { border-color:var(--teal); background:var(--teal-dim); }
+  .mission-item .bar { width:50px; height:4px; background:var(--bg); border-radius:4px; overflow:hidden; }
+  .mission-item .fill { height:100%; background:linear-gradient(90deg,var(--teal),var(--gold)); border-radius:4px; transition:width 0.5s; }
+  .mission-item .reward { color:var(--gold); font-weight:700; }
+
+  .achieve-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:3px; margin:6px 0;
+  }
+  .achieve-item {
+    display:flex; align-items:center; gap:4px;
+    padding:3px 6px; background:var(--surface);
+    border-radius:6px; border:1px solid var(--border); font-size:8px; transition:all 0.3s;
+  }
+  .achieve-item.done { border-color:var(--teal); background:var(--teal-dim); }
 
   .game-header {
     display:flex; justify-content:space-between; align-items:center;
     margin-bottom:8px; flex-wrap:wrap; gap:4px;
   }
   .game-stats {
-    display:flex; gap:4px; flex-wrap:wrap;
+    display:flex; gap:3px; flex-wrap:wrap;
   }
   .stat-chip {
     background:var(--card); border:1px solid var(--border);
     border-radius:20px; padding:2px 8px;
-    font-size:9px; font-weight:700; display:flex; align-items:center; gap:3px;
+    font-size:8px; font-weight:700; display:flex; align-items:center; gap:3px;
   }
   .stat-chip .heart { color:var(--red); }
-  .stat-chip .timer { transition:all 0.3s; }
-  .stat-chip .timer.urgent { color:var(--red); animation:pulse 0.5s infinite; }
+  .timer { transition:all 0.3s; }
+  .timer.urgent { color:var(--red); animation:pulse 0.5s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
   .question-box {
     background:var(--card); border:2px solid var(--border);
     border-radius:var(--radius); padding:14px;
     text-align:center; margin:8px 0; min-height:80px;
-    transition:all 0.3s;
+    transition:all 0.4s; position:relative; overflow:hidden;
   }
-  .question-box.correct { border-color:var(--teal); }
-  .question-box.wrong { border-color:var(--red); }
-  .question-box .q-label { font-size:9px; color:var(--muted); }
+  .question-box.correct { border-color:var(--teal); box-shadow:0 0 30px rgba(0,245,212,0.12); }
+  .question-box.wrong { border-color:var(--red); box-shadow:0 0 30px rgba(255,71,87,0.12); }
+  .question-box .q-label { font-size:8px; color:var(--muted); letter-spacing:1px; }
   .question-box .q-eq {
     font-size:24px; font-weight:900;
     direction:ltr; font-family:'Times New Roman',serif;
-    margin:4px 0;
+    margin:4px 0; letter-spacing:-0.5px;
   }
-  .question-box .q-hint { font-size:11px; color:var(--muted); }
+  .question-box .q-hint { font-size:10px; color:var(--muted); }
 
   .options-grid {
     display:grid; grid-template-columns:1fr 1fr;
-    gap:6px; margin:8px 0;
+    gap:5px; margin:8px 0;
   }
   .option-btn {
     background:var(--card); border:2px solid var(--border);
@@ -178,24 +280,24 @@
     font-family:'Vazirmatn',sans-serif; color:var(--text);
     transition:all 0.3s;
   }
-  .option-btn:hover { border-color:var(--teal); background:var(--teal-dim); }
+  .option-btn:hover { border-color:var(--teal); background:var(--teal-dim); transform:scale(1.02); }
   .option-btn.selected { border-color:var(--gold); background:var(--gold-dim); }
   .option-btn.correct { border-color:var(--teal); background:var(--teal-dim); }
   .option-btn.wrong { border-color:var(--red); background:var(--red-dim); }
-  .option-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .option-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
 
   .numpad-grid {
     display:grid; grid-template-columns:repeat(4,1fr);
-    gap:4px; margin:8px 0;
+    gap:3px; margin:8px 0;
   }
   .num-key {
     background:var(--card); border:1.5px solid var(--border);
-    border-radius:6px; padding:10px;
+    border-radius:8px; padding:10px;
     font-size:16px; font-weight:700; cursor:pointer;
     color:var(--text); font-family:'Vazirmatn',sans-serif;
     transition:all 0.15s; text-align:center;
   }
-  .num-key:active { transform:scale(0.92); }
+  .num-key:active { transform:scale(0.92); background:var(--surface); }
   .num-key.del { background:var(--gold-dim); color:var(--gold); }
   .num-key.minus { background:var(--pink-dim); color:var(--pink); }
   .num-key.check { background:var(--teal); color:var(--bg); font-size:18px; }
@@ -207,34 +309,39 @@
     border-radius:8px; padding:8px 12px;
     font-size:20px; font-weight:700; text-align:center;
     direction:ltr; font-family:'Courier New',monospace;
-    min-height:38px; margin-bottom:6px;
+    min-height:38px; margin-bottom:6px; transition:all 0.3s;
   }
   .display-box .placeholder { color:var(--muted); font-size:13px; }
+  .display-box.error { border-color:var(--red); }
 
   .feedback {
-    padding:10px; border-radius:8px;
+    padding:10px 12px; border-radius:8px;
     margin:8px 0; display:none;
-    font-size:12px; line-height:1.6;
+    font-size:11px; line-height:1.8;
   }
-  .feedback.show { display:block; }
+  .feedback.show { display:block; animation:slideFeedback 0.4s ease; }
+  @keyframes slideFeedback {
+    from{opacity:0;transform:translateY(-10px)}
+    to{opacity:1;transform:translateY(0)}
+  }
   .feedback.correct { background:var(--teal-dim); border:2px solid rgba(0,245,212,0.25); }
   .feedback.wrong { background:var(--red-dim); border:2px solid rgba(255,71,87,0.25); }
   .feedback .steps {
-    font-size:10px; direction:ltr; text-align:left;
+    font-size:9px; direction:ltr; text-align:left;
     background:rgba(0,0,0,0.15); padding:4px 8px;
     border-radius:6px; margin-top:4px;
   }
 
   .result-box {
     background:var(--card); border:2px solid var(--border);
-    border-radius:var(--radius); padding:16px;
+    border-radius:var(--radius); padding:18px;
     text-align:center;
   }
-  .result-box .trophy { font-size:48px; }
-  .result-box .title { font-size:20px; font-weight:900; margin:4px 0; }
-  .result-box .subtitle { font-size:12px; color:var(--muted); }
+  .result-trophy { font-size:48px; animation:float 3s ease-in-out infinite; }
+  .result-title { font-size:20px; font-weight:900; margin:4px 0; }
+  .result-subtitle { font-size:11px; color:var(--muted); }
   .result-stats {
-    display:grid; grid-template-columns:1fr 1fr 1fr 1fr;
+    display:grid; grid-template-columns:repeat(4,1fr);
     gap:4px; margin:8px 0;
   }
   .result-stat {
@@ -242,7 +349,7 @@
     padding:6px; border:1px solid var(--border);
   }
   .result-stat .num { font-size:18px; font-weight:900; }
-  .result-stat .label { font-size:8px; color:var(--muted); }
+  .result-stat .label { font-size:7px; color:var(--muted); }
 
   .duel-box {
     background:var(--surface); border-radius:12px;
@@ -262,22 +369,22 @@
   .duel-player.winner { border-color:var(--gold); background:var(--gold-dim); }
   .duel-player.loser { border-color:var(--red); background:var(--red-dim); }
   .duel-player .avatar { font-size:28px; display:block; }
-  .duel-player .name { font-size:10px; font-weight:700; }
+  .duel-player .name { font-size:9px; font-weight:700; }
   .duel-player .answer { font-size:18px; font-weight:700; margin-top:4px; }
-  .duel-vs { font-size:18px; font-weight:900; color:var(--gold); }
+  .duel-vs { font-size:18px; font-weight:900; color:var(--gold); padding:0 4px; }
   .duel-score {
-    display:flex; justify-content:center; gap:16px;
+    display:flex; justify-content:center; gap:12px;
     font-size:12px; font-weight:700; margin:6px 0;
   }
   .duel-score .p-score { color:var(--teal); }
   .duel-score .r-score { color:var(--duel-blue); }
   .duel-result {
     text-align:center; font-size:16px; font-weight:700;
-    margin-top:4px; display:none;
+    margin-top:4px; display:none; padding:6px; border-radius:8px;
   }
-  .duel-result.win { color:var(--teal); }
-  .duel-result.lose { color:var(--red); }
-  .duel-result.draw { color:var(--gold); }
+  .duel-result.win { color:var(--teal); background:var(--teal-dim); }
+  .duel-result.lose { color:var(--red); background:var(--red-dim); }
+  .duel-result.draw { color:var(--gold); background:var(--gold-dim); }
 
   .ai-chat {
     background:var(--bg); border-radius:10px;
@@ -287,28 +394,29 @@
   .ai-msg {
     display:flex; gap:6px; padding:6px 10px;
     border-radius:8px; margin-bottom:4px;
-    font-size:12px; line-height:1.6;
+    font-size:11px; line-height:1.8;
   }
-  .ai-msg.user { background:var(--teal-dim); justify-content:flex-end; }
+  .ai-msg.user { background:var(--teal-dim); justify-content:flex-end; border:1px solid rgba(0,245,212,0.2); }
   .ai-msg.bot { background:var(--surface); border:1px solid var(--border); }
   .ai-msg .avatar { font-size:18px; }
   .ai-input-row {
     display:flex; gap:6px;
   }
   .ai-input-row input {
-    flex:1; padding:6px 10px;
+    flex:1; padding:8px 12px;
     background:var(--bg); border:2px solid var(--border);
     border-radius:8px; color:var(--text);
     font-size:12px; font-family:'Vazirmatn',sans-serif;
-    outline:none; direction:rtl;
+    outline:none; direction:rtl; transition:all 0.3s;
   }
-  .ai-input-row input:focus { border-color:var(--teal); }
+  .ai-input-row input:focus { border-color:var(--teal); box-shadow:0 0 20px rgba(0,245,212,0.08); }
   .ai-input-row button {
-    padding:6px 14px; border-radius:8px;
+    padding:8px 16px; border-radius:8px;
     background:var(--teal); color:var(--bg);
     border:none; font-weight:700; cursor:pointer;
-    font-family:'Vazirmatn',sans-serif;
+    font-family:'Vazirmatn',sans-serif; transition:all 0.3s;
   }
+  .ai-input-row button:hover { transform:scale(1.05); }
   .ai-quick {
     display:flex; gap:3px; flex-wrap:wrap; margin-top:6px;
   }
@@ -316,9 +424,9 @@
     background:var(--surface); border:1px solid var(--border);
     border-radius:14px; padding:3px 10px;
     font-size:8px; color:var(--muted); cursor:pointer;
-    font-family:'Vazirmatn',sans-serif;
+    font-family:'Vazirmatn',sans-serif; transition:all 0.2s;
   }
-  .ai-quick button:hover { border-color:var(--teal); color:var(--text); }
+  .ai-quick button:hover { border-color:var(--teal); color:var(--text); background:var(--teal-dim); }
 
   .modal-overlay {
     position:fixed; inset:0;
@@ -331,11 +439,19 @@
     background:var(--card); border:2px solid var(--border);
     border-radius:var(--radius); padding:20px;
     max-width:400px; width:100%; max-height:90vh; overflow-y:auto;
+    animation:fadeSlide 0.3s ease;
   }
+  .modal-close {
+    background:var(--surface); border:2px solid var(--border);
+    border-radius:8px; padding:6px; font-size:11px;
+    cursor:pointer; font-family:'Vazirmatn',sans-serif;
+    color:var(--text); width:100%; transition:all 0.3s;
+  }
+  .modal-close:hover { border-color:rgba(255,255,255,0.2); }
 
   .cert-preview { max-width:100%; border-radius:12px; border:2px solid var(--border); }
   .cert-actions { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
-  .cert-actions button { flex:1; padding:6px; font-size:10px; border-radius:8px; border:none; cursor:pointer; font-family:'Vazirmatn',sans-serif; font-weight:700; }
+  .cert-actions button { flex:1; padding:6px; font-size:9px; border-radius:8px; border:none; cursor:pointer; font-family:'Vazirmatn',sans-serif; font-weight:700; }
 
   .rocket-container {
     position:fixed; bottom:-100px; left:50%; transform:translateX(-50%);
@@ -358,43 +474,20 @@
   .rocket-trail.active { height:300px; animation:trailPulse 0.5s infinite alternate; }
   @keyframes trailPulse { 0%{opacity:0.4;height:200px} 100%{opacity:1;height:350px} }
 
-  .mission-box {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:10px; padding:10px; margin:8px 0;
-  }
-  .mission-item {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:4px 8px; background:var(--surface);
-    border-radius:6px; margin-bottom:3px;
-    border:1px solid var(--border); font-size:11px;
-  }
-  .mission-item.done { border-color:var(--teal); background:var(--teal-dim); }
-  .mission-item .bar { width:50px; height:3px; background:var(--bg); border-radius:3px; overflow:hidden; }
-  .mission-item .fill { height:100%; background:linear-gradient(90deg,var(--teal),var(--gold)); border-radius:3px; transition:width 0.5s; }
-
-  .achieve-grid {
-    display:grid; grid-template-columns:1fr 1fr;
-    gap:4px; margin:6px 0;
-  }
-  .achieve-item {
-    display:flex; align-items:center; gap:4px;
-    padding:4px 6px; background:var(--surface);
-    border-radius:6px; border:1px solid var(--border); font-size:9px;
-  }
-  .achieve-item.done { border-color:var(--teal); background:var(--teal-dim); }
-
   .setting-item {
     display:flex; justify-content:space-between; align-items:center;
     padding:8px 0; border-bottom:1px solid var(--border);
   }
-  .setting-item label { font-size:12px; font-weight:600; }
+  .setting-item label { font-size:11px; font-weight:600; }
   .setting-item select {
     background:var(--bg); border:2px solid var(--border);
     border-radius:6px; padding:4px 8px;
-    color:var(--text); font-size:11px; font-family:'Vazirmatn',sans-serif;
+    color:var(--text); font-size:10px; font-family:'Vazirmatn',sans-serif;
+    transition:all 0.3s;
   }
+  .setting-item select:focus { border-color:var(--teal); outline:none; }
   .theme-selector {
-    display:flex; gap:6px; flex-wrap:wrap; margin:6px 0;
+    display:flex; gap:5px; flex-wrap:wrap; margin:6px 0;
   }
   .theme-opt {
     width:32px; height:32px; border-radius:50%;
@@ -402,41 +495,92 @@
     transition:all 0.3s;
   }
   .theme-opt:hover { transform:scale(1.1); }
-  .theme-opt.active { border-color:var(--gold); }
+  .theme-opt.active { border-color:var(--gold); box-shadow:0 0 20px rgba(255,215,0,0.2); }
   .theme-opt.default { background:#0a0a1a; }
-  .theme-opt.nature { background:#0f1f0f; }
+  .theme-opt.forest { background:#0f1f0f; }
   .theme-opt.ocean { background:#0a1a2a; }
   .theme-opt.galaxy { background:#0a0a2a; }
   .theme-opt.sunset { background:#1a0a0a; }
   .theme-opt.cyber { background:#0a0a0a; }
+  .theme-opt.ice { background:#0a1a2a; }
+  .theme-opt.fire { background:#1a0a0a; }
+  .theme-opt.candy { background:#1a0a1a; }
+  .theme-opt.matrix { background:#0a0a0a; }
+  .theme-opt.night { background:#0a0a0a; }
+
+  .music-player {
+    display:flex; align-items:center; gap:4px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:2px 8px;
+  }
+  .music-btn {
+    background:none; border:none; color:var(--muted);
+    font-size:14px; cursor:pointer; padding:4px 6px;
+    transition:all 0.3s; border-radius:6px;
+  }
+  .music-btn:hover { color:var(--text); background:var(--teal-dim); }
+  .music-btn.active { color:var(--teal); }
+  .music-select {
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:12px; padding:2px 6px;
+    color:var(--text); font-size:9px; font-family:'Vazirmatn',sans-serif;
+    max-width:80px;
+  }
 
   .credit-box {
     text-align:center; padding:8px 0;
     border-top:1px solid var(--border); margin-top:8px;
   }
-  .credit-box .name { font-size:11px; font-weight:600; color:var(--muted); }
-  .credit-box .name span { color:var(--teal); }
-  .credit-box .links {
-    display:flex; justify-content:center; gap:8px;
+  .credit-name { font-size:10px; font-weight:600; color:var(--muted); }
+  .credit-name span { color:var(--teal); }
+  .credit-links {
+    display:flex; justify-content:center; gap:6px;
     margin-top:4px; flex-wrap:wrap;
   }
-  .credit-box .links a {
+  .credit-links a {
     color:var(--teal); text-decoration:none;
-    font-size:10px; padding:2px 10px;
-    border:1px solid var(--teal-dim); border-radius:12px;
-    transition:all 0.3s;
+    font-size:9px; padding:4px 12px;
+    border:1px solid var(--teal-dim); border-radius:14px;
+    transition:all 0.3s; display:inline-flex; align-items:center; gap:4px;
   }
-  .credit-box .links a:hover { background:var(--teal-dim); }
+  .credit-links a:hover { background:var(--teal-dim); transform:scale(1.05); }
+
+  .combo-popup {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:36px; font-weight:900; color:var(--gold);
+    pointer-events:none; z-index:100;
+    text-shadow:0 0 40px rgba(255,215,0,0.4);
+    animation:comboAnim 0.8s ease forwards;
+  }
+  @keyframes comboAnim {
+    0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)}
+    30%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}
+    60%{transform:translate(-50%,-50%) scale(1)}
+    100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
+  }
+
+  .toast {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:var(--card); border:2px solid var(--gold);
+    border-radius:12px; padding:16px 24px;
+    font-size:16px; font-weight:700; z-index:1000;
+    text-align:center; animation:fadeSlide 0.3s ease;
+    box-shadow:var(--shadow); max-width:90%;
+  }
 
   @media (max-width:480px) {
-    .mode-grid { grid-template-columns:1fr 1fr 1fr; }
+    .mode-grid { grid-template-columns:repeat(3,1fr); }
     .level-grid { grid-template-columns:1fr 1fr; }
     .options-grid { grid-template-columns:1fr 1fr; }
     .result-stats { grid-template-columns:1fr 1fr; }
     .extra-grid { grid-template-columns:1fr 1fr; }
-    .app { padding:12px; }
     .duel-players { flex-direction:column; }
     .duel-vs { padding:4px 0; }
+    .app { padding:12px; }
+    .logo-title { font-size:18px; }
+    .question-box .q-eq { font-size:18px; }
+    .header { flex-direction:column; align-items:stretch; gap:6px; }
+    .header-left, .header-right { justify-content:center; }
   }
 </style>
 </head>
@@ -449,40 +593,62 @@
 
   <!-- ===== HOME ===== -->
   <div class="screen active" id="homeScreen">
-    <div class="top-bar">
-      <button class="btn btn-secondary btn-sm" onclick="toggleMusic()">🔊</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleThemeMode()">🌓</button>
-      <div id="leagueDisplay"></div>
+    <div class="header">
+      <div class="header-left">
+        <button class="btn btn-secondary btn-sm" onclick="toggleMusic()">🔊</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">🎨</button>
+        <div class="music-player">
+          <button class="music-btn" onclick="prevMusic()">⏮</button>
+          <select class="music-select" id="musicSelect" onchange="changeMusic(this.value)">
+            <option value="0">🎵 آرامش</option>
+            <option value="1">🎵 حماسی</option>
+            <option value="2">🎵 الکترونیک</option>
+            <option value="3">🎵 کلاسیک</option>
+            <option value="4">🎵 جاز</option>
+            <option value="5">🎵 راک</option>
+            <option value="6">🎵 پاپ</option>
+            <option value="7">🎵 لوفی</option>
+            <option value="8">🎵 سینمایی</option>
+            <option value="9">🎵 آرامبخش</option>
+          </select>
+          <button class="music-btn" onclick="nextMusic()">⏭</button>
+        </div>
+      </div>
+      <div class="header-right">
+        <div id="leagueDisplay"></div>
+      </div>
     </div>
 
     <div class="logo">
-      <span class="icon">⚡</span>
-      <div class="title">Math Game</div>
-      <div class="sub">بازی ریاضی هوشمند</div>
+      <span class="logo-icon">⚡</span>
+      <div class="logo-title">Math Game + AI</div>
+      <div class="logo-sub">نسخه ۳.۰ · هوش مصنوعی · ۱۰ تم · ۱۰ آهنگ</div>
     </div>
 
+    <!-- ===== سربرگ‌های هیجانی ===== -->
     <div class="mode-grid">
       <button class="mode-btn active" data-mode="testi" onclick="setMode('testi')">
-        <span class="icon">📝</span><span class="label">تستی</span>
+        <span class="icon">🎯</span><span class="label">هدف‌یاب</span>
       </button>
       <button class="mode-btn" data-mode="tashrihi" onclick="setMode('tashrihi')">
-        <span class="icon">✍️</span><span class="label">تشریحی</span>
+        <span class="icon">✍️</span><span class="label">نابغه‌نویس</span>
       </button>
       <button class="mode-btn" data-mode="sorati" onclick="setMode('sorati')">
-        <span class="icon">⚡</span><span class="label">سرعتی</span>
+        <span class="icon">⚡</span><span class="label">تندباد</span>
       </button>
       <button class="mode-btn" data-mode="duel" onclick="setMode('duel')">
-        <span class="icon">⚔️</span><span class="label">دوئل</span>
+        <span class="icon">⚔️</span><span class="label">نبردگاه</span>
       </button>
       <button class="mode-btn" data-mode="ai" onclick="setMode('ai')">
-        <span class="icon">🤖</span><span class="label">هوش مصنوعی</span>
+        <span class="icon">🤖</span><span class="label">مغز دیجیتال</span>
       </button>
     </div>
 
+    <!-- ===== سطوح هیجانی با مباحث جدید ===== -->
     <div class="level-grid" id="levelGrid"></div>
 
     <div class="mission-box" id="missionBox">
-      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;">
+      <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;">
         <span>🎯 ماموریت‌ها</span>
         <span id="missionProgress">۰/۰</span>
       </div>
@@ -493,33 +659,32 @@
       <button class="extra-btn" onclick="dailyChallenge()"><span class="icon">📅</span>چالش روزانه</button>
       <button class="extra-btn" onclick="showProfile()"><span class="icon">👤</span>پروفایل</button>
       <button class="extra-btn" onclick="showLeaderboard()"><span class="icon">🏆</span>رتبه‌بندی</button>
+      <button class="extra-btn" onclick="showSettings()"><span class="icon">⚙️</span>تنظیمات</button>
     </div>
 
-    <!-- ===== CREDIT SECTION ===== -->
     <div class="credit-box">
-      <div class="name">⚡ ساخته شده توسط <span>محمد حسین حبیبی راد</span> و <span>ارتیمان میری</span></div>
-      <div class="links">
+      <div class="credit-name">⚡ ساخته شده توسط <span>محمد حسین حبیبی راد</span></div>
+      <div class="credit-links">
         <a href="https://eitaa.com/irandigital_python" target="_blank">📱 کانال Python</a>
-        <a href="https://eitaa.com/riyaziyateallamehelli2arak" target="_blank">📐 ریاضی علامه حلی</a>
       </div>
     </div>
   </div>
 
   <!-- ===== AI ===== -->
   <div class="screen" id="aiScreen">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;">🤖 هوش مصنوعی</span>
+      <span style="font-weight:700;font-size:14px;">🤖 مغز دیجیتال</span>
       <div style="width:50px;"></div>
     </div>
     <div class="ai-chat" id="aiChat">
       <div class="ai-msg bot">
         <span class="avatar">🤖</span>
-        <div>سلام! 👋 من دستیار ریاضی هستم.<br>می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال را حل کنم.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span></div>
+        <div>سلام! 👋 من مغز دیجیتال هستم.<br>می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات و ... را حل کنم.<br>مثال: <span style="color:var(--gold);">2x + 3 = 7</span></div>
       </div>
     </div>
     <div class="ai-input-row">
-      <input type="text" id="aiInput" placeholder="سوال ریاضی..." onkeypress="if(event.key==='Enter') askAI()">
+      <input type="text" id="aiInput" placeholder="سوال ریاضی خود را بپرسید..." onkeypress="if(event.key==='Enter') askAI()">
       <button onclick="askAI()">📤</button>
     </div>
     <div class="ai-quick">
@@ -529,20 +694,22 @@
       <button onclick="quickAI('مفهوم انتگرال را توضیح بده')">📖 انتگرال</button>
       <button onclick="quickAI('یک سوال چالش‌برانگیز بده')">🏆 چالش</button>
       <button onclick="quickAI('سیستم 2x+y=5 و x-y=1 را حل کن')">📊 سیستم</button>
+      <button onclick="quickAI('sin(30) را محاسبه کن')">📐 sin30</button>
     </div>
   </div>
 
   <!-- ===== SETTINGS ===== -->
   <div class="screen" id="settingsScreen">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;">⚙️ تنظیمات</span>
+      <span style="font-weight:700;font-size:14px;">⚙️ تنظیمات</span>
       <div style="width:50px;"></div>
     </div>
     <div class="result-box">
       <div class="setting-item">
         <label>⏱️ زمان تایمر</label>
         <select id="timerSetting" onchange="updateSettings()">
+          <option value="15">۱۵ ثانیه</option>
           <option value="20">۲۰ ثانیه</option>
           <option value="30" selected>۳۰ ثانیه</option>
           <option value="45">۴۵ ثانیه</option>
@@ -556,6 +723,7 @@
           <option value="10" selected>۱۰ سوال</option>
           <option value="15">۱۵ سوال</option>
           <option value="20">۲۰ سوال</option>
+          <option value="30">۳۰ سوال</option>
         </select>
       </div>
       <div class="setting-item">
@@ -567,31 +735,46 @@
           <option value="master">استاد</option>
         </select>
       </div>
+      <div class="setting-item">
+        <label>🔊 افکت‌های صوتی</label>
+        <select id="sfxSetting" onchange="updateSettings()">
+          <option value="on" selected>فعال</option>
+          <option value="off">غیرفعال</option>
+        </select>
+      </div>
       <div style="margin-top:10px;">
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">🎨 تم‌ها</label>
+        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:6px;">🎨 انتخاب تم (۱۰ تم)</label>
         <div class="theme-selector">
           <div class="theme-opt default active" onclick="applyTheme('default')" title="پیش‌فرض"></div>
-          <div class="theme-opt nature" onclick="applyTheme('nature')" title="طبیعت"></div>
+          <div class="theme-opt forest" onclick="applyTheme('forest')" title="جنگل"></div>
           <div class="theme-opt ocean" onclick="applyTheme('ocean')" title="اقیانوس"></div>
           <div class="theme-opt galaxy" onclick="applyTheme('galaxy')" title="کهکشان"></div>
           <div class="theme-opt sunset" onclick="applyTheme('sunset')" title="غروب"></div>
           <div class="theme-opt cyber" onclick="applyTheme('cyber')" title="سایبر"></div>
+          <div class="theme-opt ice" onclick="applyTheme('ice')" title="یخ"></div>
+          <div class="theme-opt fire" onclick="applyTheme('fire')" title="آتش"></div>
+          <div class="theme-opt candy" onclick="applyTheme('candy')" title="شیرینی"></div>
+          <div class="theme-opt matrix" onclick="applyTheme('matrix')" title="ماتریکس"></div>
+          <div class="theme-opt night" onclick="applyTheme('night')" title="شب"></div>
         </div>
       </div>
-      <button class="btn btn-secondary" onclick="resetStats()" style="margin-top:10px;">🔄 ریست همه چیز</button>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-secondary" onclick="resetStats()" style="flex:1;">🔄 ریست آمار</button>
+        <button class="btn btn-red" onclick="resetAll()" style="flex:1;">🗑️ ریست کامل</button>
+      </div>
     </div>
   </div>
 
   <!-- ===== PROFILE ===== -->
   <div class="screen" id="profileScreen">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;">👤 پروفایل</span>
+      <span style="font-weight:700;font-size:14px;">👤 پروفایل</span>
       <div style="width:50px;"></div>
     </div>
     <div class="result-box">
       <div style="font-size:40px;">🧑‍🎓</div>
-      <div style="font-size:16px;font-weight:700;" id="profileName">کاربر</div>
+      <div style="font-size:16px;font-weight:700;" id="profileName">کاربر عزیز</div>
       <div id="profileLeague" style="margin:4px 0;"></div>
       <div class="result-stats">
         <div class="result-stat"><div class="num" id="pCorrect">0</div><div class="label">✅ صحیح</div></div>
@@ -600,30 +783,32 @@
         <div class="result-stat"><div class="num" id="pAccuracy">0%</div><div class="label">🎯 دقت</div></div>
       </div>
       <div style="margin:8px 0;text-align:right;">
-        <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;">🏆 دستاوردها</div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:4px;">🏆 دستاوردها</div>
         <div class="achieve-grid" id="achieveList"></div>
       </div>
-      <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:4px;">📜 گواهینامه</button>
-      <button class="btn btn-secondary" onclick="showSettings()" style="margin-top:4px;">⚙️ تنظیمات</button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-gold" onclick="generateCertificate()" style="flex:1;">📜 گواهینامه</button>
+        <button class="btn btn-secondary" onclick="showSettings()" style="flex:1;">⚙️ تنظیمات</button>
+      </div>
     </div>
   </div>
 
   <!-- ===== LEADERBOARD ===== -->
   <div class="screen" id="leaderboardScreen">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <div class="header">
       <button class="btn btn-secondary btn-sm" onclick="goHome()">← بازگشت</button>
-      <span style="font-weight:700;">🏆 رتبه‌بندی</span>
+      <span style="font-weight:700;font-size:14px;">🏆 رتبه‌بندی</span>
       <div style="width:50px;"></div>
     </div>
     <div class="result-box">
-      <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:8px;">
+      <div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:center;margin-bottom:8px;">
         <button class="btn btn-secondary btn-sm" onclick="loadLeaderboard('all')">🌐 همه</button>
         <button class="btn btn-secondary btn-sm" onclick="loadLeaderboard('easy')">📐 آسان</button>
         <button class="btn btn-secondary btn-sm" onclick="loadLeaderboard('hard')">🔢 سخت</button>
         <button class="btn btn-secondary btn-sm" onclick="loadLeaderboard('expert')">🧠 متخصص</button>
         <button class="btn btn-secondary btn-sm" onclick="loadLeaderboard('master')">👑 استاد</button>
       </div>
-      <div id="leaderboardList" style="max-height:300px;overflow-y:auto;text-align:right;"></div>
+      <div id="leaderboardList" style="max-height:350px;overflow-y:auto;text-align:right;"></div>
     </div>
   </div>
 
@@ -636,7 +821,7 @@
         <button class="btn btn-primary btn-sm" onclick="downloadCert()">📥 دانلود</button>
         <button class="btn btn-secondary btn-sm" onclick="shareCert()">📤 اشتراک</button>
       </div>
-      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('certModal').classList.remove('show')" style="margin-top:6px;">بستن</button>
+      <button class="modal-close" onclick="document.getElementById('certModal').classList.remove('show')" style="margin-top:8px;">بستن</button>
     </div>
   </div>
 
@@ -654,9 +839,10 @@
       </div>
     </div>
 
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;">
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px;">
       <span id="questionCounter">سوال ۱ از ۱۰</span>
       <span id="scoreDisplay">⭐ ۰ امتیاز</span>
+      <span id="timeBonusDisplay" style="color:var(--gold);display:none;">⚡ +۰</span>
     </div>
 
     <div class="question-box" id="questionBox">
@@ -669,6 +855,7 @@
       <div class="duel-score">
         <span class="p-score">👤 شما: <span id="duelPlayerScore">0</span></span>
         <span class="r-score">🤖 ربات: <span id="duelRobotScore">0</span></span>
+        <span style="color:var(--gold);">⚔️ دور: <span id="duelRoundDisplay">۱</span></span>
       </div>
       <div class="duel-players">
         <div class="duel-player active" id="duelPlayerBox">
@@ -699,9 +886,9 @@
   <!-- ===== RESULT ===== -->
   <div class="screen" id="resultScreen">
     <div class="result-box">
-      <div class="trophy" id="resultTrophy">🏆</div>
-      <div class="title" id="resultTitle">عالی بود!</div>
-      <div class="subtitle" id="resultSubtitle">نتایج بازی شما</div>
+      <div class="result-trophy" id="resultTrophy">🏆</div>
+      <div class="result-title" id="resultTitle">عالی بود!</div>
+      <div class="result-subtitle" id="resultSubtitle">نتایج بازی شما</div>
       <div id="resultLeague" style="margin:4px 0;"></div>
       <div class="result-stats">
         <div class="result-stat"><div class="num" id="rCorrect">0</div><div class="label">✅ صحیح</div></div>
@@ -709,12 +896,12 @@
         <div class="result-stat"><div class="num" id="rScore">0</div><div class="label">⭐ امتیاز</div></div>
         <div class="result-stat"><div class="num" id="rStreak">0</div><div class="label">🔥 زنجیره</div></div>
       </div>
-      <div style="font-size:11px;color:var(--muted);" id="resultDetails"></div>
-      <button class="btn btn-gold" onclick="generateCertificate()" style="margin-top:6px;">📜 گواهینامه</button>
-      <div style="display:flex;gap:6px;margin-top:6px;">
-        <button class="btn btn-primary" onclick="restartGame()">🔄 دوباره</button>
-        <button class="btn btn-secondary" onclick="goHome()">🏠 منو</button>
+      <div style="font-size:10px;color:var(--muted);" id="resultDetails"></div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn btn-gold" onclick="generateCertificate()" style="flex:1;">📜 گواهینامه</button>
+        <button class="btn btn-primary" onclick="restartGame()" style="flex:1;">🔄 دوباره</button>
       </div>
+      <button class="btn btn-secondary" onclick="goHome()" style="margin-top:4px;">🏠 منو</button>
     </div>
   </div>
 
@@ -722,28 +909,43 @@
 
 <script>
 // ============================================
-// 🎵 SOUND SYSTEM
+// 🎵 SOUND SYSTEM با ۱۰ آهنگ مختلف
 // ============================================
+const MUSIC_PATTERNS = [
+  { notes: [523,587,659,523], delay: 500, type: 'sine' },
+  { notes: [440,554,659,880,659,554], delay: 300, type: 'sawtooth' },
+  { notes: [440,440,554,554,659,659,554,554], delay: 200, type: 'square' },
+  { notes: [523,523,523,587,659,659,659,587], delay: 400, type: 'sine' },
+  { notes: [440,523,659,784,659,523], delay: 350, type: 'sine' },
+  { notes: [440,440,554,554,880,880,784], delay: 250, type: 'sawtooth' },
+  { notes: [523,587,659,784,659,587,523], delay: 300, type: 'sine' },
+  { notes: [392,440,523,392,440,523], delay: 450, type: 'sine' },
+  { notes: [392,523,659,784,659,523,392], delay: 350, type: 'sawtooth' },
+  { notes: [440,440,523,523,587,587,523,523], delay: 550, type: 'sine' }
+];
+
 class SoundSystem {
   constructor() {
     this.ctx = null;
-    this.volume = 0.5;
+    this.volume = 0.4;
     this.isMuted = false;
+    this.isSFXEnabled = true;
     this.isMusicPlaying = false;
     this.musicInterval = null;
     this.musicIndex = 0;
+    this.currentPattern = 0;
   }
   init() {
     try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
   }
   play(freq, dur, type = 'sine') {
-    if (this.isMuted || !this.ctx) return;
+    if (this.isMuted || !this.isSFXEnabled || !this.ctx) return;
     try {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = type;
       osc.frequency.value = freq;
-      gain.gain.value = 0.15 * this.volume;
+      gain.gain.value = 0.12 * this.volume;
       gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
@@ -764,27 +966,51 @@ class SoundSystem {
   }
   playMusicLoop() {
     if (!this.isMusicPlaying || this.isMuted) return;
-    const notes = [523,587,659,523];
-    this.play(notes[this.musicIndex % notes.length], 0.3);
+    const pattern = MUSIC_PATTERNS[this.currentPattern] || MUSIC_PATTERNS[0];
+    const notes = pattern.notes;
+    this.play(notes[this.musicIndex % notes.length], 0.2, pattern.type);
     this.musicIndex++;
-    this.musicInterval = setTimeout(()=>this.playMusicLoop(), 400);
+    this.musicInterval = setTimeout(()=>this.playMusicLoop(), pattern.delay);
   }
   stopMusic() {
     this.isMusicPlaying = false;
     if (this.musicInterval) { clearTimeout(this.musicInterval); this.musicInterval = null; }
+  }
+  setPattern(index) {
+    this.currentPattern = Math.min(Math.max(index, 0), MUSIC_PATTERNS.length - 1);
+    if (this.isMusicPlaying) {
+      this.stopMusic();
+      this.startMusic();
+    }
   }
 }
 const sound = new SoundSystem();
 
 function toggleMusic() {
   sound.isMuted = !sound.isMuted;
-  const btn = document.querySelector('.top-bar .btn:first-child');
+  const btn = document.querySelector('.header-left .btn:first-child');
   if (btn) btn.textContent = sound.isMuted ? '🔇' : '🔊';
-  if (!sound.isMuted && !sound.isMusicPlaying) {
-    sound.startMusic();
-  } else if (sound.isMuted) {
-    sound.stopMusic();
-  }
+  if (!sound.isMuted && !sound.isMusicPlaying) sound.startMusic();
+  else if (sound.isMuted) sound.stopMusic();
+}
+
+function changeMusic(val) {
+  sound.setPattern(parseInt(val));
+  document.getElementById('musicSelect').value = val;
+}
+
+function nextMusic() {
+  const sel = document.getElementById('musicSelect');
+  const val = (parseInt(sel.value) + 1) % MUSIC_PATTERNS.length;
+  sel.value = val;
+  changeMusic(val);
+}
+
+function prevMusic() {
+  const sel = document.getElementById('musicSelect');
+  const val = (parseInt(sel.value) - 1 + MUSIC_PATTERNS.length) % MUSIC_PATTERNS.length;
+  sel.value = val;
+  changeMusic(val);
 }
 
 // ============================================
@@ -805,7 +1031,7 @@ function fireRocket() {
 }
 
 // ============================================
-// 🎨 THEME SYSTEM
+// 🎨 THEME SYSTEM - ۱۰ تم
 // ============================================
 function applyTheme(name) {
   document.body.className = document.body.className.split(' ').filter(c => !c.startsWith('theme-')).join(' ');
@@ -817,15 +1043,12 @@ function applyTheme(name) {
 }
 
 function loadTheme() {
-  try { 
-    const theme = localStorage.getItem('mathTheme') || 'default';
-    applyTheme(theme);
-  } catch(e) {}
+  try { const theme = localStorage.getItem('mathTheme') || 'default'; applyTheme(theme); } catch(e) {}
 }
 loadTheme();
 
-function toggleThemeMode() {
-  const themes = ['default', 'nature', 'ocean', 'galaxy', 'sunset', 'cyber'];
+function toggleTheme() {
+  const themes = ['default','forest','ocean','galaxy','sunset','cyber','ice','fire','candy','matrix','night'];
   const current = document.body.className.match(/theme-(\w+)/)?.[1] || 'default';
   const idx = (themes.indexOf(current) + 1) % themes.length;
   applyTheme(themes[idx]);
@@ -834,30 +1057,31 @@ function toggleThemeMode() {
 // ============================================
 // ⚙️ SETTINGS
 // ============================================
-let userSettings = { timer: 30, questionCount: 10, robotLevel: 'medium' };
+let userSettings = { timer: 30, questionCount: 10, robotLevel: 'medium', sfx: 'on' };
 
 function loadSettings() {
   try {
-    const data = JSON.parse(localStorage.getItem('mathSettings'));
+    const data = JSON.parse(localStorage.getItem('mathSettingsV2'));
     if (data) Object.assign(userSettings, data);
   } catch(e) {}
   document.getElementById('timerSetting').value = userSettings.timer;
   document.getElementById('questionCount').value = userSettings.questionCount;
   document.getElementById('robotLevel').value = userSettings.robotLevel;
+  document.getElementById('sfxSetting').value = userSettings.sfx;
+  sound.isSFXEnabled = userSettings.sfx === 'on';
 }
-loadSettings();
 
 function updateSettings() {
   userSettings.timer = parseInt(document.getElementById('timerSetting').value);
   userSettings.questionCount = parseInt(document.getElementById('questionCount').value);
   userSettings.robotLevel = document.getElementById('robotLevel').value;
-  localStorage.setItem('mathSettings', JSON.stringify(userSettings));
+  userSettings.sfx = document.getElementById('sfxSetting').value;
+  sound.isSFXEnabled = userSettings.sfx === 'on';
+  localStorage.setItem('mathSettingsV2', JSON.stringify(userSettings));
 }
 
-function showSettings() {
-  loadSettings();
-  showScreen('settingsScreen');
-}
+function showSettings() { loadSettings(); showScreen('settingsScreen'); }
+loadSettings();
 
 // ============================================
 // 🏆 ACHIEVEMENTS
@@ -866,21 +1090,21 @@ const achievements = {
   firstWin: { name: '🎯 اولین برد', unlocked: false },
   combo3: { name: '🔥 کامبو ۳', unlocked: false },
   combo5: { name: '⭐ کامبو ۵', unlocked: false },
+  combo10: { name: '👑 کامبو ۱۰', unlocked: false },
   perfect: { name: '💎 بدون خطا', unlocked: false },
   speedster: { name: '⚡ استاد سرعت', unlocked: false },
   duelMaster: { name: '⚔️ سلطان دوئل', unlocked: false },
   rocketMan: { name: '🚀 افسانه موشک', unlocked: false },
-  mathWizard: { name: '🧙 نابغه ریاضی', unlocked: false }
+  mathWizard: { name: '🧙 نابغه ریاضی', unlocked: false },
+  veteran: { name: '🎖️ کهنه‌سرباز', unlocked: false }
 };
 let rocketCount = 0;
 
 function loadAchievements() {
   try {
-    const data = JSON.parse(localStorage.getItem('mathAchievements'));
+    const data = JSON.parse(localStorage.getItem('mathAchievementsV2'));
     if (data) {
-      Object.keys(achievements).forEach(k => {
-        if (data[k] !== undefined) achievements[k].unlocked = data[k];
-      });
+      Object.keys(achievements).forEach(k => { if (data[k] !== undefined) achievements[k].unlocked = data[k]; });
       rocketCount = data.rocketCount || 0;
     }
   } catch(e) {}
@@ -892,35 +1116,42 @@ function saveAchievements() {
     const data = {};
     Object.keys(achievements).forEach(k => { data[k] = achievements[k].unlocked; });
     data.rocketCount = rocketCount;
-    localStorage.setItem('mathAchievements', JSON.stringify(data));
+    localStorage.setItem('mathAchievementsV2', JSON.stringify(data));
   } catch(e) {}
   updateAchieveUI();
 }
 
 function checkAchievements() {
-  if (state.correct + state.wrong >= 5 && !achievements.firstWin.unlocked) {
+  const total = state.correct + state.wrong;
+  if (total >= 5 && !achievements.firstWin.unlocked) {
     achievements.firstWin.unlocked = true; sound.achievement(); showToast('🎯 اولین برد!');
   }
   if (state.combo >= 3 && !achievements.combo3.unlocked) {
     achievements.combo3.unlocked = true; sound.achievement(); showToast('🔥 کامبو ۳!');
   }
   if (state.combo >= 5 && !achievements.combo5.unlocked) {
-    achievements.combo5.unlocked = true; sound.achievement(); showToast('⭐ کامبو ۵!');
+    achievements.combo5.unlocked = true; sound.achievement(); showToast('⭐ کامبو ۵!'); fireRocket();
+  }
+  if (state.combo >= 10 && !achievements.combo10.unlocked) {
+    achievements.combo10.unlocked = true; sound.achievement(); showToast('👑 کامبو ۱۰!'); fireRocket();
   }
   if (state.wrong === 0 && state.correct >= 5 && !achievements.perfect.unlocked) {
-    achievements.perfect.unlocked = true; sound.achievement(); showToast('💎 بدون خطا!');
+    achievements.perfect.unlocked = true; sound.achievement(); showToast('💎 بدون خطا!'); fireRocket();
   }
   if (state.speedCorrect >= 10 && !achievements.speedster.unlocked) {
-    achievements.speedster.unlocked = true; sound.achievement(); showToast('⚡ استاد سرعت!');
+    achievements.speedster.unlocked = true; sound.achievement(); showToast('⚡ استاد سرعت!'); fireRocket();
   }
   if (state.duelWins >= 3 && !achievements.duelMaster.unlocked) {
-    achievements.duelMaster.unlocked = true; sound.achievement(); showToast('⚔️ سلطان دوئل!');
+    achievements.duelMaster.unlocked = true; sound.achievement(); showToast('⚔️ سلطان دوئل!'); fireRocket();
   }
   if (rocketCount >= 5 && !achievements.rocketMan.unlocked) {
-    achievements.rocketMan.unlocked = true; sound.achievement(); showToast('🚀 افسانه موشک!');
+    achievements.rocketMan.unlocked = true; sound.achievement(); showToast('🚀 افسانه موشک!'); fireRocket();
   }
   if (state.totalCorrect >= 100 && !achievements.mathWizard.unlocked) {
-    achievements.mathWizard.unlocked = true; sound.achievement(); showToast('🧙 نابغه ریاضی!');
+    achievements.mathWizard.unlocked = true; sound.achievement(); showToast('🧙 نابغه ریاضی!'); fireRocket();
+  }
+  if (state.totalPlayed >= 50 && !achievements.veteran.unlocked) {
+    achievements.veteran.unlocked = true; sound.achievement(); showToast('🎖️ کهنه‌سرباز!'); fireRocket();
   }
   saveAchievements();
 }
@@ -937,7 +1168,7 @@ function updateAchieveUI() {
 
 function showToast(msg) {
   const el = document.createElement('div');
-  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2px solid var(--gold);border-radius:12px;padding:16px 24px;font-size:18px;font-weight:700;z-index:1000;text-align:center;animation:fadeIn 0.3s ease;box-shadow:var(--shadow);';
+  el.className = 'toast';
   el.textContent = '🏆 ' + msg;
   document.body.appendChild(el);
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'all 0.5s'; }, 1500);
@@ -976,15 +1207,16 @@ function updateLeagueUI() {
 // 🎯 MISSIONS
 // ============================================
 const missions = {
-  solve10: { name: '📝 ۱۰ سوال', target: 10, progress: 0, done: false },
-  perfectRound: { name: '🎯 بدون خطا', target: 1, progress: 0, done: false },
-  combo5: { name: '🔥 کامبو ۵', target: 5, progress: 0, done: false },
-  speed5: { name: '⚡ سرعت', target: 5, progress: 0, done: false }
+  solve10: { name: '📝 ۱۰ سوال', target: 10, progress: 0, done: false, reward: 20 },
+  perfectRound: { name: '🎯 بدون خطا', target: 1, progress: 0, done: false, reward: 50 },
+  combo5: { name: '🔥 کامبو ۵', target: 5, progress: 0, done: false, reward: 30 },
+  speed5: { name: '⚡ سرعت', target: 5, progress: 0, done: false, reward: 40 },
+  duelWin: { name: '⚔️ برد دوئل', target: 1, progress: 0, done: false, reward: 60 }
 };
 
 function loadMissions() {
   try {
-    const data = JSON.parse(localStorage.getItem('mathMissions'));
+    const data = JSON.parse(localStorage.getItem('mathMissionsV2'));
     if (data) {
       Object.keys(missions).forEach(k => {
         if (data[k]) {
@@ -1001,7 +1233,7 @@ function saveMissions() {
   try {
     const data = {};
     Object.keys(missions).forEach(k => { data[k] = { progress: missions[k].progress, done: missions[k].done }; });
-    localStorage.setItem('mathMissions', JSON.stringify(data));
+    localStorage.setItem('mathMissionsV2', JSON.stringify(data));
   } catch(e) {}
 }
 
@@ -1014,9 +1246,10 @@ function updateMissions(type, amount = 1) {
     if (k === 'perfectRound' && type === 'perfect') { m.progress += amount; }
     if (k === 'combo5' && type === 'combo') { m.progress = Math.max(m.progress, amount); }
     if (k === 'speed5' && type === 'speed') { m.progress += amount; }
-    if (m.progress >= m.target) { m.done = true; updated = true; showToast('🎯 ماموریت کامل شد!'); sound.achievement(); }
+    if (k === 'duelWin' && type === 'duelWin') { m.progress += amount; }
+    if (m.progress >= m.target) { m.done = true; updated = true; state.score += m.reward; showToast('🎯 ماموریت کامل شد! +' + m.reward + '⭐'); sound.achievement(); }
   });
-  if (updated) { saveMissions(); renderMissions(); }
+  if (updated) { saveMissions(); renderMissions(); saveStats(); }
 }
 
 function renderMissions() {
@@ -1032,7 +1265,8 @@ function renderMissions() {
         <span>${m.name}</span>
         <div style="display:flex;align-items:center;gap:6px;">
           <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
-          <span style="font-size:10px;">${m.done ? '✅' : m.progress + '/' + m.target}</span>
+          <span style="font-size:9px;">${m.done ? '✅' : m.progress + '/' + m.target}</span>
+          <span class="reward">⭐${m.reward}</span>
         </div>
       </div>
     `;
@@ -1045,15 +1279,9 @@ function renderMissions() {
 // 🏆 LEADERBOARD
 // ============================================
 function saveLeaderboard(level) {
-  const score = state.totalCorrect * 2 - state.totalWrong;
-  const data = {
-    name: 'کاربر',
-    score: score,
-    correct: state.totalCorrect,
-    wrong: state.totalWrong,
-    date: new Date().toLocaleDateString('fa-IR')
-  };
-  const key = 'leaderboard_' + level;
+  const score = state.totalCorrect * 2 - state.totalWrong + state.score;
+  const data = { name: 'کاربر', score: score, correct: state.totalCorrect, wrong: state.totalWrong, streak: state.maxCombo, date: new Date().toLocaleDateString('fa-IR') };
+  const key = 'leaderboardV2_' + level;
   const list = JSON.parse(localStorage.getItem(key) || '[]');
   list.push(data);
   list.sort((a, b) => b.score - a.score);
@@ -1064,33 +1292,30 @@ function saveLeaderboard(level) {
 function loadLeaderboard(level) {
   const container = document.getElementById('leaderboardList');
   if (!container) return;
-  const key = level === 'all' ? null : 'leaderboard_' + level;
-  
+  const key = level === 'all' ? null : 'leaderboardV2_' + level;
   let allData = [];
   if (key) {
     allData = JSON.parse(localStorage.getItem(key) || '[]');
   } else {
     ['easy', 'hard', 'expert', 'master'].forEach(l => {
-      const d = JSON.parse(localStorage.getItem('leaderboard_' + l) || '[]');
+      const d = JSON.parse(localStorage.getItem('leaderboardV2_' + l) || '[]');
       d.forEach(item => { item.level = l; allData.push(item); });
     });
     allData.sort((a, b) => b.score - a.score);
   }
-  
   if (allData.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:10px;">📭 هنوز رکوردی ثبت نشده!</div>';
+    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">📭 هنوز رکوردی ثبت نشده!</div>';
     return;
   }
-  
   let html = '';
   allData.slice(0, 20).forEach((item, i) => {
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
     const league = getLeague(item.score);
     html += `
-      <div style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--surface);border-radius:6px;margin-bottom:3px;border:1px solid var(--border);font-size:11px;">
-        <span style="font-weight:700;min-width:24px;">${medal}</span>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--surface);border-radius:6px;margin-bottom:3px;border:1px solid var(--border);font-size:10px;">
+        <span style="font-weight:700;min-width:28px;font-size:12px;">${medal}</span>
         <span style="font-weight:600;flex:1;">${item.name || 'کاربر'}</span>
-        <span style="color:var(--muted);font-size:9px;">${item.level || ''}</span>
+        <span style="color:var(--muted);font-size:8px;">${item.level || ''}</span>
         <span style="color:var(--gold);font-weight:700;">${item.score} ⭐</span>
         <span>${league.icon}</span>
       </div>
@@ -1099,10 +1324,7 @@ function loadLeaderboard(level) {
   container.innerHTML = html;
 }
 
-function showLeaderboard() {
-  showScreen('leaderboardScreen');
-  loadLeaderboard('all');
-}
+function showLeaderboard() { showScreen('leaderboardScreen'); loadLeaderboard('all'); }
 
 // ============================================
 // 📜 CERTIFICATE
@@ -1111,70 +1333,35 @@ let certDataURL = '';
 
 function generateCertificate() {
   const canvas = document.createElement('canvas');
-  canvas.width = 800;
-  canvas.height = 600;
+  canvas.width = 800; canvas.height = 600;
   const ctx = canvas.getContext('2d');
-
-  const grad = ctx.createLinearGradient(0, 0, 800, 600);
-  grad.addColorStop(0, '#0a0a1a');
-  grad.addColorStop(0.5, '#111128');
-  grad.addColorStop(1, '#0a0a1a');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 800, 600);
-
-  ctx.strokeStyle = '#ffd700';
-  ctx.lineWidth = 6;
-  ctx.strokeRect(20, 20, 760, 560);
-  ctx.strokeStyle = 'rgba(255,215,0,0.3)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(40, 40, 720, 520);
-
-  ctx.font = '60px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffd700';
-  ctx.fillText('🏆', 400, 80);
-
-  ctx.font = 'bold 36px Vazirmatn, sans-serif';
-  ctx.fillStyle = '#00f5d4';
-  ctx.fillText('گواهینامه افتخار', 400, 140);
-
-  ctx.strokeStyle = '#00f5d4';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(200, 165);
-  ctx.lineTo(600, 165);
-  ctx.stroke();
-
-  ctx.font = 'bold 32px Vazirmatn, sans-serif';
-  ctx.fillStyle = '#ffd700';
-  ctx.fillText('به کاربر عزیز', 400, 220);
-
-  const totalScore = state.totalCorrect * 2 - state.totalWrong;
+  const grad = ctx.createLinearGradient(0,0,800,600);
+  grad.addColorStop(0,'#0a0a1a'); grad.addColorStop(0.5,'#111128'); grad.addColorStop(1,'#0a0a1a');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,800,600);
+  ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 6; ctx.strokeRect(20,20,760,560);
+  ctx.strokeStyle = 'rgba(255,215,0,0.3)'; ctx.lineWidth = 2; ctx.strokeRect(40,40,720,520);
+  ctx.font = '60px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#ffd700'; ctx.fillText('🏆', 400, 80);
+  ctx.font = 'bold 36px Vazirmatn, sans-serif'; ctx.fillStyle = '#00f5d4'; ctx.fillText('گواهینامه افتخار', 400, 140);
+  ctx.strokeStyle = '#00f5d4'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(200,165); ctx.lineTo(600,165); ctx.stroke();
+  ctx.font = 'bold 32px Vazirmatn, sans-serif'; ctx.fillStyle = '#ffd700'; ctx.fillText('به کاربر عزیز', 400, 220);
+  const totalScore = state.totalCorrect * 2 - state.totalWrong + state.score;
   const accuracy = state.totalCorrect + state.totalWrong > 0 ? Math.round((state.totalCorrect / (state.totalCorrect + state.totalWrong)) * 100) : 0;
   const league = getLeague(totalScore);
-
-  ctx.font = '20px Vazirmatn, sans-serif';
-  ctx.fillStyle = '#f0f4ff';
-  ctx.textAlign = 'center';
+  ctx.font = '20px Vazirmatn, sans-serif'; ctx.fillStyle = '#f0f4ff'; ctx.textAlign = 'center';
   const lines = [
     `با ${state.totalCorrect} پاسخ صحیح و ${state.totalWrong} پاسخ غلط`,
     `دقت ${accuracy}% و بیشترین زنجیره ${state.maxCombo}`,
     `امتیاز کل: ${totalScore} · لیگ: ${league.icon} ${league.name}`
   ];
-  lines.forEach((line, i) => {
+  lines.forEach((line,i) => {
     ctx.fillStyle = i === 2 ? '#ffd700' : '#f0f4ff';
-    ctx.fillText(line, 400, 290 + (i * 50));
+    ctx.fillText(line, 400, 290 + (i*50));
   });
-
-  ctx.font = '16px Vazirmatn, sans-serif';
-  ctx.fillStyle = '#8899bb';
+  ctx.font = '16px Vazirmatn, sans-serif'; ctx.fillStyle = '#8899bb';
   ctx.fillText(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, 400, 480);
-
-  ctx.font = '14px Vazirmatn, sans-serif';
-  ctx.fillStyle = 'rgba(136,153,187,0.5)';
-  ctx.fillText('⚡ Math Game', 400, 540);
-
+  ctx.font = '14px Vazirmatn, sans-serif'; ctx.fillStyle = 'rgba(136,153,187,0.5)';
+  ctx.fillText('⚡ Math Game + AI v3.0', 400, 540);
   certDataURL = canvas.toDataURL('image/png');
   document.getElementById('certImage').src = certDataURL;
   document.getElementById('certModal').classList.add('show');
@@ -1183,17 +1370,16 @@ function generateCertificate() {
 function downloadCert() {
   const link = document.createElement('a');
   link.download = `certificate-${Date.now()}.png`;
-  link.href = certDataURL;
-  link.click();
+  link.href = certDataURL; link.click();
 }
 
 function shareCert() {
-  navigator.clipboard.writeText('من در Math Game به موفقیت رسیدم! 🏆');
+  navigator.clipboard.writeText('من در Math Game + AI v3.0 به موفقیت رسیدم! 🏆');
   showToast('📋 کپی شد!');
 }
 
 // ============================================
-// 🧠 AI SYSTEM - کامل
+// 🧠 AI SYSTEM
 // ============================================
 function askAI() {
   const input = document.getElementById('aiInput');
@@ -1213,65 +1399,57 @@ function quickAI(q) { document.getElementById('aiInput').value = q; askAI(); }
 
 function generateAIResponse(question) {
   const q = question.toLowerCase().trim();
-  
-  // 1. معادلات خطی
   const linearMatch = q.match(/([+-]?\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*([+-]?\s*\d*\.?\d*)/);
   if (linearMatch) {
-    let a = parseFloat(linearMatch[1] || '1');
-    let b = parseFloat(linearMatch[2] || '0');
-    let c = parseFloat(linearMatch[3] || '0');
+    let a = parseFloat(linearMatch[1] || '1'), b = parseFloat(linearMatch[2] || '0'), c = parseFloat(linearMatch[3] || '0');
     if (a === 0) return '⚠️ معادله معتبر نیست (ضریب x صفر است)';
     const x = (c - b) / a;
     return `<strong>📐 حل معادله خطی</strong><br>📌 ${a}x + (${b}) = ${c}<br>➡️ ${a}x = ${c - b}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span>`;
   }
-  
-  // 2. معادلات درجه دو
   if (q.includes('x²') || q.includes('x^2')) {
     const match = q.match(/([+-]?\d*\.?\d*)?\s*x²\s*([+-]?\s*\d*\.?\d*)?\s*x\s*([+-]?\s*\d*\.?\d*)?\s*=\s*0/);
-    let a = parseFloat(match?.[1] || '1');
-    let b = parseFloat(match?.[2] || '0');
-    let c = parseFloat(match?.[3] || '0');
+    let a = parseFloat(match?.[1] || '1'), b = parseFloat(match?.[2] || '0'), c = parseFloat(match?.[3] || '0');
     const disc = b*b - 4*a*c;
-    if (disc < 0) {
-      return `<strong>🧮 معادله درجه دو</strong><br>📌 ${a}x² + ${b}x + ${c} = 0<br>❌ ریشه حقیقی ندارد (Δ = ${disc} < 0)`;
-    }
+    if (disc < 0) return `<strong>🧮 معادله درجه دو</strong><br>📌 ${a}x² + ${b}x + ${c} = 0<br>❌ ریشه حقیقی ندارد (Δ = ${disc} < 0)`;
     const sqrtDisc = Math.sqrt(disc);
-    const x1 = (-b + sqrtDisc) / (2*a);
-    const x2 = (-b - sqrtDisc) / (2*a);
+    const x1 = (-b + sqrtDisc) / (2*a), x2 = (-b - sqrtDisc) / (2*a);
     return `<strong>🧮 حل معادله درجه دو</strong><br>📌 ${a}x² + ${b}x + ${c} = 0<br>➡️ Δ = ${disc}<br>➡️ x₁ = <span style="color:var(--teal);font-weight:700;">${x1.toFixed(3)}</span><br>➡️ x₂ = <span style="color:var(--teal);font-weight:700;">${x2.toFixed(3)}</span>`;
   }
-  
-  // 3. دستگاه دو معادله
-  if (q.includes('سیستم') && q.includes('y')) {
+  if ((q.includes('سیستم') || q.includes('دستگاه')) && q.includes('y')) {
     const nums = q.match(/([+-]?\d*\.?\d+)/g);
     if (nums && nums.length >= 6) {
       const a1 = parseFloat(nums[0] || '1'), b1 = parseFloat(nums[1] || '1'), c1 = parseFloat(nums[2] || '0');
       const a2 = parseFloat(nums[3] || '1'), b2 = parseFloat(nums[4] || '1'), c2 = parseFloat(nums[5] || '0');
       const det = a1*b2 - a2*b1;
       if (Math.abs(det) < 0.001) return '⚠️ دستگاه منحصربه‌فرد نیست';
-      const x = (c1*b2 - c2*b1) / det;
-      const y = (a1*c2 - a2*c1) / det;
+      const x = (c1*b2 - c2*b1) / det, y = (a1*c2 - a2*c1) / det;
       return `<strong>📊 حل دستگاه دو معادله</strong><br>📌 ${a1}x + ${b1}y = ${c1}<br>📌 ${a2}x + ${b2}y = ${c2}<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${x.toFixed(3)}</span><br>➡️ y = <span style="color:var(--teal);font-weight:700;">${y.toFixed(3)}</span>`;
     }
   }
-  
-  // 4. مشتق
-  if (q.includes('مشتق') || q.includes('مفهوم مشتق')) {
-    return `<strong>📖 مفهوم مشتق</strong><br>مشتق = نرخ تغییر تابع<br>🔹 f'(x) = lim (f(x+h)-f(x))/h<br>🔹 (xⁿ)' = n·xⁿ⁻¹<br>🔹 (sin x)' = cos x<br>🔹 (cos x)' = -sin x<br>🔹 (eˣ)' = eˣ<br>🔹 (ln x)' = 1/x`;
+  if (q.includes('مشتق') || q.includes('مفهوم مشتق') || q.includes('مشتق گیری')) {
+    return `<strong>📖 مفهوم مشتق</strong><br>مشتق = نرخ تغییر تابع<br>🔹 f'(x) = lim (f(x+h)-f(x))/h<br>🔹 (xⁿ)' = n·xⁿ⁻¹<br>🔹 (sin x)' = cos x<br>🔹 (cos x)' = -sin x<br>🔹 (tan x)' = sec²x<br>🔹 (eˣ)' = eˣ<br>🔹 (ln x)' = 1/x`;
   }
-  
-  // 5. انتگرال
-  if (q.includes('انتگرال') || q.includes('مفهوم انتگرال')) {
+  if (q.includes('انتگرال') || q.includes('مفهوم انتگرال') || q.includes('انتگرال گیری')) {
     return `<strong>📖 مفهوم انتگرال</strong><br>انتگرال = مساحت زیر منحنی<br>🔹 ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C<br>🔹 ∫ sin x dx = -cos x + C<br>🔹 ∫ cos x dx = sin x + C<br>🔹 ∫ eˣ dx = eˣ + C<br>🔹 ∫ 1/x dx = ln|x| + C`;
   }
-  
-  // 6. سوال چالش
-  if (q.includes('چالش') || q.includes('چالش‌برانگیز')) {
+  if (q.includes('sin') || q.includes('cos') || q.includes('tan') || q.includes('مثلثات')) {
+    const match = q.match(/(sin|cos|tan)\s*\(?\s*(\d+)\s*\)?/);
+    if (match) {
+      const func = match[1], angle = parseInt(match[2]);
+      const rad = angle * Math.PI / 180;
+      let value;
+      if (func === 'sin') value = Math.sin(rad);
+      else if (func === 'cos') value = Math.cos(rad);
+      else value = Math.tan(rad);
+      const rounded = Math.round(value * 1000) / 1000;
+      return `<strong>📐 محاسبه مثلثاتی</strong><br>📌 ${func}(${angle}°) = ?<br>➡️ ${func}(${angle}°) = <span style="color:var(--teal);font-weight:700;">${rounded}</span>`;
+    }
+    return `<strong>📐 مفاهیم مثلثاتی</strong><br>🔹 sin²θ + cos²θ = 1<br>🔹 sin(α+β) = sinα·cosβ + cosα·sinβ<br>🔹 cos(α+β) = cosα·cosβ − sinα·sinβ`;
+  }
+  if (q.includes('چالش') || q.includes('چالش‌برانگیز') || q.includes('سخت')) {
     const a = randInt(2,5), b = randInt(1,4), c = randInt(1,3);
     return `<strong>🏆 سوال چالش‌برانگیز</strong><br>📌 ${a}x + ${b} = ${c}x + ${b + a + c}<br>➡️ همه x‌ها را به یک طرف ببرید<br>➡️ x = <span style="color:var(--teal);font-weight:700;">${a + c}</span>`;
   }
-  
-  // 7. محاسبه ساده
   const calcMatch = q.match(/(\d+)\s*([+\-*/])\s*(\d+)/);
   if (calcMatch && !q.includes('x') && !q.includes('y')) {
     const n1 = parseFloat(calcMatch[1]), op = calcMatch[2], n2 = parseFloat(calcMatch[3]);
@@ -1284,114 +1462,79 @@ function generateAIResponse(question) {
     }
     return `<strong>🧮 محاسبه عبارت</strong><br>📌 ${n1} ${op} ${n2} = ${result}`;
   }
-  
-  // 8. مثلثات
-  if (q.includes('sin') || q.includes('cos') || q.includes('tan')) {
-    const match = q.match(/(sin|cos|tan)\s*\(?\s*(\d+)\s*\)?/);
-    if (match) {
-      const func = match[1], angle = parseInt(match[2]);
-      const rad = angle * Math.PI / 180;
-      let value;
-      if (func === 'sin') value = Math.sin(rad);
-      else if (func === 'cos') value = Math.cos(rad);
-      else value = Math.tan(rad);
-      const rounded = Math.round(value * 1000) / 1000;
-      return `<strong>📐 محاسبه مثلثاتی</strong><br>📌 ${func}(${angle}°) = ?<br>➡️ ${func}(${angle}°) = <span style="color:var(--teal);font-weight:700;">${rounded}</span>`;
-    }
-  }
-  
-  return `<strong>🤖 پاسخ هوش مصنوعی</strong><br>سوال شما: "${question}"<br>من می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات را حل کنم.<br>💡 سوال خود را دقیق‌تر بپرسید.`;
+  return `<strong>🤖 پاسخ هوش مصنوعی</strong><br>سوال شما: "${question}"<br>من می‌توانم معادلات خطی، درجه دو، دستگاه، مشتق، انتگرال، مثلثات و محاسبات را حل کنم.<br>💡 سوال خود را دقیق‌تر بپرسید.`;
 }
 
 // ============================================
 // 🎮 GAME STATE
 // ============================================
 const state = {
-  mode: 'testi',
-  level: 'easy',
-  questions: [],
-  current: 0,
-  correct: 0,
-  wrong: 0,
-  combo: 0,
-  maxCombo: 0,
-  score: 0,
-  lives: 3,
-  maxLives: 3,
-  totalQ: 10,
-  answered: false,
-  timeLeft: 30,
-  timerInterval: null,
-  selectedOption: -1,
-  numpadValue: '',
-  totalCorrect: 0,
-  totalWrong: 0,
-  totalPlayed: 0,
-  speedCorrect: 0,
-  duelWins: 0,
-  isDuel: false,
-  duelRound: 0,
-  duelTotal: 5,
-  duelPlayerScore: 0,
-  duelRobotScore: 0,
-  duelAnswered: false,
-  duelRobotAnswer: null,
-  duelTimeout: null
+  mode: 'testi', level: 'easy', questions: [], current: 0,
+  correct: 0, wrong: 0, combo: 0, maxCombo: 0, score: 0,
+  lives: 3, maxLives: 3, totalQ: 10, answered: false,
+  timeLeft: 30, timerInterval: null,
+  selectedOption: -1, numpadValue: '',
+  totalCorrect: 0, totalWrong: 0, totalPlayed: 0,
+  speedCorrect: 0, duelWins: 0,
+  isDuel: false, duelRound: 0, duelTotal: 5,
+  duelPlayerScore: 0, duelRobotScore: 0,
+  duelAnswered: false, duelRobotAnswer: null,
+  duelTimeout: null, answerTime: 0, timeBonus: 0
 };
 
 // ============================================
 // 📚 QUESTION GENERATORS
 // ============================================
-function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = randInt(0, i); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=randInt(0,i); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
 function generateLinear() {
-  const a = randInt(1, 9), x = randInt(0, 15), b = randInt(-10, 10), c = a * x + b;
-  const aStr = a === 1 ? '' : a;
-  const bStr = b === 0 ? '' : (b > 0 ? ` + ${b}` : ` - ${Math.abs(b)}`);
-  const eq = `${aStr}x${bStr} = ${c}`;
-  const opts = [x]; while (opts.length < 4) { const o = x + randInt(-5, 5); if (!opts.includes(o) && o >= -10 && o <= 20) opts.push(o); }
+  const a=randInt(1,9), x=randInt(0,15), b=randInt(-10,10), c=a*x+b;
+  const aStr=a===1?'':a;
+  const bStr=b===0?'':b>0?` + ${b}`:` - ${Math.abs(b)}`;
+  const eq=`${aStr}x${bStr} = ${c}`;
+  const opts=[x]; while(opts.length<4){ const o=x+randInt(-5,5); if(!opts.includes(o)&&o>=-10&&o<=20) opts.push(o); }
   shuffle(opts);
-  return { eq, answer: [x], options: opts, steps: [`📌 ${aStr}x${bStr} = ${c}`, `➡️ x = ${x}`], hint: 'مقدار x را پیدا کنید', difficulty: '⭐', points: 10 };
+  return { eq, answer:[x], options:opts, steps:[`📌 ${aStr}x${bStr} = ${c}`, `➡️ x = ${x}`], hint:'مقدار x را پیدا کنید', difficulty:'⭐', points:10 };
 }
 
 function generateQuadratic() {
-  const r1 = randInt(-3, 8), r2 = randInt(-3, 8);
-  const b = -(r1 + r2), c = r1 * r2;
-  const bStr = b === 0 ? '' : (b > 0 ? ` + ${b}x` : ` - ${Math.abs(b)}x`);
-  const cStr = c === 0 ? '' : (c > 0 ? ` + ${c}` : ` - ${Math.abs(c)}`);
-  const eq = `x²${bStr}${cStr} = 0`;
-  const disc = b * b - 4 * c;
-  const sqrtDisc = Math.sqrt(disc);
-  const root1 = (-b + sqrtDisc) / 2, root2 = (-b - sqrtDisc) / 2;
-  const opts = [r1, r2]; while (opts.length < 4) { const o = randInt(-5, 10); if (!opts.includes(o)) opts.push(o); }
+  const r1=randInt(-3,8), r2=randInt(-3,8);
+  while(Math.abs(r2-r1)<1) r2=randInt(-3,8);
+  const b=-(r1+r2), c=r1*r2;
+  const bStr=b===0?'':b>0?` + ${b}x`:` - ${Math.abs(b)}x`;
+  const cStr=c===0?'':c>0?` + ${c}`:` - ${Math.abs(c)}`;
+  const eq=`x²${bStr}${cStr} = 0`;
+  const disc=b*b-4*c, sqrtDisc=Math.sqrt(disc);
+  const root1=(-b+sqrtDisc)/2, root2=(-b-sqrtDisc)/2;
+  const opts=[r1,r2]; while(opts.length<4){ const o=randInt(-5,10); if(!opts.includes(o)) opts.push(o); }
   shuffle(opts);
-  return { eq, answer: [r1, r2], options: opts, steps: [`📌 ${eq}`, `➡️ x₁ = ${root1.toFixed(1)} , x₂ = ${root2.toFixed(1)}`], hint: 'یکی از ریشه‌ها را پیدا کنید', difficulty: '⭐⭐', points: 20 };
+  return { eq, answer:[r1,r2], options:opts, steps:[`📌 ${eq}`, `➡️ x₁ = ${root1.toFixed(1)} , x₂ = ${root2.toFixed(1)}`], hint:'یکی از ریشه‌ها را پیدا کنید', difficulty:'⭐⭐', points:20 };
 }
 
 function generateFractional() {
-  const a = randInt(1, 5), b = randInt(-10, 10), c = randInt(1, 5), d = randInt(-10, 10), x = randInt(0, 10);
-  const e = (a * x + b) / (c * x + d);
-  if (!isFinite(e) || e < -50 || e > 50 || Math.abs(e - Math.round(e)) > 0.01) return generateFractional();
-  const num = `${a !== 1 ? a : ''}x ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}`;
-  const den = `${c !== 1 ? c : ''}x ${d >= 0 ? '+ ' + d : '- ' + Math.abs(d)}`;
-  const eq = `(${num}) / (${den}) = ${Math.round(e)}`;
-  const opts = [x]; while (opts.length < 4) { const o = x + randInt(-4, 4); if (!opts.includes(o) && o >= -5 && o <= 15) opts.push(o); }
+  const a=randInt(1,5), b=randInt(-10,10), c=randInt(1,5), d=randInt(-10,10), x=randInt(0,10);
+  const e=(a*x+b)/(c*x+d);
+  if(!isFinite(e)||e<-50||e>50||Math.abs(e-Math.round(e))>0.01) return generateFractional();
+  const num=`${a!==1?a:''}x ${b>=0?'+ '+b:'- '+Math.abs(b)}`;
+  const den=`${c!==1?c:''}x ${d>=0?'+ '+d:'- '+Math.abs(d)}`;
+  const eq=`(${num}) / (${den}) = ${Math.round(e)}`;
+  const opts=[x]; while(opts.length<4){ const o=x+randInt(-4,4); if(!opts.includes(o)&&o>=-5&&o<=15) opts.push(o); }
   shuffle(opts);
-  return { eq, answer: [x], options: opts, steps: [`📌 (${num})/(${den}) = ${Math.round(e)}`, `➡️ x = ${x}`], hint: 'مقدار x را پیدا کنید (کسری)', difficulty: '⭐⭐⭐', points: 30 };
+  return { eq, answer:[x], options:opts, steps:[`📌 (${num})/(${den}) = ${Math.round(e)}`, `➡️ x = ${x}`], hint:'مقدار x را پیدا کنید (کسری)', difficulty:'⭐⭐⭐', points:30 };
 }
 
 function generateExponential() {
-  const base = randInt(2, 5), exp = randInt(1, 8), result = Math.pow(base, exp);
-  const eq = `${base}^x = ${result}`;
-  const opts = [exp]; while (opts.length < 4) { const o = exp + randInt(-4, 4); if (!opts.includes(o) && o >= 0 && o <= 12) opts.push(o); }
+  const base=randInt(2,5), exp=randInt(1,8), result=Math.pow(base,exp);
+  const eq=`${base}^x = ${result}`;
+  const opts=[exp]; while(opts.length<4){ const o=exp+randInt(-4,4); if(!opts.includes(o)&&o>=0&&o<=12) opts.push(o); }
   shuffle(opts);
-  return { eq, answer: [exp], options: opts, steps: [`📌 ${base}^x = ${result}`, `➡️ x = ${exp}`], hint: `مقدار x را پیدا کنید`, difficulty: '⭐⭐⭐', points: 35 };
+  return { eq, answer:[exp], options:opts, steps:[`📌 ${base}^x = ${result}`, `➡️ x = ${exp}`], hint:`مقدار x را پیدا کنید`, difficulty:'⭐⭐⭐', points:35 };
 }
 
 function generateMaster() {
-  const types = ['quadratic', 'fractional', 'exponential'];
-  switch (types[randInt(0, 2)]) {
+  const types=['quadratic','fractional','exponential'];
+  switch(types[randInt(0,2)]){
     case 'quadratic': return generateQuadratic();
     case 'fractional': return generateFractional();
     case 'exponential': return generateExponential();
@@ -1399,17 +1542,44 @@ function generateMaster() {
   }
 }
 
-function buildQuestions(level, count = 10) {
-  const qs = [];
-  let gen;
-  switch (level) {
-    case 'easy': gen = generateLinear; break;
-    case 'hard': gen = generateQuadratic; break;
-    case 'expert': gen = () => [generateFractional, generateExponential][randInt(0, 1)](); break;
-    case 'master': gen = generateMaster; break;
-    default: gen = generateLinear;
+function generateTrigonometric() {
+  const angles=[0,30,45,60,90,180,270,360];
+  const angle=angles[randInt(0,angles.length-1)];
+  const funcs=['sin','cos','tan'];
+  const func=funcs[randInt(0,2)];
+  const rad=angle*Math.PI/180;
+  let value;
+  if(func==='sin') value=Math.sin(rad);
+  else if(func==='cos') value=Math.cos(rad);
+  else value=Math.tan(rad);
+  const rounded=Math.round(value*1000)/1000;
+  const opts=[rounded]; while(opts.length<4){ const o=rounded+(randInt(-5,5)*0.1); if(!opts.includes(Math.round(o*1000)/1000)) opts.push(Math.round(o*1000)/1000); }
+  shuffle(opts);
+  return { eq:`${func}(${angle}°) = ?`, answer:[rounded], options:opts, steps:[`📌 ${func}(${angle}°) = ?`, `➡️ ${func}(${angle}°) = ${rounded}`], hint:`مقدار ${func}(${angle}°) را محاسبه کنید`, difficulty:'⭐⭐⭐', points:30 };
+}
+
+function generateLogarithmic() {
+  const base=randInt(2,10);
+  const result=randInt(1,100);
+  const answer=Math.log(result)/Math.log(base);
+  const rounded=Math.round(answer*1000)/1000;
+  const opts=[rounded]; while(opts.length<4){ const o=rounded+(randInt(-3,3)*0.1); if(!opts.includes(Math.round(o*1000)/1000)) opts.push(Math.round(o*1000)/1000); }
+  shuffle(opts);
+  return { eq:`log${base}(${result}) = ?`, answer:[rounded], options:opts, steps:[`📌 log${base}(${result}) = ?`, `➡️ log${base}(${result}) = ${rounded}`], hint:`لگاریتم ${result} در پایه ${base} را محاسبه کنید`, difficulty:'⭐⭐⭐⭐', points:40 };
+}
+
+function buildQuestions(level, count=10) {
+  const qs=[]; let gen;
+  switch(level){
+    case 'easy': gen=generateLinear; break;
+    case 'hard': gen=generateQuadratic; break;
+    case 'expert': gen=()=>[generateFractional,generateExponential][randInt(0,1)](); break;
+    case 'master': gen=generateMaster; break;
+    case 'trigonometric': gen=generateTrigonometric; break;
+    case 'logarithmic': gen=generateLogarithmic; break;
+    default: gen=generateLinear;
   }
-  for (let i = 0; i < count; i++) qs.push(gen());
+  for(let i=0;i<count;i++) qs.push(gen());
   return shuffle(qs);
 }
 
@@ -1428,10 +1598,12 @@ function setMode(mode) {
 function buildLevelMenu() {
   const grid = document.getElementById('levelGrid');
   const levels = [
-    { id: 'easy', icon: '📐', name: 'آسان', desc: 'معادلات درجه یک' },
-    { id: 'hard', icon: '🔢', name: 'سخت', desc: 'معادلات درجه دو' },
-    { id: 'expert', icon: '🧠', name: 'متخصص', desc: 'کسری و توانی' },
-    { id: 'master', icon: '👑', name: 'استاد', desc: 'ترکیبی از همه' }
+    { id: 'easy', icon: '📐', name: 'شروع شیرین', desc: 'معادلات درجه یک', badge: '⭐ مبتدی' },
+    { id: 'hard', icon: '🔢', name: 'چالش دوم', desc: 'معادلات درجه دو', badge: '⭐⭐ متوسط' },
+    { id: 'expert', icon: '🧠', name: 'نبرد ذهن', desc: 'کسری و توانی', badge: '⭐⭐⭐ پیشرفته' },
+    { id: 'master', icon: '👑', name: 'تاج‌گذار', desc: 'ترکیبی از همه', badge: '⭐⭐⭐⭐ استاد' },
+    { id: 'trigonometric', icon: '📐', name: 'مثلث‌باز', desc: 'معادلات مثلثاتی', badge: '⭐ مثلثات' },
+    { id: 'logarithmic', icon: '📊', name: 'لگاریتم‌سوار', desc: 'معادلات لگاریتمی', badge: '⭐ لگاریتم' }
   ];
   let html = '';
   levels.forEach(l => {
@@ -1439,7 +1611,7 @@ function buildLevelMenu() {
       <span class="icon">${l.icon}</span>
       <div class="name">${l.name}</div>
       <div class="desc">${l.desc}</div>
-      <div class="badge">⭐ شروع</div>
+      <div class="badge">${l.badge}</div>
     </div>`;
   });
   grid.innerHTML = html;
@@ -1448,18 +1620,18 @@ function buildLevelMenu() {
 function showDuelMenu() {
   const grid = document.getElementById('levelGrid');
   const levels = [
-    { id: 'easy', icon: '📐', name: 'آسان', desc: 'ربات کند' },
-    { id: 'hard', icon: '🔢', name: 'سخت', desc: 'ربات متوسط' },
-    { id: 'expert', icon: '🧠', name: 'متخصص', desc: 'ربات سریع' },
-    { id: 'master', icon: '👑', name: 'استاد', desc: 'ربات حرفه‌ای' }
+    { id: 'easy', icon: '📐', name: 'نبرد آسان', desc: 'ربات کند', badge: '🤖 مبتدی' },
+    { id: 'hard', icon: '🔢', name: 'نبرد سخت', desc: 'ربات متوسط', badge: '🤖 نیمه‌حرفه‌ای' },
+    { id: 'expert', icon: '🧠', name: 'نبرد متخصص', desc: 'ربات سریع', badge: '🤖 حرفه‌ای' },
+    { id: 'master', icon: '👑', name: 'نبرد استاد', desc: 'ربات افسانه‌ای', badge: '🤖 افسانه' }
   ];
   let html = '';
   levels.forEach(l => {
     html += `<div class="level-card" onclick="startDuel('${l.id}')">
       <span class="icon">${l.icon}</span>
-      <div class="name">⚔️ دوئل ${l.name}</div>
+      <div class="name">⚔️ ${l.name}</div>
       <div class="desc">${l.desc}</div>
-      <div class="badge">🤖 VS شما</div>
+      <div class="badge">${l.badge}</div>
     </div>`;
   });
   grid.innerHTML = html;
@@ -1468,16 +1640,17 @@ function showDuelMenu() {
 function startGame(level) {
   state.level = level;
   state.isDuel = false;
-  state.correct = 0; state.wrong = 0; state.combo = 0; state.maxCombo = 0;
-  state.score = 0; state.lives = state.maxLives; state.current = 0;
-  state.answered = false; state.selectedOption = -1; state.numpadValue = '';
-  state.speedCorrect = 0;
+  state.correct=0; state.wrong=0; state.combo=0; state.maxCombo=0;
+  state.score=0; state.lives=state.maxLives; state.current=0;
+  state.answered=false; state.selectedOption=-1; state.numpadValue='';
+  state.speedCorrect=0;
   const count = state.mode === 'sorati' ? 20 : (userSettings.questionCount || 10);
   state.totalQ = count;
   state.questions = buildQuestions(level, count);
-  const labels = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
+  const labels = { easy:'آسان', hard:'سخت', expert:'متخصص', master:'استاد', trigonometric:'مثلثات', logarithmic:'لگاریتم' };
   document.getElementById('levelLabel').textContent = state.mode === 'sorati' ? '⚡ سرعتی' : labels[level] || 'آسان';
   document.getElementById('duelContainer').style.display = 'none';
+  document.getElementById('timeBonusDisplay').style.display = 'none';
   updateStats();
   renderQuestion();
   showScreen('gameScreen');
@@ -1487,33 +1660,34 @@ function startGame(level) {
 // ⚔️ DUEL SYSTEM
 // ============================================
 const DUEL_DIFF = {
-  easy: { delay: { min: 3000, max: 5000 }, error: 0.3 },
-  medium: { delay: { min: 1500, max: 3000 }, error: 0.15 },
-  hard: { delay: { min: 500, max: 1500 }, error: 0.05 },
-  master: { delay: { min: 200, max: 800 }, error: 0.01 }
+  easy: { delay:{min:3000,max:5000}, error:0.3 },
+  medium: { delay:{min:1500,max:3000}, error:0.15 },
+  hard: { delay:{min:500,max:1500}, error:0.05 },
+  master: { delay:{min:200,max:800}, error:0.01 }
 };
 
 function getDuelDiff(level) {
-  const map = { easy: 'easy', hard: 'medium', expert: 'hard', master: 'master' };
-  return DUEL_DIFF[map[level] || 'easy'];
+  const map = { easy:'easy', hard:'medium', expert:'hard', master:'master' };
+  return DUEL_DIFF[map[level]||'easy'];
 }
 
 function startDuel(level) {
-  state.level = level;
-  state.isDuel = true;
-  state.duelRound = 0; state.duelTotal = 5;
-  state.duelPlayerScore = 0; state.duelRobotScore = 0;
-  state.correct = 0; state.wrong = 0; state.combo = 0; state.maxCombo = 0;
-  state.score = 0; state.current = 0;
-  state.answered = false; state.selectedOption = -1; state.numpadValue = '';
-  state.questions = buildQuestions(level, state.duelTotal);
-  state.totalQ = state.questions.length;
-  const labels = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
-  document.getElementById('levelLabel').textContent = '⚔️ دوئل ' + (labels[level] || 'آسان');
-  document.getElementById('duelContainer').style.display = 'block';
-  document.getElementById('duelPlayerScore').textContent = '0';
-  document.getElementById('duelRobotScore').textContent = '0';
-  document.getElementById('duelResult').style.display = 'none';
+  state.level=level;
+  state.isDuel=true;
+  state.duelRound=0; state.duelTotal=5;
+  state.duelPlayerScore=0; state.duelRobotScore=0;
+  state.correct=0; state.wrong=0; state.combo=0; state.maxCombo=0;
+  state.score=0; state.current=0;
+  state.answered=false; state.selectedOption=-1; state.numpadValue='';
+  state.questions=buildQuestions(level, state.duelTotal);
+  state.totalQ=state.questions.length;
+  const labels = { easy:'آسان', hard:'سخت', expert:'متخصص', master:'استاد' };
+  document.getElementById('levelLabel').textContent = '⚔️ دوئل ' + (labels[level]||'آسان');
+  document.getElementById('duelContainer').style.display='block';
+  document.getElementById('duelPlayerScore').textContent='0';
+  document.getElementById('duelRobotScore').textContent='0';
+  document.getElementById('duelResult').style.display='none';
+  document.getElementById('timeBonusDisplay').style.display='none';
   updateStats();
   renderDuelQuestion();
   showScreen('gameScreen');
@@ -1521,182 +1695,155 @@ function startDuel(level) {
 
 function renderDuelQuestion() {
   if (state.duelRound >= state.duelTotal) { showDuelResult(); return; }
-  state.answered = false; state.duelAnswered = false; state.duelRobotAnswer = null;
-  state.selectedOption = -1; state.numpadValue = '';
-  const q = state.questions[state.duelRound];
-  document.getElementById('qLabel').textContent = `⚔️ دوئل - دور ${state.duelRound + 1}`;
-  document.getElementById('questionCounter').textContent = `⚔️ دور ${state.duelRound + 1} از ${state.duelTotal}`;
+  state.answered=false; state.duelAnswered=false; state.duelRobotAnswer=null;
+  state.selectedOption=-1; state.numpadValue='';
+  const q=state.questions[state.duelRound];
+  document.getElementById('qLabel').textContent = `⚔️ دوئل - دور ${state.duelRound+1}`;
+  document.getElementById('questionCounter').textContent = `⚔️ دور ${state.duelRound+1} از ${state.duelTotal}`;
+  document.getElementById('duelRoundDisplay').textContent = state.duelRound+1;
   document.getElementById('qEquation').textContent = q.eq;
   document.getElementById('qHint').textContent = q.hint;
-  document.getElementById('questionBox').className = 'question-box';
-  document.getElementById('feedback').className = 'feedback';
-  document.getElementById('nextBtn').style.display = 'none';
-  document.getElementById('duelResult').style.display = 'none';
-  document.getElementById('duelPlayerAnswer').textContent = '❓';
-  document.getElementById('duelRobotAnswer').textContent = '❓';
-  document.getElementById('duelPlayerBox').className = 'duel-player active';
-  document.getElementById('duelRobotBox').className = 'duel-player';
-  if (state.mode === 'testi') {
-    renderOptions(q);
-  } else {
-    renderNumpad();
-  }
+  document.getElementById('questionBox').className='question-box';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('duelResult').style.display='none';
+  document.getElementById('duelPlayerAnswer').textContent='❓';
+  document.getElementById('duelRobotAnswer').textContent='❓';
+  document.getElementById('duelPlayerBox').className='duel-player active';
+  document.getElementById('duelRobotBox').className='duel-player';
+  if (state.mode==='testi') renderOptions(q);
+  else renderNumpad();
   updateStats();
   startDuelTimer();
 }
 
 function startDuelTimer() {
   clearInterval(state.timerInterval);
-  state.timeLeft = 30;
-  document.getElementById('timerDisplay').textContent = state.timeLeft;
-  document.getElementById('timerDisplay').className = 'timer';
-  const diff = getDuelDiff(state.level);
-  const delay = randInt(diff.delay.min, diff.delay.max);
-  if (state.duelTimeout) clearTimeout(state.duelTimeout);
-  state.duelTimeout = setTimeout(() => {
-    if (!state.duelAnswered) {
-      const q = state.questions[state.duelRound];
-      const correct = q.answer[0];
-      let robotAns = correct;
-      if (Math.random() < diff.error) {
-        const wrong = q.options.filter(o => Math.abs(o - correct) > 0.01);
-        if (wrong.length) robotAns = wrong[randInt(0, wrong.length - 1)];
-        else robotAns = correct + randInt(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+  state.timeLeft=30;
+  document.getElementById('timerDisplay').textContent=state.timeLeft;
+  document.getElementById('timerDisplay').className='timer';
+  const diff=getDuelDiff(state.level);
+  const delay=randInt(diff.delay.min, diff.delay.max);
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  state.duelTimeout=setTimeout(()=>{
+    if(!state.duelAnswered){
+      const q=state.questions[state.duelRound];
+      const correct=q.answer[0];
+      let robotAns=correct;
+      if(Math.random()<diff.error){
+        const wrong=q.options.filter(o=>Math.abs(o-correct)>0.01);
+        if(wrong.length) robotAns=wrong[randInt(0,wrong.length-1)];
+        else robotAns=correct+randInt(1,3)*(Math.random()>0.5?1:-1);
       }
-      state.duelRobotAnswer = robotAns;
-      document.getElementById('duelRobotAnswer').textContent = robotAns;
-      document.getElementById('duelRobotBox').className = 'duel-player robot-active';
-      if (state.answered) { evaluateDuelRound(); }
+      state.duelRobotAnswer=robotAns;
+      document.getElementById('duelRobotAnswer').textContent=robotAns;
+      document.getElementById('duelRobotBox').className='duel-player robot-active';
+      if(state.answered) evaluateDuelRound();
     }
   }, delay);
-  state.timerInterval = setInterval(() => {
+  state.timerInterval=setInterval(()=>{
     state.timeLeft--;
-    document.getElementById('timerDisplay').textContent = state.timeLeft;
-    if (state.timeLeft <= 3) document.getElementById('timerDisplay').className = 'timer urgent';
-    if (state.timeLeft <= 0) {
+    document.getElementById('timerDisplay').textContent=state.timeLeft;
+    if(state.timeLeft<=3) document.getElementById('timerDisplay').className='timer urgent';
+    if(state.timeLeft<=0){
       clearInterval(state.timerInterval);
-      if (!state.answered) {
-        state.answered = true; state.duelAnswered = true;
-        state.wrong++; state.combo = 0;
-        if (state.duelTimeout) clearTimeout(state.duelTimeout);
-        document.getElementById('duelPlayerAnswer').textContent = '⏰';
-        document.getElementById('duelPlayerBox').className = 'duel-player loser';
-        if (state.duelRobotAnswer !== null) { evaluateDuelRound(); }
+      if(!state.answered){
+        state.answered=true; state.duelAnswered=true;
+        state.wrong++; state.combo=0;
+        if(state.duelTimeout) clearTimeout(state.duelTimeout);
+        document.getElementById('duelPlayerAnswer').textContent='⏰';
+        document.getElementById('duelPlayerBox').className='duel-player loser';
+        if(state.duelRobotAnswer!==null) evaluateDuelRound();
       }
     }
-  }, 1000);
+  },1000);
 }
 
 function evaluateDuelRound() {
-  const q = state.questions[state.duelRound];
-  const correct = q.answer[0];
-  const playerAns = state.numpadValue ? parseFloat(state.numpadValue) : null;
-  const isPlayerCorrect = playerAns !== null && Math.abs(playerAns - correct) < 0.01;
-  const isRobotCorrect = state.duelRobotAnswer !== null && Math.abs(state.duelRobotAnswer - correct) < 0.01;
-  let result = 'draw', resultText = '🤝 تساوی!', resultClass = 'draw';
-  if (isPlayerCorrect && !isRobotCorrect) {
-    result = 'win'; resultText = '🎉 شما برنده شدید!'; resultClass = 'win';
-    state.duelPlayerScore++; state.correct++; state.combo++;
-    if (state.combo > state.maxCombo) state.maxCombo = state.combo;
-    sound.correct();
-  } else if (!isPlayerCorrect && isRobotCorrect) {
-    result = 'lose'; resultText = '😔 ربات برنده شد!'; resultClass = 'lose';
-    state.duelRobotScore++; state.wrong++; state.combo = 0;
-    sound.wrong();
-  } else if (isPlayerCorrect && isRobotCorrect) {
-    result = 'draw'; resultText = '🤝 هر دو درست!'; resultClass = 'draw';
-    state.correct++; state.combo++; sound.correct();
-  } else {
-    result = 'draw'; resultText = '🤝 هر دو اشتباه!'; resultClass = 'draw';
-    state.wrong++; state.combo = 0; sound.wrong();
-  }
-  document.getElementById('duelResult').style.display = 'block';
-  document.getElementById('duelResult').textContent = resultText;
-  document.getElementById('duelResult').className = `duel-result ${resultClass}`;
-  if (result === 'win') {
-    document.getElementById('duelPlayerBox').className = 'duel-player winner';
-    document.getElementById('duelRobotBox').className = 'duel-player loser';
-    document.getElementById('questionBox').className = 'question-box correct';
-  } else if (result === 'lose') {
-    document.getElementById('duelPlayerBox').className = 'duel-player loser';
-    document.getElementById('duelRobotBox').className = 'duel-player winner';
-    document.getElementById('questionBox').className = 'question-box wrong';
-  }
-  document.getElementById('duelPlayerScore').textContent = state.duelPlayerScore;
-  document.getElementById('duelRobotScore').textContent = state.duelRobotScore;
-  const fb = document.getElementById('feedback');
-  const title = document.getElementById('feedbackTitle');
-  const steps = document.getElementById('feedbackSteps');
-  fb.className = `feedback show ${isPlayerCorrect ? 'correct' : 'wrong'}`;
-  title.textContent = `✅ پاسخ صحیح: ${correct}`;
-  steps.innerHTML = q.steps.map(s => `<div>${s}</div>`).join('');
+  const q=state.questions[state.duelRound];
+  const correct=q.answer[0];
+  const playerAns=state.numpadValue?parseFloat(state.numpadValue):null;
+  const isPlayerCorrect=playerAns!==null&&Math.abs(playerAns-correct)<0.01;
+  const isRobotCorrect=state.duelRobotAnswer!==null&&Math.abs(state.duelRobotAnswer-correct)<0.01;
+  let result='draw', resultText='🤝 تساوی!', resultClass='draw';
+  if(isPlayerCorrect&&!isRobotCorrect){ result='win'; resultText='🎉 شما برنده شدید!'; resultClass='win'; state.duelPlayerScore++; state.correct++; state.combo++; if(state.combo>state.maxCombo) state.maxCombo=state.combo; sound.correct(); }
+  else if(!isPlayerCorrect&&isRobotCorrect){ result='lose'; resultText='😔 ربات برنده شد!'; resultClass='lose'; state.duelRobotScore++; state.wrong++; state.combo=0; sound.wrong(); }
+  else if(isPlayerCorrect&&isRobotCorrect){ result='draw'; resultText='🤝 هر دو درست!'; resultClass='draw'; state.correct++; state.combo++; sound.correct(); }
+  else { result='draw'; resultText='🤝 هر دو اشتباه!'; resultClass='draw'; state.wrong++; state.combo=0; sound.wrong(); }
+  document.getElementById('duelResult').style.display='block';
+  document.getElementById('duelResult').textContent=resultText;
+  document.getElementById('duelResult').className=`duel-result ${resultClass}`;
+  if(result==='win'){ document.getElementById('duelPlayerBox').className='duel-player winner'; document.getElementById('duelRobotBox').className='duel-player loser'; document.getElementById('questionBox').className='question-box correct'; }
+  else if(result==='lose'){ document.getElementById('duelPlayerBox').className='duel-player loser'; document.getElementById('duelRobotBox').className='duel-player winner'; document.getElementById('questionBox').className='question-box wrong'; }
+  document.getElementById('duelPlayerScore').textContent=state.duelPlayerScore;
+  document.getElementById('duelRobotScore').textContent=state.duelRobotScore;
+  const fb=document.getElementById('feedback'); const title=document.getElementById('feedbackTitle'); const steps=document.getElementById('feedbackSteps');
+  fb.className=`feedback show ${isPlayerCorrect?'correct':'wrong'}`;
+  title.textContent=`✅ پاسخ صحیح: ${correct}`;
+  steps.innerHTML=q.steps.map(s=>`<div>${s}</div>`).join('');
   updateStats();
-  if (state.duelTimeout) clearTimeout(state.duelTimeout);
-  document.getElementById('nextBtn').style.display = 'block';
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  document.getElementById('nextBtn').style.display='block';
+  if(result==='win'){ updateMissions('duelWin'); state.duelWins++; checkAchievements(); }
 }
 
 function showDuelResult() {
   clearInterval(state.timerInterval);
-  if (state.duelTimeout) clearTimeout(state.duelTimeout);
-  const ps = state.duelPlayerScore, rs = state.duelRobotScore;
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
+  const ps=state.duelPlayerScore, rs=state.duelRobotScore;
   let trophy, title, stars;
-  if (ps > rs) { trophy = '🏆'; title = '🎉 شما برنده دوئل شدید!'; stars = '⭐⭐⭐⭐⭐'; sound.levelUp(); fireRocket(); }
-  else if (rs > ps) { trophy = '🤖'; title = '😔 ربات برنده شد!'; stars = '⭐⭐'; sound.wrong(); }
-  else { trophy = '🤝'; title = 'تساوی!'; stars = '⭐⭐⭐'; }
-  if (ps > rs) { state.duelWins++; checkAchievements(); }
-  document.getElementById('resultTrophy').textContent = trophy;
-  document.getElementById('resultTitle').textContent = title;
-  document.getElementById('resultStars').textContent = stars;
-  document.getElementById('resultSubtitle').textContent = `⚔️ دوئل · ${state.duelTotal} دور`;
-  document.getElementById('rCorrect').textContent = ps;
-  document.getElementById('rWrong').textContent = rs;
-  document.getElementById('rScore').textContent = ps * 10;
-  document.getElementById('rStreak').textContent = state.maxCombo;
-  document.getElementById('resultDetails').textContent = `👤 شما: ${ps} برد · 🤖 ربات: ${rs} برد`;
-  state.totalPlayed++; state.totalCorrect += ps; state.totalWrong += rs;
+  if(ps>rs){ trophy='🏆'; title='🎉 شما برنده دوئل شدید!'; stars='⭐⭐⭐⭐⭐'; sound.levelUp(); fireRocket(); }
+  else if(rs>ps){ trophy='🤖'; title='😔 ربات برنده شد!'; stars='⭐⭐'; sound.wrong(); }
+  else { trophy='🤝'; title='تساوی!'; stars='⭐⭐⭐'; }
+  document.getElementById('resultTrophy').textContent=trophy;
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultStars').textContent=stars;
+  document.getElementById('resultSubtitle').textContent=`⚔️ دوئل · ${state.duelTotal} دور`;
+  document.getElementById('rCorrect').textContent=ps;
+  document.getElementById('rWrong').textContent=rs;
+  document.getElementById('rScore').textContent=ps*10;
+  document.getElementById('rStreak').textContent=state.maxCombo;
+  document.getElementById('resultDetails').textContent=`👤 شما: ${ps} برد · 🤖 ربات: ${rs} برد`;
+  state.totalPlayed++; state.totalCorrect+=ps; state.totalWrong+=rs;
   saveStats(); updateLeagueUI();
   showScreen('resultScreen');
 }
 
-// ============================================
-// 🎮 RENDER QUESTION
-// ============================================
 function renderQuestion() {
-  if (state.current >= state.totalQ || state.lives <= 0) { showResult(); return; }
-  state.answered = false; state.selectedOption = -1; state.numpadValue = '';
-  const q = state.questions[state.current];
-  document.getElementById('qLabel').textContent = `سوال ${state.current + 1} از ${state.totalQ}`;
-  document.getElementById('questionCounter').textContent = `سوال ${state.current + 1} از ${state.totalQ}`;
-  document.getElementById('qEquation').textContent = q.eq;
-  document.getElementById('qHint').textContent = q.hint;
-  document.getElementById('questionBox').className = 'question-box';
-  document.getElementById('feedback').className = 'feedback';
-  document.getElementById('nextBtn').style.display = 'none';
-  if (state.mode === 'testi') {
-    renderOptions(q);
-  } else {
-    renderNumpad();
-  }
+  if(state.current>=state.totalQ||state.lives<=0){ showResult(); return; }
+  state.answered=false; state.selectedOption=-1; state.numpadValue='';
+  state.answerTime=Date.now();
+  const q=state.questions[state.current];
+  document.getElementById('qLabel').textContent=`سوال ${state.current+1} از ${state.totalQ}`;
+  document.getElementById('questionCounter').textContent=`سوال ${state.current+1} از ${state.totalQ}`;
+  document.getElementById('qEquation').textContent=q.eq;
+  document.getElementById('qHint').textContent=q.hint;
+  document.getElementById('questionBox').className='question-box';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('timeBonusDisplay').style.display='none';
+  if(state.mode==='testi') renderOptions(q);
+  else renderNumpad();
   updateStats();
   startTimer();
 }
 
 function renderOptions(q) {
-  const area = document.getElementById('inputArea');
-  const opts = q.options || ['۱', '۲', '۳', '۴'];
-  let html = '<div class="options-grid">';
-  opts.forEach((opt, i) => {
-    html += `<button class="option-btn" onclick="selectOption(${i})" id="opt_${i}">${String.fromCharCode(65 + i)}. ${opt}</button>`;
+  const area=document.getElementById('inputArea');
+  const opts=q.options||['۱','۲','۳','۴'];
+  let html='<div class="options-grid">';
+  opts.forEach((opt,i)=>{
+    html+=`<button class="option-btn" onclick="selectOption(${i})" id="opt_${i}">${String.fromCharCode(65+i)}. ${opt}</button>`;
   });
-  html += '</div><button class="btn btn-primary" onclick="checkAnswer()" id="submitBtn">✓ تایید پاسخ</button>';
-  area.innerHTML = html;
+  html+='</div><button class="btn btn-primary" onclick="checkAnswer()" id="submitBtn">✓ تایید پاسخ</button>';
+  area.innerHTML=html;
 }
 
 function renderNumpad() {
-  const area = document.getElementById('inputArea');
-  const isMulti = state.level === 'hard' && state.mode !== 'sorati' && !state.isDuel;
-  area.innerHTML = `
-    <div class="display-box" id="displayBox"><span class="placeholder">${isMulti ? 'x₁ = ?' : 'x = ?'}</span></div>
+  const area=document.getElementById('inputArea');
+  const isMulti=state.level==='hard'&&state.mode!=='sorati'&&!state.isDuel;
+  area.innerHTML=`
+    <div class="display-box" id="displayBox"><span class="placeholder">${isMulti?'x₁ = ?':'x = ?'}</span></div>
     <div class="numpad-grid">
       <button class="num-key" onclick="numpadPress('7')">7</button>
       <button class="num-key" onclick="numpadPress('8')">8</button>
@@ -1718,261 +1865,274 @@ function renderNumpad() {
 }
 
 function numpadPress(digit) {
-  if (state.answered) return;
-  let val = state.numpadValue;
-  if (digit === '⌫') { val = val.slice(0, -1); }
-  else if (digit === '±') { 
-    if (val.startsWith('-')) val = val.slice(1);
-    else if (val && val !== '0') val = '-' + val;
-  }
-  else {
-    if (val === '0' && digit !== '.') val = digit;
-    else if (val.length < 8) val += digit;
-  }
-  state.numpadValue = val;
+  if(state.answered) return;
+  let val=state.numpadValue;
+  if(digit==='⌫'){ val=val.slice(0,-1); }
+  else if(digit==='±'){ if(val.startsWith('-')) val=val.slice(1); else if(val&&val!=='0') val='-'+val; }
+  else { if(val==='0'&&digit!=='.') val=digit; else if(val.length<8) val+=digit; }
+  state.numpadValue=val;
   updateDisplay();
 }
 
 function updateDisplay() {
-  const el = document.getElementById('displayBox');
-  if (!el) return;
-  const isMulti = state.level === 'hard' && state.mode !== 'sorati' && !state.isDuel;
-  const val = state.numpadValue;
-  el.innerHTML = val ? val : `<span class="placeholder">${isMulti ? 'x₁ = ?' : 'x = ?'}</span>`;
+  const el=document.getElementById('displayBox');
+  if(!el) return;
+  const isMulti=state.level==='hard'&&state.mode!=='sorati'&&!state.isDuel;
+  const val=state.numpadValue;
+  el.innerHTML=val?val:`<span class="placeholder">${isMulti?'x₁ = ?':'x = ?'}</span>`;
 }
 
 function selectOption(index) {
-  if (state.answered) return;
-  state.selectedOption = index;
-  document.querySelectorAll('.option-btn').forEach((el, i) => {
-    el.classList.toggle('selected', i === index);
-  });
-  document.getElementById('submitBtn').disabled = false;
+  if(state.answered) return;
+  state.selectedOption=index;
+  document.querySelectorAll('.option-btn').forEach((el,i)=>{ el.classList.toggle('selected',i===index); });
+  document.getElementById('submitBtn').disabled=false;
 }
 
 function checkAnswer() {
-  if (state.answered) return;
-  const q = state.questions[state.current];
+  if(state.answered) return;
+  const q=state.questions[state.current];
   let userAnswer;
-  if (state.mode === 'testi') {
-    if (state.selectedOption === -1) {
-      document.getElementById('submitBtn').disabled = true;
-      return;
-    }
-    userAnswer = [q.options[state.selectedOption]];
+  if(state.mode==='testi'){
+    if(state.selectedOption===-1){ document.getElementById('submitBtn').disabled=true; return; }
+    userAnswer=[q.options[state.selectedOption]];
   } else {
-    const val = parseFloat(state.numpadValue);
-    if (isNaN(val) || state.numpadValue === '' || state.numpadValue === '-') {
-      const el = document.getElementById('displayBox');
-      if (el) { el.style.borderColor = 'var(--red)'; setTimeout(() => el.style.borderColor = '', 500); }
+    const val=parseFloat(state.numpadValue);
+    if(isNaN(val)||state.numpadValue===''||state.numpadValue==='-'){
+      const el=document.getElementById('displayBox');
+      if(el){ el.classList.add('error'); setTimeout(()=>el.classList.remove('error'),500); }
       return;
     }
-    userAnswer = [val];
+    userAnswer=[val];
   }
-  state.answered = true;
+  state.answered=true;
   clearInterval(state.timerInterval);
-  const expected = q.answer.sort((a, b) => a - b);
-  const userSorted = [...userAnswer].sort((a, b) => a - b);
-  const isCorrect = userSorted.length === expected.length && userSorted.every((v, i) => Math.abs(v - expected[i]) < 0.01);
-  if (isCorrect) {
+  const expected=q.answer.sort((a,b)=>a-b);
+  const userSorted=[...userAnswer].sort((a,b)=>a-b);
+  const isCorrect=userSorted.length===expected.length&&userSorted.every((v,i)=>Math.abs(v-expected[i])<0.01);
+  const timeTaken=(Date.now()-state.answerTime)/1000;
+  let timeBonus=0;
+  if(isCorrect){ if(timeTaken<3) timeBonus=5; else if(timeTaken<5) timeBonus=3; else if(timeTaken<7) timeBonus=1; }
+  if(isCorrect){
     sound.correct(); state.correct++; state.combo++;
-    if (state.combo > state.maxCombo) state.maxCombo = state.combo;
-    const bonus = 1 + state.combo * 0.1;
-    const points = Math.round((q.points || 10) * bonus);
-    state.score += points;
-    if (state.combo >= 3) { showCombo(state.combo); }
-    if (state.combo === 5) { showToast('🔥 کامبو ۵!'); fireRocket(); }
-    if (state.combo === 10) { showToast('👑 کامبو ۱۰!'); fireRocket(); }
-    if (state.mode === 'sorati') state.speedCorrect++;
-    if (state.correct % 5 === 0 && state.correct > 0) { fireRocket(); rocketCount++; checkAchievements(); }
+    if(state.combo>state.maxCombo) state.maxCombo=state.combo;
+    const bonus=1+state.combo*0.1;
+    const points=Math.round((q.points||10)*bonus)+timeBonus;
+    state.score+=points;
+    if(state.mode==='sorati') state.speedCorrect++;
+    if(state.combo>=3) showCombo(state.combo);
+    if(state.combo===5){ showToast('⭐ کامبو ۵!'); fireRocket(); }
+    if(state.combo===10){ showToast('👑 کامبو ۱۰!'); fireRocket(); }
+    if(state.correct%5===0&&state.correct>0){ fireRocket(); rocketCount++; checkAchievements(); }
+    if(timeBonus>0){ const bonusEl=document.getElementById('timeBonusDisplay'); bonusEl.style.display='inline'; bonusEl.textContent=`⚡ +${timeBonus}`; setTimeout(()=>{ bonusEl.style.display='none'; },1500); }
   } else {
-    sound.wrong(); state.wrong++; state.combo = 0;
-    if (!state.isDuel) { state.lives--; if (state.lives <= 0) { showResult(); return; } }
+    sound.wrong(); state.wrong++; state.combo=0;
+    if(!state.isDuel){ state.lives--; if(state.lives<=0){ showResult(); return; } }
   }
   updateStats();
-  showFeedback(isCorrect, q);
+  showFeedback(isCorrect,q);
   styleQuestion(isCorrect);
-  if (state.mode === 'testi') {
-    document.querySelectorAll('.option-btn').forEach((el, i) => {
-      el.disabled = true;
-      if (q.options[i] === q.answer[0]) el.classList.add('correct');
-      if (i === state.selectedOption && !isCorrect) el.classList.add('wrong');
+  if(state.mode==='testi'){
+    document.querySelectorAll('.option-btn').forEach((el,i)=>{
+      el.disabled=true;
+      if(q.options[i]===q.answer[0]) el.classList.add('correct');
+      if(i===state.selectedOption&&!isCorrect) el.classList.add('wrong');
     });
-    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').disabled=true;
   } else {
-    const btn = document.getElementById('submitBtn');
-    if (btn) btn.disabled = true;
+    const btn=document.getElementById('submitBtn');
+    if(btn) btn.disabled=true;
   }
   updateMissions('solve');
-  if (state.combo >= 5) updateMissions('combo', state.combo);
-  if (state.mode === 'sorati' && state.speedCorrect >= 5) updateMissions('speed', state.speedCorrect);
-  if (state.wrong === 0 && state.correct >= 5) updateMissions('perfect', 1);
+  if(state.combo>=5) updateMissions('combo',state.combo);
+  if(state.mode==='sorati'&&state.speedCorrect>=5) updateMissions('speed',state.speedCorrect);
+  if(state.wrong===0&&state.correct>=5) updateMissions('perfect',1);
   checkAchievements();
-  if (!state.isDuel) {
-    document.getElementById('nextBtn').style.display = 'block';
+  if(!state.isDuel){
+    document.getElementById('nextBtn').style.display='block';
   } else {
-    state.duelAnswered = true;
-    const val = state.mode === 'testi' ? q.options[state.selectedOption] : parseFloat(state.numpadValue);
-    document.getElementById('duelPlayerAnswer').textContent = val;
-    document.getElementById('duelPlayerBox').className = 'duel-player active';
-    if (state.duelRobotAnswer !== null) { evaluateDuelRound(); }
+    state.duelAnswered=true;
+    const val=state.mode==='testi'?q.options[state.selectedOption]:parseFloat(state.numpadValue);
+    document.getElementById('duelPlayerAnswer').textContent=val;
+    document.getElementById('duelPlayerBox').className='duel-player active';
+    if(state.duelRobotAnswer!==null) evaluateDuelRound();
   }
 }
 
-function showFeedback(correct, q) {
-  const fb = document.getElementById('feedback');
-  const title = document.getElementById('feedbackTitle');
-  const steps = document.getElementById('feedbackSteps');
-  fb.className = `feedback show ${correct ? 'correct' : 'wrong'}`;
-  title.textContent = correct ? '✅ آفرین! پاسخ درست است!' : '❌ پاسخ اشتباه بود. راه حل صحیح:';
-  steps.innerHTML = q.steps.map(s => `<div>${s}</div>`).join('');
+function showFeedback(correct,q) {
+  const fb=document.getElementById('feedback');
+  const title=document.getElementById('feedbackTitle');
+  const steps=document.getElementById('feedbackSteps');
+  fb.className=`feedback show ${correct?'correct':'wrong'}`;
+  title.textContent=correct?'✅ آفرین! پاسخ درست است!':'❌ پاسخ اشتباه بود. راه حل صحیح:';
+  steps.innerHTML=q.steps.map(s=>`<div>${s}</div>`).join('');
 }
 
 function styleQuestion(correct) {
-  document.getElementById('questionBox').className = `question-box ${correct ? 'correct' : 'wrong'}`;
+  document.getElementById('questionBox').className=`question-box ${correct?'correct':'wrong'}`;
 }
 
 function updateStats() {
-  document.getElementById('correctCount').textContent = state.correct;
-  document.getElementById('wrongCount').textContent = state.wrong;
-  document.getElementById('comboCount').textContent = state.combo;
-  document.getElementById('livesDisplay').textContent = state.lives;
-  document.getElementById('scoreDisplay').textContent = `⭐ ${state.score} امتیاز`;
+  document.getElementById('correctCount').textContent=state.correct;
+  document.getElementById('wrongCount').textContent=state.wrong;
+  document.getElementById('comboCount').textContent=state.combo;
+  document.getElementById('livesDisplay').textContent=state.lives;
+  document.getElementById('scoreDisplay').textContent=`⭐ ${state.score} امتیاز`;
 }
 
 function startTimer() {
   clearInterval(state.timerInterval);
-  const total = state.mode === 'sorati' ? 10 : (userSettings.timer || 30);
-  state.timeLeft = total;
-  document.getElementById('timerDisplay').textContent = state.timeLeft;
-  document.getElementById('timerDisplay').className = 'timer';
-  state.timerInterval = setInterval(() => {
+  const total=state.mode==='sorati'?10:(userSettings.timer||30);
+  state.timeLeft=total;
+  document.getElementById('timerDisplay').textContent=state.timeLeft;
+  document.getElementById('timerDisplay').className='timer';
+  state.timerInterval=setInterval(()=>{
     state.timeLeft--;
-    document.getElementById('timerDisplay').textContent = state.timeLeft;
-    if (state.timeLeft <= 3) document.getElementById('timerDisplay').className = 'timer urgent';
-    if (state.timeLeft <= 0) {
+    document.getElementById('timerDisplay').textContent=state.timeLeft;
+    if(state.timeLeft<=3) document.getElementById('timerDisplay').className='timer urgent';
+    if(state.timeLeft<=0){
       clearInterval(state.timerInterval);
-      if (!state.answered) {
-        state.answered = true; state.wrong++; state.combo = 0;
-        if (!state.isDuel) { state.lives--; updateStats(); }
-        showFeedback(false, state.questions[state.current]);
+      if(!state.answered){
+        state.answered=true; state.wrong++; state.combo=0;
+        if(!state.isDuel){ state.lives--; updateStats(); }
+        showFeedback(false,state.questions[state.current]);
         styleQuestion(false);
-        document.getElementById('nextBtn').style.display = 'block';
-        if (state.lives <= 0 && !state.isDuel) showResult();
-        if (state.mode === 'testi') {
-          document.querySelectorAll('.option-btn').forEach(el => el.disabled = true);
-          document.getElementById('submitBtn').disabled = true;
+        document.getElementById('nextBtn').style.display='block';
+        if(state.lives<=0&&!state.isDuel) showResult();
+        if(state.mode==='testi'){
+          document.querySelectorAll('.option-btn').forEach(el=>el.disabled=true);
+          document.getElementById('submitBtn').disabled=true;
         } else {
-          const btn = document.getElementById('submitBtn');
-          if (btn) btn.disabled = true;
+          const btn=document.getElementById('submitBtn');
+          if(btn) btn.disabled=true;
         }
-        if (state.isDuel) {
-          state.duelAnswered = true;
-          document.getElementById('duelPlayerAnswer').textContent = '⏰';
-          document.getElementById('duelPlayerBox').className = 'duel-player loser';
-          if (state.duelRobotAnswer !== null) { evaluateDuelRound(); }
+        if(state.isDuel){
+          state.duelAnswered=true;
+          document.getElementById('duelPlayerAnswer').textContent='⏰';
+          document.getElementById('duelPlayerBox').className='duel-player loser';
+          if(state.duelRobotAnswer!==null) evaluateDuelRound();
         }
       }
     }
-  }, 1000);
+  },1000);
 }
 
 function showCombo(combo) {
-  const el = document.createElement('div');
-  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:36px;font-weight:900;color:var(--gold);pointer-events:none;z-index:100;text-shadow:0 0 30px rgba(255,215,0,0.4);animation:comboAnim 0.7s ease;';
-  el.textContent = `🔥 COMBO x${combo}`;
+  const el=document.createElement('div');
+  el.className='combo-popup';
+  el.textContent=`🔥 COMBO x${combo}`;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 800);
+  setTimeout(()=>el.remove(),800);
 }
 
 function nextQuestion() {
-  if (state.isDuel) {
+  if(state.isDuel){
     state.duelRound++;
-    if (state.duelRound >= state.duelTotal) showDuelResult();
+    if(state.duelRound>=state.duelTotal) showDuelResult();
     else renderDuelQuestion();
   } else {
     state.current++;
-    if (state.current >= state.totalQ || state.lives <= 0) showResult();
+    if(state.current>=state.totalQ||state.lives<=0) showResult();
     else renderQuestion();
   }
 }
 
 function showResult() {
   clearInterval(state.timerInterval);
-  const total = state.correct + state.wrong;
-  const pct = total > 0 ? state.correct / total : 0;
-  const score = state.score;
-  let trophy, title, stars;
-  if (pct === 1) { trophy = '👑'; title = 'بی‌نظیر! کامل بود!'; stars = '⭐⭐⭐⭐⭐'; fireRocket(); }
-  else if (pct >= 0.85) { trophy = '🏆'; title = 'عالی!'; stars = '⭐⭐⭐⭐'; }
-  else if (pct >= 0.7) { trophy = '🥇'; title = 'خوب بود!'; stars = '⭐⭐⭐'; }
-  else if (pct >= 0.5) { trophy = '🥈'; title = 'تلاش خوب!'; stars = '⭐⭐'; }
-  else if (pct >= 0.3) { trophy = '🥉'; title = 'بیشتر تمرین کن!'; stars = '⭐'; }
-  else { trophy = '📚'; title = 'نیاز به تمرین داری!'; stars = ''; }
-  if (state.lives <= 0 && !state.isDuel) { trophy = '💀'; title = 'تمام جان‌ها از دست رفت!'; stars = '💔'; }
-  document.getElementById('resultTrophy').textContent = trophy;
-  document.getElementById('resultTitle').textContent = title;
-  document.getElementById('resultStars').textContent = stars;
-  const levelNames = { easy: 'آسان', hard: 'سخت', expert: 'متخصص', master: 'استاد' };
-  document.getElementById('resultSubtitle').textContent = `${state.mode === 'testi' ? 'تستی' : state.mode === 'tashrihi' ? 'تشریحی' : '⚡ سرعتی'} · ${levelNames[state.level] || 'آسان'}`;
-  document.getElementById('rCorrect').textContent = state.correct;
-  document.getElementById('rWrong').textContent = state.wrong;
-  document.getElementById('rScore').textContent = score;
-  document.getElementById('rStreak').textContent = state.maxCombo;
-  document.getElementById('resultDetails').textContent = `✅ دقت: ${Math.round(pct * 100)}% · 🔥 زنجیره: ${state.maxCombo}`;
-  if (state.correct >= 3) saveLeaderboard(state.level);
-  state.totalPlayed++; state.totalCorrect += state.correct; state.totalWrong += state.wrong;
+  const total=state.correct+state.wrong;
+  const pct=total>0?state.correct/total:0;
+  const score=state.score;
+  let trophy,title,stars;
+  if(pct===1){ trophy='👑'; title='بی‌نظیر! کامل بود!'; stars='⭐⭐⭐⭐⭐'; fireRocket(); }
+  else if(pct>=0.85){ trophy='🏆'; title='عالی!'; stars='⭐⭐⭐⭐'; }
+  else if(pct>=0.7){ trophy='🥇'; title='خوب بود!'; stars='⭐⭐⭐'; }
+  else if(pct>=0.5){ trophy='🥈'; title='تلاش خوب!'; stars='⭐⭐'; }
+  else if(pct>=0.3){ trophy='🥉'; title='بیشتر تمرین کن!'; stars='⭐'; }
+  else { trophy='📚'; title='نیاز به تمرین داری!'; stars=''; }
+  if(state.lives<=0&&!state.isDuel){ trophy='💀'; title='تمام جان‌ها از دست رفت!'; stars='💔'; }
+  document.getElementById('resultTrophy').textContent=trophy;
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultStars').textContent=stars;
+  const levelNames={ easy:'آسان', hard:'سخت', expert:'متخصص', master:'استاد', trigonometric:'مثلثات', logarithmic:'لگاریتم' };
+  document.getElementById('resultSubtitle').textContent=`${state.mode==='testi'?'تستی':state.mode==='tashrihi'?'تشریحی':'⚡ سرعتی'} · ${levelNames[state.level]||'آسان'}`;
+  document.getElementById('rCorrect').textContent=state.correct;
+  document.getElementById('rWrong').textContent=state.wrong;
+  document.getElementById('rScore').textContent=score;
+  document.getElementById('rStreak').textContent=state.maxCombo;
+  document.getElementById('resultDetails').textContent=`✅ دقت: ${Math.round(pct*100)}% · 🔥 زنجیره: ${state.maxCombo}`;
+  if(state.correct>=3) saveLeaderboard(state.level);
+  state.totalPlayed++; state.totalCorrect+=state.correct; state.totalWrong+=state.wrong;
   saveStats(); updateLeagueUI();
   showScreen('resultScreen');
 }
 
 function restartGame() {
-  if (state.isDuel) startDuel(state.level);
+  if(state.isDuel) startDuel(state.level);
   else startGame(state.level);
 }
 
 function dailyChallenge() {
-  const today = new Date().toDateString();
-  const last = localStorage.getItem('dailyChallengeDate');
-  if (last === today) { alert('📅 امروز چالش رو انجام دادی!'); return; }
+  const today=new Date().toDateString();
+  const last=localStorage.getItem('dailyChallengeDateV2');
+  if(last===today){ alert('📅 امروز چالش رو انجام دادی!'); return; }
   sound.levelUp();
-  const qs = [];
-  const gens = [generateLinear, generateQuadratic, generateFractional, generateExponential];
-  for (let i = 0; i < 5; i++) qs.push(gens[randInt(0, 3)]());
-  state.isDuel = false;
-  state.questions = shuffle(qs);
-  state.correct = 0; state.wrong = 0; state.combo = 0; state.maxCombo = 0;
-  state.score = 0; state.lives = state.maxLives; state.current = 0;
-  state.totalQ = state.questions.length; state.answered = false;
-  state.selectedOption = -1; state.numpadValue = '';
-  document.getElementById('levelLabel').textContent = '🌟 چالش روزانه';
-  document.getElementById('duelContainer').style.display = 'none';
+  const qs=[];
+  const gens=[generateLinear,generateQuadratic,generateFractional,generateExponential,generateTrigonometric,generateLogarithmic];
+  for(let i=0;i<5;i++) qs.push(gens[randInt(0,gens.length-1)]());
+  state.isDuel=false;
+  state.questions=shuffle(qs);
+  state.correct=0; state.wrong=0; state.combo=0; state.maxCombo=0;
+  state.score=0; state.lives=state.maxLives; state.current=0;
+  state.totalQ=state.questions.length; state.answered=false;
+  state.selectedOption=-1; state.numpadValue='';
+  document.getElementById('levelLabel').textContent='🌟 چالش روزانه';
+  document.getElementById('duelContainer').style.display='none';
+  document.getElementById('timeBonusDisplay').style.display='none';
   updateStats();
   renderQuestion();
   showScreen('gameScreen');
-  localStorage.setItem('dailyChallengeDate', today);
+  localStorage.setItem('dailyChallengeDateV2', today);
 }
 
 function showProfile() {
-  document.getElementById('profileName').textContent = 'کاربر عزیز';
-  document.getElementById('pCorrect').textContent = state.totalCorrect;
-  document.getElementById('pWrong').textContent = state.totalWrong;
-  document.getElementById('pGames').textContent = state.totalPlayed;
-  const total = state.totalCorrect + state.totalWrong;
-  document.getElementById('pAccuracy').textContent = total > 0 ? Math.round((state.totalCorrect / total) * 100) + '%' : '۰%';
-  updateAchieveUI();
-  updateLeagueUI();
+  document.getElementById('profileName').textContent='کاربر عزیز';
+  document.getElementById('pCorrect').textContent=state.totalCorrect;
+  document.getElementById('pWrong').textContent=state.totalWrong;
+  document.getElementById('pGames').textContent=state.totalPlayed;
+  const total=state.totalCorrect+state.totalWrong;
+  document.getElementById('pAccuracy').textContent=total>0?Math.round((state.totalCorrect/total)*100)+'%':'۰%';
+  updateAchieveUI(); updateLeagueUI();
   showScreen('profileScreen');
 }
 
 function resetStats() {
-  if (confirm('آیا از ریست کردن همه چیز مطمئنی؟')) {
-    state.totalCorrect = 0; state.totalWrong = 0; state.totalPlayed = 0;
-    state.duelWins = 0; rocketCount = 0;
-    Object.keys(achievements).forEach(k => achievements[k].unlocked = false);
-    Object.keys(missions).forEach(k => { missions[k].progress = 0; missions[k].done = false; });
+  if(confirm('آیا از ریست کردن آمار مطمئنی؟')){
+    state.totalCorrect=0; state.totalWrong=0; state.totalPlayed=0;
+    state.duelWins=0; rocketCount=0;
+    Object.keys(achievements).forEach(k=>achievements[k].unlocked=false);
+    Object.keys(missions).forEach(k=>{ missions[k].progress=0; missions[k].done=false; });
     saveAchievements(); saveMissions(); saveStats();
     showProfile();
+  }
+}
+
+function resetAll() {
+  if(confirm('🗑️ آیا از ریست کامل همه چیز مطمئنی؟\nهمه داده‌ها پاک خواهند شد!')){
+    localStorage.removeItem('mathStats');
+    localStorage.removeItem('mathAchievementsV2');
+    localStorage.removeItem('mathMissionsV2');
+    localStorage.removeItem('mathSettingsV2');
+    localStorage.removeItem('dailyChallengeDateV2');
+    for(let key in localStorage){ if(key.startsWith('leaderboardV2_')) localStorage.removeItem(key); }
+    state.totalCorrect=0; state.totalWrong=0; state.totalPlayed=0;
+    state.duelWins=0; rocketCount=0;
+    Object.keys(achievements).forEach(k=>achievements[k].unlocked=false);
+    Object.keys(missions).forEach(k=>{ missions[k].progress=0; missions[k].done=false; });
+    userSettings={timer:30,questionCount:10,robotLevel:'medium',sfx:'on'};
+    loadSettings();
+    saveAchievements(); saveMissions(); saveStats();
+    showToast('🗑️ همه چیز ریست شد!');
+    setTimeout(()=>location.reload(),1000);
   }
 }
 
@@ -1987,29 +2147,28 @@ function saveStats() {
 
 function loadStats() {
   try {
-    const data = JSON.parse(localStorage.getItem('mathStats'));
-    if (data) {
-      state.totalCorrect = data.totalCorrect || 0;
-      state.totalWrong = data.totalWrong || 0;
-      state.totalPlayed = data.totalPlayed || 0;
-      state.duelWins = data.duelWins || 0;
+    const data=JSON.parse(localStorage.getItem('mathStats'));
+    if(data){
+      state.totalCorrect=data.totalCorrect||0;
+      state.totalWrong=data.totalWrong||0;
+      state.totalPlayed=data.totalPlayed||0;
+      state.duelWins=data.duelWins||0;
     }
   } catch(e) {}
 }
 
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
 function goHome() {
   clearInterval(state.timerInterval);
-  if (state.duelTimeout) clearTimeout(state.duelTimeout);
+  if(state.duelTimeout) clearTimeout(state.duelTimeout);
   showScreen('homeScreen');
-  if (state.mode === 'duel') showDuelMenu();
-  else if (state.mode !== 'ai') buildLevelMenu();
-  updateLeagueUI();
-  renderMissions();
+  if(state.mode==='duel') showDuelMenu();
+  else if(state.mode!=='ai') buildLevelMenu();
+  updateLeagueUI(); renderMissions();
 }
 
 // ============================================
@@ -2022,22 +2181,11 @@ loadSettings();
 buildLevelMenu();
 updateLeagueUI();
 renderMissions();
+updateAchieveUI();
 
-const styleAnim = document.createElement('style');
-styleAnim.textContent = `
-  @keyframes comboAnim {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-    100% { opacity: 0; transform: translate(-50%, -75%) scale(1); }
-  }
-`;
-document.head.appendChild(styleAnim);
-
-document.addEventListener('click', () => {
-  if (!sound.ctx) sound.init();
-  if (!sound.isMusicPlaying && !sound.isMuted) {
-    sound.startMusic();
-  }
+document.addEventListener('click', ()=>{
+  if(!sound.ctx) sound.init();
+  if(!sound.isMusicPlaying&&!sound.isMuted) sound.startMusic();
 }, { once: true });
 </script>
 </body>
